@@ -1,0 +1,4 @@
+section language
+    define  DEBUG_SYSTEM_INFO_LABEL, "Doukei: %s, Yagaku: %s"
+    define  DEBUG_SYSTEM_GPU_LABEL,  "Doukei-mae: %s, GPU: %s"
+end-section

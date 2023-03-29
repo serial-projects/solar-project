@@ -1,0 +1,4 @@
+section language
+    define  DEBUG_SYSTEM_INFO_LABEL, "Sistema: %s, Gráficos: %s"
+    define  DEBUG_SYSTEM_GPU_LABEL,  "Nome: %s, GPU: %s"
+end-section

@@ -1,0 +1,9 @@
+section language
+    define  DEBUG_SYSTEM_INFO_LABEL, "System: %s, Graphics: %s"
+    define  DEBUG_SYSTEM_GPU_LABEL, "Name: %s, GPU: %s"
+
+    ## map translation here, texts ##
+    ## niea-room.bc
+    define  WORLD_NIEA_ROOM_NAME, "Niea's Room"
+    define  WORLD_NIEA_ROOM_DESCRIPTION, "Her very own room."
+end-section

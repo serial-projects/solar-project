@@ -2,8 +2,6 @@ local module = {}
 local sfmt = string.format
 --
 local utils = require("solar.utils")
-local wworld= require("solar.worlds.world")
-
 --
 
 -- TODO: implement translation.
@@ -129,7 +127,7 @@ Solar_CommandTable["Solar_GetPlayerPosition"]={wrap=Solar_PerformGetPlayerPositi
 -- Solar_SetPlayerPosition	<dest_variable(x)> 		<dest_variable(y)> 		<collided?>
 function Solar_PerformSetPlayerPosition(engine, command, destx, desty)
 	local xpos, ypos = Solar_GetData(engine, command, destx), Solar_GetData(engine, command, desty)
-	local collide = wworld.Solar_TestPlayerCollisionAt(engine.world_mode.worlds[engine.world_mode.current_world], engine.world_mode.player, xpos, ypos)
+	local collide = Solar_TestPlayerCollisionAt(engine.world_mode.worlds[engine.world_mode.current_world], engine.world_mode.player, xpos, ypos)
 	if not collide then
 		engine.world_mode.player.abs_position.x, engine.world_mode.player.abs_position.y = xpos, ypos
 	end
@@ -139,7 +137,7 @@ Solar_CommandTable["Solar_SetPlayerPosition"]={wrap=Solar_PerformSetPlayerPositi
 -- Solar_SetTilePosition <generic_name> <xpos> <ypos>
 function Solar_PerformSetTilePosition(engine, command, tilegn, xpos, ypos)
 	local xpos, ypos = Solar_GetData(engine, command, xpos), Solar_GetData(engine, command, ypos)
-	wworld.Solar_SetTilePosition(engine.world_mode.worlds[engine.world_mode.current_world], tilegn, xpos, ypos)
+	Solar_SetTilePosition(engine.world_mode.worlds[engine.world_mode.current_world], tilegn, xpos, ypos)
 end
 Solar_CommandTable["Solar_SetTilePosition"]={wrap=Solar_PerformSetTilePosition, nargs=3}
 
@@ -305,14 +303,21 @@ end
 module.Solar_StepCommand = Solar_StepCommand
 function Solar_TickCommand(engine, command)
 	if command.status == FINISHED or command.status == DIED then
-		return
+		return command.status
 	else
 		-- SLEEPING, RUNNING doesn't mean the machine needs to be halted.
+		-- SLEEPING, depending of the time, it's kinda useless to tick, so break.
 		for count = 1, command.steps_per_tick do
-			if Solar_StepCommand(engine, command) == FINISHED then break end
+			local current_status = Solar_StepCommand(engine, command)
+			if current_status == FINISHED or current_status == SLEEPING then break end
 		end
 	end
+	return command.status
 end
 module.Solar_TickCommand = Solar_TickCommand
+function Solar_ResetCommand(command)
+	command.command_index = 1
+	command.status = RUNNING
+end
 --
 return module

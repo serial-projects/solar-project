@@ -5,7 +5,6 @@ local storage = require("solar.storage")
 local utils   = require("solar.utils")
 local consts  = require("solar.consts")
 local terminal= require("solar.terminal")
-local com     = require("solar.com")
 
 local wworld = require("solar.worlds.world")
 
@@ -133,16 +132,16 @@ module.Solar_FixResolutionWorldMode = Solar_FixResolutionWorldMode
 function Solar_KeyboardEventCheckWorldMode(engine, world_mode, current_world)
   if      love.keyboard.isDown(engine.world_keymap.walk_up) then
     wworld.Solar_WalkPlayer(current_world, world_mode.player, 0, -world_mode.player.speed)
-    world_mode.looking_at = consts.SOLAR_PLAYER_LOOKING_UP
+    world_mode.player.looking_at = consts.SOLAR_PLAYER_LOOKING_UP
   elseif  love.keyboard.isDown(engine.world_keymap.walk_down) then
     wworld.Solar_WalkPlayer(current_world, world_mode.player, 0,  world_mode.player.speed)
-    world_mode.looking_at = consts.SOLAR_PLAYER_LOOKING_DOWN
+    world_mode.player.looking_at = consts.SOLAR_PLAYER_LOOKING_DOWN
   elseif  love.keyboard.isDown(engine.world_keymap.walk_left) then
     wworld.Solar_WalkPlayer(current_world, world_mode.player, -world_mode.player.speed, 0)
-    world_mode.looking_at = consts.SOLAR_PLAYER_LOOKING_LEFT
+    world_mode.player.looking_at = consts.SOLAR_PLAYER_LOOKING_LEFT
   elseif  love.keyboard.isDown(engine.world_keymap.walk_right) then
     wworld.Solar_WalkPlayer(current_world, world_mode.player,  world_mode.player.speed, 0)
-    world_mode.looking_at = consts.SOLAR_PLAYER_LOOKING_RIGHT
+    world_mode.player.looking_at = consts.SOLAR_PLAYER_LOOKING_RIGHT
   end
 end
 function Solar_TickDebugScreenWorldMode(engine, world_mode, current_world)
@@ -179,10 +178,14 @@ end
 module.Solar_TickWorldMode = Solar_TickWorldMode
 
 -- Keypress function
+function Solar_AttemptInteraction(engine, world_mode)
+  local current_world = world_mode.worlds[world_mode.current_world]
+  wworld.Solar_AttemptInteraction(engine, world_mode, current_world)
+end
+module.Solar_AttemptInteraction = Solar_AttemptInteraction
 function Solar_KeypressWorldMode(engine, world_mode, key)
-  if key == "f3" then
-    world_mode.debug_frame.visible = not world_mode.debug_frame.visible
-  end
+  if key == "f3" then world_mode.debug_frame.visible = not world_mode.debug_frame.visible
+  elseif key == "e" then Solar_AttemptInteraction(engine, world_mode) end
 end
 module.Solar_KeypressWorldMode = Solar_KeypressWorldMode
 

@@ -85,10 +85,10 @@ function Solar_StorageRemoveOldCache(storage)
     return elements_deleted
     --
   end
-  local deleted_images = Solar_CheckStorageList(storage.fonts,'font')
-  local deleted_fonts  = Solar_CheckStorageList(storage.images,'image')
+  Solar_CheckStorageList(storage.fonts,'font')
+  Solar_CheckStorageList(storage.images,'image')
 end
-module.Solar_RemoveOldCache = Solar_RemoveOldCache
+module.Solar_RemoveOldCache = Solar_StorageRemoveOldCache
 
 --
 return module

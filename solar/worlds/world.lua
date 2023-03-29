@@ -5,8 +5,12 @@ local consts  = require("solar.consts")
 local scf     = require("solar.scf")
 local storage = require("solar.storage")
 
-local wtile = require("solar.worlds.tiles")
+local wtile   = require("solar.worlds.tiles")
 local wplayer = require("solar.worlds.player")
+
+--
+--
+--
 
 --
 -- World
@@ -75,7 +79,7 @@ function Solar_BuildTestingWorld(world_mode)
   world_mode.current_world = 1
 end
 module.Solar_BuildTestingWorld = Solar_BuildTestingWorld
-function Solar_TestPlayerCollisionAt(world, player, posx, posy)
+function Solar_TestPlayerCollisionAt(world, player, posx, posy, return_object)
   -- Check if the player at the position still on the world boundaries.
   do
     local xa, xb = posx, posx + (player.size.x)
@@ -102,7 +106,7 @@ function Solar_TestPlayerCollisionAt(world, player, posx, posy)
         local ya, yb = tile.position.y, tile.position.y + tile.size.y
         local cx = (xa >= ta and xa <= tb) or (xb >= ta and xb <= tb)
         local cy = (ya >= tc and ya <= td) or (yb >= tc and yb <= td)
-        if cx and cy then return true end
+        if cx and cy then return (return_object and tile or true) end
       else
         -- calculate the tile lines tatb and tctd for X and Y axis.
         local ta, tb = tile.position.x, tile.position.x + tile.size.x
@@ -114,7 +118,7 @@ function Solar_TestPlayerCollisionAt(world, player, posx, posy)
         local cy = (ya >= tc and ya <= td) or (yb >= tc and yb <= td)
         --local colliding = cx and cy
         --if colliding then return true end
-        if cx and cy then return true end
+        if cx and cy then return (return_object and tile or true) end
       end
     end
   end
@@ -187,7 +191,6 @@ local function Solar_UnpackWorldInformation(tr)
 end
 function Solar_GenerateFloorWorld(engine, world, floor)
   --
-  --
   for line_count = 1, #floor.background do
     local line = floor.background[line_count]
     for line_index = 1, #line do
@@ -215,6 +218,12 @@ function Solar_SpawnTilesWorld(engine, world, tile)
       if tile_data["use_tile_alignment"] then
         proto_tile.position = utils.Solar_NewVectorXY(tile_data.xpos * world.tile_size.x, tile_data.ypos * world.tile_size.y)
       else proto_tile.position = utils.Solar_NewVectorXY(tile_data.xpos, tile_data.ypos) end
+      --
+      if tile_data["when_interaction"] then
+        proto_tile.has_action = true
+        proto_tile.when_interaction = Solar_NewCommand()
+        Solar_TokenizeCommands(engine, proto_tile.when_interaction, tile_data.when_interaction)
+      end
       Solar_InsertTileWorld(world, proto_tile)
       print("generated?")
     else
@@ -239,6 +248,26 @@ function Solar_LoadWorld(engine, world_mode, file)
   table.insert(world_mode.worlds, proto_world)
 end
 module.Solar_LoadWorld = Solar_LoadWorld
+
+--[[ INTERACTION ]]--
+function Solar_AttemptInteraction(engine, world_mode, world)
+  -- this is basically the same as WALK in a certain direction and check if we are colliding with
+  -- something based on the player direction it is looking.
+  local player = world_mode.player
+  local test_directions = {
+    [consts.SOLAR_PLAYER_LOOKING_UP]    ={0, -1},
+    [consts.SOLAR_PLAYER_LOOKING_DOWN]  ={0,  1},
+    [consts.SOLAR_PLAYER_LOOKING_LEFT]  ={-1, 0},
+    [consts.SOLAR_PLAYER_LOOKING_RIGHT] ={ 1, 0}
+  }
+  local current_direction=test_directions[world_mode.player.looking_at]
+  local has_collision = Solar_TestPlayerCollisionAt(world, player, (player.abs_position.x + current_direction[1]), (player.abs_position.y + current_direction[2]), true)
+  if has_collision ~= false then
+    Solar_ResetCommand(has_collision.when_interaction)
+    has_collision.run_interaction = true
+  end
+end
+module.Solar_AttemptInteraction = Solar_AttemptInteraction
 
 --[[ TICK WORLD ]]--
 function Solar_TickWorld(engine, world_mode, world)

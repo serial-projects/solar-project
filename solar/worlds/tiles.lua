@@ -2,6 +2,7 @@ local module = {}
 
 local utils = require("solar.utils")
 local consts = require("solar.consts")
+local com = require("solar.com")
 
 --
 -- Tile
@@ -20,14 +21,15 @@ function Solar_NewTile(name, gname, zindex, posx, posy, sizew, sizeh, collide)
     texture_index = 0,
     texture_timing = 0,
     --
-    has_action = false,
-    when_iteraction = nil,
-    when_touched = nil,
+    when_interaction = nil, run_interaction = false,
   }
 end
 module.Solar_NewTile = Solar_NewTile
 function Solar_TickTile(engine, world_mode, world, tile)
-
+  if tile.when_interaction and tile.run_interaction then 
+    local status = com.Solar_TickCommand(engine, tile.when_interaction)
+    tile.run_interaction = status ~= com.DIED and status ~= com.FINISHED
+  end
 end
 module.Solar_TickTile = Solar_TickTile
 function Solar_DrawTile(engine, world_mode, world, tile)

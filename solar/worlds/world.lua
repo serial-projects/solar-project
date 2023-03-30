@@ -172,7 +172,8 @@ end
 module.Solar_GetTile = Solar_GetTile
 function Solar_SetTilePosition(world, tilegn, xpos, ypos)
   local tt = Solar_GetTile(world, tilegn)
-  assert(tt, "no tile found: "..tilegn)
+  assert(tt ~= nil, "no tile found: "..tilegn)
+  print("tile "..tilegn.." position changin!")
   tt.position.x = xpos
   tt.position.y = ypos
 end

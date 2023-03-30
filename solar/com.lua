@@ -46,7 +46,7 @@ function Solar_RuntimeCrashCommand(engine, command, reason)
 	for vn, vv in ipairs(engine.shared_values) 	do print(sfmt("\t[@%s]: %s", vn, vv)) end
 	command.status = DIED
 end
-function Solar_GetData(engine, command, token)
+function Solar_GetData(engine, command, token, strip_string)
 	local function make_sure_exists(t, value)
 		-- NOTE: allow true/false
 		if value == nil then
@@ -63,7 +63,7 @@ function Solar_GetData(engine, command, token)
 	--[[ strings / numbers ]]--
 	elseif (prefix=='"' or prefix=='\'') and (suffix=='"' or suffix=='\'') then
 		return token:sub(2,#token-1)
-	elseif tonumber(token) ~= nil then
+	elseif tonumber(token) ~= nil or prefix=='-' then
 		return tonumber(token)
 	--[[ everything else is unknown ]]--
 	else
@@ -116,6 +116,10 @@ local Solar_CommandTable = {}
 --[[ Not So Basic Commands ]]--
 --
 
+-- NOTE: WE ARE TAKING THE ADVANTAGE THAT EVERYTHING ON THE GLOBAL TABLE
+-- TO PREVENT CIRCULAR REQUIRES! WE SHOULD LOOK THIS MORE IN DEPTH ON THE
+-- FUTURE TO PREVENT BUGS AND BAD CODE.
+
 -- Solar_GetPlayerPosition	<dest_variable(x)> 		<dest_variable(y)>
 function Solar_PerformGetPlayerPosition(engine, command, destx, desty)
 	local xpos, ypos = engine.world_mode.player.abs_position.x, engine.world_mode.player.abs_position.y
@@ -134,9 +138,20 @@ function Solar_PerformSetPlayerPosition(engine, command, destx, desty)
 end
 Solar_CommandTable["Solar_SetPlayerPosition"]={wrap=Solar_PerformSetPlayerPosition, nargs=2}
 
+-- Solar_GetTilePosition <generic_name> <xpos> <ypos>
+function Solar_PerformGetTilePosition(engine, command, tilegn, xpos, ypos)
+	local tile = Solar_GetTile(engine.world_mode.worlds[engine.world_mode.current_world], Solar_GetData(engine, command, tilegn))
+	Solar_GetData(engine, command, tilegn)
+	local tilex, tiley = tile.position.x, tile.position.y
+	Solar_SetData(engine, command, xpos, tilex)
+	Solar_SetData(engine, command, ypos, tiley)
+end
+Solar_CommandTable["Solar_GetTilePosition"]={wrap=Solar_PerformGetTilePosition, nargs=3}
+
 -- Solar_SetTilePosition <generic_name> <xpos> <ypos>
 function Solar_PerformSetTilePosition(engine, command, tilegn, xpos, ypos)
 	local xpos, ypos = Solar_GetData(engine, command, xpos), Solar_GetData(engine, command, ypos)
+	local tilegn = Solar_GetData(engine, command, tilegn)
 	Solar_SetTilePosition(engine.world_mode.worlds[engine.world_mode.current_world], tilegn, xpos, ypos)
 end
 Solar_CommandTable["Solar_SetTilePosition"]={wrap=Solar_PerformSetTilePosition, nargs=3}
@@ -214,6 +229,7 @@ function Solar_PerformDiv(engine, command, x, y)
 end
 Solar_CommandTable["Solar_Div"]={wrap=Solar_PerformDiv, nargs=2}
 
+-- Solar_Sleep <time>
 function Solar_PerformSleep(engine, command, time)
 	local tv=Solar_GetData(engine, command, time)
 	if type(tv) ~= "number" then
@@ -224,6 +240,16 @@ function Solar_PerformSleep(engine, command, time)
 	end
 end
 Solar_CommandTable["Solar_Sleep"]={wrap=Solar_PerformSleep, nargs=1}
+
+-- Solar_RandomNumber <min> <max> <value>
+function Solar_PerformRandomNumber(engine, command, min, max, value)
+	local min, max = Solar_GetData(engine, command, min), Solar_GetData(engine, command, max)
+	assert(type(min)=="number","Solar_RandomNumber expects min to be number.")
+	assert(type(max)=="number","Solar_RandomNumber expects max to be number.")
+	local number = math.random(min, max)
+	Solar_SetData(engine, command, value, number)
+end
+Solar_CommandTable["Solar_RandomNumber"]={wrap=Solar_PerformRandomNumber, nargs=3}
 
 function Solar_PerformDummy(engine, command)
 	print("Marine Time Keepers")
@@ -260,7 +286,9 @@ end
 module.Solar_InitCommand = Solar_InitCommand
 function Solar_TokenizeCommand(engine, command, line)
 	local tokens = utils.Solar_Tokenize(line)
-	for _, token in ipairs(tokens) do table.insert(command.commands, token) end
+	for _, token in ipairs(tokens) do
+		table.insert(command.commands, token)
+	end
 end
 module.Solar_TokenizeCommand = Solar_TokenizeCommand
 function Solar_TokenizeCommands(engine, command, lines)

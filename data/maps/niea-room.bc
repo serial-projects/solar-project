@@ -24,10 +24,18 @@ section tiles
         define  color, [200, 100, 80]
         define  use_interaction, yes
         define  when_interaction, [
-            "Solar_Define $x 0",
+            "Solar_Label    Top",
+            "Solar_Define $x 0", 
             "Solar_Define $y 0",
-            "Solar_GetPlayerPosition $x $y",
-            "Solar_Print 'X is $x and Y is $y'"
+            "Solar_GetTilePosition 'box' $x $y",
+            "Solar_Define $add_x 0", "Solar_Define $add_y 0",
+            "Solar_RandomNumber -1 1 $add_x",
+            "Solar_RandomNumber -1 1 $add_y",
+            "Solar_Add $x $add_x",
+            "Solar_Add $y $add_y",
+            "Solar_Print 'new X: $x, new Y: $y'"
+            "Solar_SetTilePosition 'box' $x $y"
+            "Solar_Jump     Top"
         ]
     end-section
     define spawn, ["box"]

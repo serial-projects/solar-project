@@ -58,7 +58,15 @@ module.SOLAR_CURSOR_HEIGHT = 16
 
 -- Console/Terminal configuration.
 module.SOLAR_TERMINAL_BACKGROUND_COLOR = utils.Solar_NewColor(100, 100, 100)
+module.SOLAR_TERMINAL_INPUT_BACKGROUND_COLOR = utils.Solar_NewColor(150, 150, 150)
+module.SOLAR_TERMINAL_INPUT_FOREGROUND_COLOR = utils.Solar_NewColor(200, 200, 200)
+module.SOLAR_TERMINAL_INPUTBOX_HEIGHT = 30
+module.SOLAR_TERMINAL_INPUTBOX_FONTNAME = "terminal"
+module.SOLAR_TERMINAL_INPUTBOX_FONTSIZE = 12
+module.SOLAR_TERMINAL_TEXT_FONTNAME = "terminal"
+module.SOLAR_TERMINAL_TEXT_FONTSIZE = 12
 module.SOLAR_TERMINAL_HEIGHT = 400
+
 
 
 -- ############################################################################

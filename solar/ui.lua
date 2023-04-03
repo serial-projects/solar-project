@@ -131,11 +131,16 @@ end
 module.Solar_DrawProgress = Solar_DrawProgress
 
 --
+-- Input Element (TODO)
+--
+
+
+--
 -- Frame Element
 --
 local Solar_ElementCallTable = {
-  label = {tick = Solar_TickLabel, draw = Solar_DrawLabel},
-  progress = {tick = Solar_TickProgress, draw = Solar_DrawProgress }
+  label     = {tick = Solar_TickLabel, draw = Solar_DrawLabel},
+  progress  = {tick = Solar_TickProgress, draw = Solar_DrawProgress}
 }
 
 function Solar_NewFrame(name, visible, posx, posy, force_absolute)

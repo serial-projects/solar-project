@@ -263,12 +263,19 @@ function Solar_NewCommand()
 	return {
 		name = "unknown-thread",
 		--
-		commands = {}, command_index = 1,
-		status = 0, enable_warnings = true,
-		labels = {}, local_vars	= {},	global_vars = {},
-		steps_per_tick = 10, sleep_until = 0,
-		-- when_warning(warning_message)
-		-- when_error(error_message)
+		commands = {},
+		command_index = 1,
+		--
+		status = 0, 
+		enable_warnings = true,
+		--
+		labels = {},
+		local_vars	= {},
+		global_vars = {},
+		--
+		steps_per_tick = 10,
+		sleep_until = 0,
+		--
 		when_warning = nil,
 		when_error = nil,
 	}

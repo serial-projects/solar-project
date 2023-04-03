@@ -108,16 +108,22 @@ function Solar_InitWorldMode(engine, world_mode)
     Solar_TickDisplay=0,
     Solar_KeyboardEventCheckWorldMode=0,
     Solar_TickWorld=0,
+    Solar_TickTerminal=0,
     -- Drawing Functions
+    Solar_DrawTerminal=0,
     Solar_DrawDisplay=0,
     Solar_DrawWorld=0,
   }
-  --
+  --[[ build the UI ]]--
   Solar_BuildUIWorldMode(engine, world_mode)
-  terminal.Solar_InitTerminal(world_mode.terminal, world_mode.display)
-  --
+
+  --[[ initialize the terminal ]]--
+  terminal.Solar_InitTerminal(engine, world_mode.terminal, world_mode.display)
+
+  --[[ build the testing world ]]--
   wworld.Solar_BuildTestingWorld(world_mode)
-  --
+  
+  --[[ TODO: this is for debug only! remove from the future releases. ]]--
   local niea_room = wworld.Solar_LoadWorld(engine, world_mode, "niea-room")
 end
 module.Solar_InitWorldMode = Solar_InitWorldMode
@@ -184,8 +190,12 @@ function Solar_AttemptInteraction(engine, world_mode)
 end
 module.Solar_AttemptInteraction = Solar_AttemptInteraction
 function Solar_KeypressWorldMode(engine, world_mode, key)
-  if key == "f3" then world_mode.debug_frame.visible = not world_mode.debug_frame.visible
-  elseif key == "e" then Solar_AttemptInteraction(engine, world_mode) end
+  if      key == "f3" then        world_mode.debug_frame.visible = not world_mode.debug_frame.visible
+  elseif  key == "f4" then        world_mode.terminal.enabled = not world_mode.terminal.enabled
+  elseif  key == "e" then         Solar_AttemptInteraction(engine, world_mode)
+  end
+  --[[ feed the terminal information ]]--
+  terminal.Solar_KeypressedEventTerminal(engine, world_mode.terminal, key)
 end
 module.Solar_KeypressWorldMode = Solar_KeypressWorldMode
 
@@ -195,6 +205,7 @@ function Solar_DrawWorldMode(engine, world_mode)
   love.graphics.clear(0, 0, 0)
     local current_world = world_mode.worlds[world_mode.current_world]
     world_mode.time_taken["Solar_DrawWorld"]=utils.Solar_InvokeAndMeasureTime(wworld.Solar_DrawWorld, engine, world_mode, current_world)
+    world_mode.time_taken["Solar_DrawTerminal"]=utils.Solar_InvokeAndMeasureTime(terminal.Solar_DrawTerminal, engine, world_mode.terminal)
     world_mode.time_taken["Solar_DrawDisplay"]=utils.Solar_InvokeAndMeasureTime(ui.Solar_DrawDisplay, world_mode.display)
   love.graphics.setCanvas()
 end

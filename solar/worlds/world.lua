@@ -173,7 +173,6 @@ module.Solar_GetTile = Solar_GetTile
 function Solar_SetTilePosition(world, tilegn, xpos, ypos)
   local tt = Solar_GetTile(world, tilegn)
   assert(tt ~= nil, "no tile found: "..tilegn)
-  print("tile "..tilegn.." position changin!")
   tt.position.x = xpos
   tt.position.y = ypos
 end
@@ -223,10 +222,11 @@ function Solar_SpawnTilesWorld(engine, world, tile)
       if tile_data["when_interaction"] then
         proto_tile.has_action = true
         proto_tile.when_interaction = Solar_NewCommand()
+        proto_tile.when_interaction.name = string.format("%s-wheninteration", proto_tile.generic_name)
         Solar_TokenizeCommands(engine, proto_tile.when_interaction, tile_data.when_interaction)
       end
       Solar_InsertTileWorld(world, proto_tile)
-      print("generated?")
+      engine.handle_print("!! finished world generation...")
     else
       -- TODO: crash INGAME.
       error("couldn't find tile: "..tile_name)

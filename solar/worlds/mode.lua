@@ -108,12 +108,21 @@ function Solar_InitWorldMode(engine, world_mode)
     Solar_TickDisplay=0,
     Solar_KeyboardEventCheckWorldMode=0,
     Solar_TickWorld=0,
-    Solar_TickTerminal=0,
     -- Drawing Functions
     Solar_DrawTerminal=0,
     Solar_DrawDisplay=0,
     Solar_DrawWorld=0,
   }
+  --[[ Prepare the core ]]--
+  engine.handle_print = function(format, ...)
+    local args = {...}
+    if #args > 0 then
+      terminal.Solar_TerminalPrint(world_mode.terminal, format, unpack(args))
+    else
+      terminal.Solar_TerminalPrint(world_mode.terminal, format)
+    end
+  end
+
   --[[ build the UI ]]--
   Solar_BuildUIWorldMode(engine, world_mode)
 

@@ -12,6 +12,7 @@ function Solar_NewEngine()
     world_viewport_position = utils.Solar_NewVectorXY(0, 0),
     world_mode = world.Solar_NewWorldMode(),
     current_mode = consts.SOLAR_MODE_WORLD,
+    handle_print = function(...) end,
     -- keymap:
     world_keymap = {
       walk_up = "up", walk_down = "down", walk_left = "left", walk_right = "right"

@@ -7,10 +7,18 @@ local schar = string.char
 --
 -- String Utils
 --
-function Solar_IsValidCharacter(char)
+function Solar_GenerateExtraCharacterListFromString(s)
+  local t = {} for index = 1, #s do t[s:sub(index, index)]=true end
+  return t
+end
+module.Solar_GenerateExtraCharacterListFromString = Solar_GenerateExtraCharacterListFromString
+
+function Solar_IsValidCharacter(char, extras)
+  extras = extras or {}
   return  (sbyte(char) >= sbyte('a') and sbyte(char) <= sbyte('z')) or
           (sbyte(char) >= sbyte('A') and sbyte(char) <= sbyte('Z')) or
           (sbyte(char) >= sbyte('0') and sbyte(char) <= sbyte('9')) or
+          (extras[char] ~= nil) or
           (char == '_')
 end
 module.Solar_IsValidCharacter = Solar_IsValidCharacter

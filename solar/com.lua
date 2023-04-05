@@ -40,10 +40,10 @@ function Solar_WarnCommand(command, text)
 end
 module.Solar_WarnCommand = Solar_WarnCommand
 function Solar_RuntimeCrashCommand(engine, command, reason)
-	print(sfmt("[%s]: RuntimeCrash at (%d, aka: \"%s\"), reason: %s", command.name, command.command_index, command.commands[command.command_index], reason))
-	print("Dumping the local/global variables...")
-	for vn, vv in ipairs(command.local_vars) 		do print(sfmt("\t[$%s]: %s", vn, vv)) end
-	for vn, vv in ipairs(engine.shared_values) 	do print(sfmt("\t[@%s]: %s", vn, vv)) end
+	engine.handle_print(sfmt("[%s]: RuntimeCrash at (%d, aka: \"%s\"), reason: %s", command.name, command.command_index, command.commands[command.command_index], reason))
+	engine.handle_print("Dumping the local/global variables...")
+	for vn, vv in ipairs(command.local_vars) 		do engine.handle_print(sfmt("\t[$%s]: %s", vn, vv)) end
+	for vn, vv in ipairs(engine.shared_values) 	do engine.handle_print(sfmt("\t[@%s]: %s", vn, vv)) end
 	command.status = DIED
 end
 function Solar_GetData(engine, command, token, strip_string)
@@ -169,9 +169,9 @@ Solar_CommandTable["Solar_Quit"]={wrap=Solar_PerformQuit, nargs=0}
 function Solar_PerformPrint(engine, command, s)
 	local prefix, suffix=s:sub(1,  1), s:sub(#s, #s)
 	if (prefix=='\'' or prefix=='"') and (suffix=='\'' or suffix=='"') then
-		print(Solar_FillStringVariablesValues(engine, command, s))
+		engine.handle_print("[thread=\"%s\"]: %s", command.name, Solar_FillStringVariablesValues(engine, command, s))
 	else
-		print(Solar_GetData(engine, command, s))
+		engine.handle_print("[thread=\"%s\"]: %s", command.name, Solar_GetData(engine, command, s))
 	end
 end
 module.Solar_PerformPrint = Solar_PerformPrint
@@ -252,7 +252,7 @@ end
 Solar_CommandTable["Solar_RandomNumber"]={wrap=Solar_PerformRandomNumber, nargs=3}
 
 function Solar_PerformDummy(engine, command)
-	print("Marine Time Keepers")
+	engine.handle_print("[thread=\"%s\"]: Marine Time Keepers", command.name)
 end
 Solar_CommandTable["Solar_Dummy"]={wrap=Solar_PerformDummy, nargs=0}
 
@@ -284,10 +284,10 @@ module.Solar_NewCommand = Solar_NewCommand
 function Solar_InitCommand(engine, command)
 	-- initially redirect all the warning/error to the stdout
 	command.when_warning = function(warning_message)
-		print("Solar_Command (Warning): "..warning_message)
+		engine.handle_print("Solar_Command (Warning): "..warning_message)
 	end
 	command.when_error = function(error_message)
-		print("Solar_Command (Error): "..error_message)
+		engine.handle_print("Solar_Command (Error): "..error_message)
 	end
 end
 module.Solar_InitCommand = Solar_InitCommand

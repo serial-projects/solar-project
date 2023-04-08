@@ -99,10 +99,41 @@ function Solar_TickTerminal(engine, terminal)
 end
 module.Solar_TickTerminal = Solar_TickTerminal
 
+--[[ process the text inputs ]]--
+function Solar_ProcessCommandTerminal(terminal, command)
+  Solar_TerminalPrint(terminal, '>> '..command)
+  local command_table = {
+    ["/help"]=function(args)
+      Solar_TerminalPrint(terminal, "-- Solar Commands --")
+      Solar_TerminalPrint(terminal, "/help: show this message.")
+      Solar_TerminalPrint(terminal, "/exec <command>: execute the command inside the STRING.")
+      Solar_TerminalPrint(terminal, "/quit: close the game (no saves).")
+      Solar_TerminalPrint(terminal, "/info: shows the game version.") 
+    end,
+    ["/exec"]=function(args)
+    end,
+    ["/quit"]=function(args)
+      love.event.quit()
+    end,
+  }
+  --
+  local command_parsed=utils.Solar_Tokenize(command)
+  if #command_parsed <= 0 then
+    return
+  end
+  local program = command_parsed[1]
+  if command_table[program] then
+    command_table[program](command_parsed)
+  else
+    Solar_TerminalPrint(terminal, "!! no command: "..program)
+  end
+end
+
 --[[ keypressed events ]]--
-local SOLAR_TERMINAL_EXTRA_ALLOWED_CHARACTERS = Solar_GenerateExtraCharacterListFromString("{}()[]\"'*!$%:;?~")
-local SOLAR_TERMINAL_SUB_WHEN_UPPER = {
-  ['-']='_'
+local SOLAR_TERMINAL_EXTRA_ALLOWED_CHARACTERS = Solar_GenerateExtraCharacterListFromString("{}()[]\"'*!$%:;?~-/")
+local SOLAR_TERMINAL_SHIFT_REPLACEMENT = {
+  ['-']='_',  ['9']='(', ['0']=')', ['[']='{', [']']='}',
+  ['\'']='"', ['1']='!', ['2']='@', ['3']='#', ['4']='$'
 }
 function Solar_KeypressedEventTerminal(engine, terminal, key)
   if terminal.enabled then
@@ -114,7 +145,7 @@ function Solar_KeypressedEventTerminal(engine, terminal, key)
       end,
       -- enter/return key
       ['return'] = function(terminal)
-        Solar_TerminalPrint(terminal, '>> '..terminal.current_input)
+        Solar_ProcessCommandTerminal(terminal, terminal.current_input)
         terminal.current_input = ""
       end,
       -- space: input the text.
@@ -125,16 +156,9 @@ function Solar_KeypressedEventTerminal(engine, terminal, key)
     if input_key_events[key] then
       input_key_events[key](terminal)
     else
-      -- NOTE: this is a dirty check but works fine :^)
-
-      -- TODO: for some reason I can't input ()... Look into it on the future. This is not a big deal since
-      -- terminal commands doesn't use '()' anywhere on their syntax but the user may want to text like: :) face.
-
-      -- TODO: check if the user is using capslock. This is kinda OS-dependent and we MAY patch a function
-      -- to check that in the SDL level... who knows?
       if #key <= 1 and Solar_IsValidCharacter(key, SOLAR_TERMINAL_EXTRA_ALLOWED_CHARACTERS) then
         local should_shift = love.keyboard.isDown("lshift")
-        terminal.current_input = terminal.current_input .. (should_shift and string.upper(key) or key)
+        terminal.current_input = terminal.current_input .. (should_shift and (SOLAR_TERMINAL_SHIFT_REPLACEMENT[key] and SOLAR_TERMINAL_SHIFT_REPLACEMENT[key] or string.upper(key)) or key)
       end
     end
     terminal.inputbox_need_redraw = true

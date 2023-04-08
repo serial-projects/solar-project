@@ -144,6 +144,7 @@ function Solar_NewColor(r, g, b, a)
   }
 end
 module.Solar_NewColor = Solar_NewColor
+
 function Solar_TranslateColor(color)
   return color.red / 255, color.green / 255, color.blue / 255, color.alpha / 255
 end
@@ -169,11 +170,13 @@ function Solar_InvokeAndMeasureTime(invoke_function, ...)
   return os.clock() - begun, returned
 end
 module.Solar_InvokeAndMeasureTime = Solar_InvokeAndMeasureTime
+
 function Solar_Printf(format, ...)
   local wrap_within = print
   wrap_within(string.format(format, unpack(...)))
 end
 module.Solar_Printf = Solar_Printf
+
 function Solar_CheckFile(file)
   local fp = io.open(file, "r")
   if fp == nil then

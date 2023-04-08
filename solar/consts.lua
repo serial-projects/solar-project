@@ -68,8 +68,6 @@ module.SOLAR_TERMINAL_TEXT_FONTSIZE = 12
 module.SOLAR_TERMINAL_HEIGHT = 400
 module.SOLAR_TERMINAL_MAX_LINES = 80
 
-
-
 -- ############################################################################
 -- Things you SHOULD NOT change.
 -- ############################################################################

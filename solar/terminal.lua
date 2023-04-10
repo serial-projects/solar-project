@@ -130,10 +130,11 @@ function Solar_ProcessCommandTerminal(terminal, command)
 end
 
 --[[ keypressed events ]]--
-local SOLAR_TERMINAL_EXTRA_ALLOWED_CHARACTERS = Solar_GenerateExtraCharacterListFromString("{}()[]\"'*!$%:;?~-/")
+local SOLAR_TERMINAL_EXTRA_ALLOWED_CHARACTERS = Solar_GenerateExtraCharacterListFromString("{}()[]\"'*!$%:;?~-/=")
 local SOLAR_TERMINAL_SHIFT_REPLACEMENT = {
   ['-']='_',  ['9']='(', ['0']=')', ['[']='{', [']']='}',
-  ['\'']='"', ['1']='!', ['2']='@', ['3']='#', ['4']='$'
+  ['\'']='"', ['1']='!', ['2']='@', ['3']='#', ['4']='$',
+  ['=']='+'
 }
 function Solar_KeypressedEventTerminal(engine, terminal, key)
   if terminal.enabled then

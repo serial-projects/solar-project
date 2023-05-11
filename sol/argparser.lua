@@ -13,9 +13,11 @@ function Sol_UserArgumentsDecode(arglist, argtable)
           break
         end
       end
+      local nargs=argument_decoded["nargs"]
       makesure(argument_decoded, 42, "Sol_UserArgumentsDecode(): pointer to high argument is invalid = %s", argument)
-      argument_decoded["wrap"](unpack(table.sub(arglist, (index+1), (index+1)+argument_decoded["nargs"])))
-      index=index+argument_decoded["nargs"]
+      makesure(index+nargs<=length, 42, "%s requires %d arguments!", argument, nargs)
+      argument_decoded["wrap"](unpack(table.sub(arglist, (index+1), (index+1)+nargs)))
+      index=index+nargs
     else
       if has_default then argtable["default"](argument) end
     end

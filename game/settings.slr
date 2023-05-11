@@ -1,0 +1,20 @@
+# set the window geometry + flags.
+section window
+    # keep the flags inside this section.
+    section flags
+        define  vsync, yes
+        define  resizable, yes
+    end-section
+    # window geometry
+    define  width, 800
+    define  height, 600
+    # window title
+    define  title, "[Sol Engine]"
+end-section
+
+# the viewport is not changed if the window is resized so make sure
+# this is really the size you wish.
+section viewport
+    define  width, 800
+    define  height, 600
+end-section

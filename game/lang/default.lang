@@ -1,0 +1,4 @@
+# sadly the default language is english lol
+section texts
+    define  ENGINE_NAME, "Sol RPG Engine"
+end-section

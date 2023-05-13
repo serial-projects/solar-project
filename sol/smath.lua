@@ -1,10 +1,11 @@
 -- smath.lua: sol's library for math stuff (more shape stuff but...)
 local module = {}
 function Sol_NewVector(x, y)
-  return {
-    x = x or 0,
-    y = y or 0
-  }
+  if type(x)=="table" then
+    y = x[2] or x["y"] or 0
+    x = x[1] or x["x"] or 0
+  end
+  return { x = x , y = y }
 end ; module.Sol_NewVector=Sol_NewVector
 function Sol_NewRectangle(position, size)
   return {
@@ -13,6 +14,12 @@ function Sol_NewRectangle(position, size)
   }
 end ; module.Sol_NewRectangle=Sol_NewRectangle
 function Sol_NewColor4(red, green, blue, alpha)
+  if type(red)=="table" then
+    alpha=  red[4] or red["alpha"] or 255
+    blue=   red[3] or red["blue"] or 0
+    green=  red[2] or red["green"] or 0
+    red=    red[1] or red["red"] or 0
+  end
   return {
     red = red or 0,
     green = green or 0,
@@ -22,6 +29,9 @@ function Sol_NewColor4(red, green, blue, alpha)
 end ; module.Sol_NewColor4=Sol_NewColor4
 
 --[[ Rectangle Functions ]]--
+function Sol_UnpackVectorXY(vector)
+  return vector.x, vector.y
+end ; module.Sol_UnpackVectorXY=Sol_UnpackVectorXY
 function Sol_UnpackRectXYWH(rectangle)
   return rectangle.position.x, rectangle.position.y, rectangle.size.x, rectangle.size.y
 end ; module.Sol_UnpackRectXYWH=Sol_UnpackRectXYWH

@@ -29,6 +29,9 @@ function Sol_NewColor4(red, green, blue, alpha)
 end ; module.Sol_NewColor4=Sol_NewColor4
 
 --[[ Rectangle Functions ]]--
+function Sol_GetTileRelativePosition(rel_position, abs_position, tile_position)
+  return (-abs_position.x + rel_position.x) + tile_position.x, (-abs_position.y + rel_position.y) + tile_position.y
+end ; module.Sol_GetTileRelativePosition=Sol_GetTileRelativePosition
 function Sol_UnpackVectorXY(vector)
   return vector.x, vector.y
 end ; module.Sol_UnpackVectorXY=Sol_UnpackVectorXY

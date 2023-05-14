@@ -42,3 +42,11 @@ function table.show(t)
   end
   return _show(t, 0)
 end
+function table.find(t, value)
+  for key, tvalue in pairs(t) do
+    if tvalue == value then
+      return true, key
+    end
+  end
+  return false, nil
+end

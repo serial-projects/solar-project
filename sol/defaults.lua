@@ -20,5 +20,6 @@ module.SOL_DRAW_USING = table.enum(1, {"COLOR", "TEXTURE"})
 module.SOL_UI_CURSOR_DEFAULT_COLOR = smath.Sol_NewColor4(255, 255, 255)
 module.SOL_UI_CURSOR_DEFAULT_SIZE = smath.Sol_NewVector(16, 16)
 
+module.SOL_PLAYER_SIZE = smath.Sol_NewVector(64, 64)
 --
 return module

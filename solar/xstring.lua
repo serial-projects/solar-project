@@ -33,6 +33,7 @@ function string.tokenize(str)
     end
     index=index+1
   end
+  append_acc()
   return tokens
 end
 function string.isvalidchar(char, extras)

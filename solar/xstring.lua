@@ -42,3 +42,10 @@ function string.isvalidchar(char, extras)
           (string.byte(char) >= string.byte('0') and string.byte(char) <= string.byte('9')) or
           (extras[char] ~= nil) or (char == '_')
 end
+function string.charseq2list(s)
+  local t = {}
+  for index = 1, #s do
+    t[s:sub(index, index)]=true
+  end
+  return t
+end

@@ -1,11 +1,12 @@
 local module = {}
 
-local ui      = require("solar.ui")
+local consts = require("solar.consts")
 local storage = require("solar.storage")
-local utils   = require("solar.utils")
-local consts  = require("solar.consts")
+local functional = require("solar.functional")
+local smath = require("solar.smath")
+local system = require("solar.system")
+local ui = require("solar.ui")
 local terminal= require("solar.terminal")
-
 local wworld = require("solar.worlds.world")
 
 -- 
@@ -62,7 +63,7 @@ function Solar_BuildUIWorldMode(engine, world_mode)
   world_mode.debug_system_info.use_background = true
   ui.Solar_InsertElementFrame(world_mode.debug_frame, world_mode.debug_system_info)
   --
-  local system = (string.lower(love.system.getOS()) == 'linux') and utils.Solar_GetLinuxDistributor() or love.system.getOS()
+  local system = (string.lower(love.system.getOS()) == 'linux') and system.Solar_GetLinuxDistributor() or love.system.getOS()
   world_mode.debug_system_gpu = ui.Solar_NewLabel(
     "DebugSystemGPU", storage.Solar_StorageLoadFont(engine.storage, "normal", 14),
     -- string.format("System: %s, GPU: %s", system, device), 0, 9
@@ -73,7 +74,7 @@ function Solar_BuildUIWorldMode(engine, world_mode)
   --
   local ypos = 80
   local font = storage.Solar_StorageLoadFont(engine.storage, "normal", 12)
-  for index = 1, utils.Solar_TableGetNumberKeys(world_mode.time_taken) do
+  for index = 1, table.getnkeys(world_mode.time_taken) do
     world_mode.debug_labels[index] = ui.Solar_NewLabel(
       string.format("DebugLabel%d", index), storage.Solar_StorageLoadFont(engine.storage, "normal", 12),
       "offline...", 0, ypos, true
@@ -86,8 +87,8 @@ function Solar_BuildUIWorldMode(engine, world_mode)
   world_mode.debug_memory = ui.Solar_NewProgress(
     "DebugMemory", math.floor(world_mode.viewport:getWidth()/4), 5, 100, 3, false
   )
-  world_mode.debug_memory.background_color = utils.Solar_NewColor(207, 240, 137)
-  world_mode.debug_memory.foreground_color = utils.Solar_NewColor(240, 137, 207)
+  world_mode.debug_memory.background_color = smath.Solar_NewColor(207, 240, 137)
+  world_mode.debug_memory.foreground_color = smath.Solar_NewColor(240, 137, 207)
   world_mode.debug_memory.max_progress = 100000
   ui.Solar_InsertElementFrame(world_mode.debug_frame, world_mode.debug_memory)
   --
@@ -138,8 +139,8 @@ end
 module.Solar_InitWorldMode = Solar_InitWorldMode
 -- Utilities
 function Solar_FixResolutionWorldMode(engine, world_mode, offsetx, offsety)
-  world_mode.display.cursor.offset = utils.Solar_NewVectorXY(offsetx, offsety)
-  world_mode.display.offset = utils.Solar_NewVectorXY(offsetx, offsety)
+  world_mode.display.cursor.offset = smath.Solar_NewVectorXY(offsetx, offsety)
+  world_mode.display.offset = smath.Solar_NewVectorXY(offsetx, offsety)
 end
 module.Solar_FixResolutionWorldMode = Solar_FixResolutionWorldMode
 
@@ -186,9 +187,9 @@ function Solar_TickWorldMode(engine, world_mode)
   --
   local current_world = world_mode.worlds[world_mode.current_world]
   Solar_TickDebugScreenWorldMode(engine, world_mode, current_world)
-  world_mode.time_taken["Solar_TickDisplay"]=utils.Solar_InvokeAndMeasureTime(ui.Solar_TickDisplay, world_mode.display)
-  world_mode.time_taken["Solar_KeyboardEventCheckWorldMode"]=utils.Solar_InvokeAndMeasureTime(Solar_KeyboardEventCheckWorldMode, engine, world_mode, current_world)
-  world_mode.time_taken["Solar_TickWorld"]=utils.Solar_InvokeAndMeasureTime(wworld.Solar_TickWorld, engine, world_mode, current_world)
+  world_mode.time_taken["Solar_TickDisplay"]=functional.Solar_InvokeAndMeasureTime(ui.Solar_TickDisplay, world_mode.display)
+  world_mode.time_taken["Solar_KeyboardEventCheckWorldMode"]=functional.Solar_InvokeAndMeasureTime(Solar_KeyboardEventCheckWorldMode, engine, world_mode, current_world)
+  world_mode.time_taken["Solar_TickWorld"]=functional.Solar_InvokeAndMeasureTime(wworld.Solar_TickWorld, engine, world_mode, current_world)
 end
 module.Solar_TickWorldMode = Solar_TickWorldMode
 
@@ -213,9 +214,9 @@ function Solar_DrawWorldMode(engine, world_mode)
   love.graphics.setCanvas(world_mode.viewport)
   love.graphics.clear(0, 0, 0)
     local current_world = world_mode.worlds[world_mode.current_world]
-    world_mode.time_taken["Solar_DrawWorld"]=utils.Solar_InvokeAndMeasureTime(wworld.Solar_DrawWorld, engine, world_mode, current_world)
-    world_mode.time_taken["Solar_DrawTerminal"]=utils.Solar_InvokeAndMeasureTime(terminal.Solar_DrawTerminal, engine, world_mode.terminal)
-    world_mode.time_taken["Solar_DrawDisplay"]=utils.Solar_InvokeAndMeasureTime(ui.Solar_DrawDisplay, world_mode.display)
+    world_mode.time_taken["Solar_DrawWorld"]=functional.Solar_InvokeAndMeasureTime(wworld.Solar_DrawWorld, engine, world_mode, current_world)
+    world_mode.time_taken["Solar_DrawTerminal"]=functional.Solar_InvokeAndMeasureTime(terminal.Solar_DrawTerminal, engine, world_mode.terminal)
+    world_mode.time_taken["Solar_DrawDisplay"]=functional.Solar_InvokeAndMeasureTime(ui.Solar_DrawDisplay, world_mode.display)
   love.graphics.setCanvas()
 end
 module.Solar_DrawWorldMode = Solar_DrawWorldMode

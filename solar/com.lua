@@ -1,21 +1,5 @@
 local module = {}
 local sfmt = string.format
---
-local utils = require("solar.utils")
---
-
--- TODO: implement translation.
-
--- What exactly are commands? Well... in some parts, commands do play a very
--- important role on the player-world interaction, basically commands are a
--- very form of programming for elements, they can do some quick actions
--- like Solar_TeleportToWorld (which teleports the player to the world) or
--- Solar_LoadWorldAndKeepCache (which forces the world to loop and to kept
--- in cache for a unknown amount of time), the commands can perform very
--- simple math operations that do not contains brackets. For advanced stuff,
--- consider using a Basil Script for that. There are only global and local
---  variable and you can access them by using the prefix ('$' for local and
--- '@' for global). Commands also supports labels in case you need looping.
 
 local RUNNING 	= 0
 local FINISHED 	= 1
@@ -93,7 +77,7 @@ function Solar_FillStringVariablesValues(engine, command, s)
 			local var_name, valsub = "", nil
 			for vnindex = index + 1, length do
 				local ch = s:sub(vnindex, vnindex)
-				if utils.Solar_IsValidCharacter(ch) then var_name=var_name..ch
+				if string.tokenize(ch) then var_name=var_name..ch
 				else break end
 			end
 			--
@@ -292,7 +276,7 @@ function Solar_InitCommand(engine, command)
 end
 module.Solar_InitCommand = Solar_InitCommand
 function Solar_TokenizeCommand(engine, command, line)
-	local tokens = utils.Solar_Tokenize(line)
+	local tokens = string.tokenize(line)
 	for _, token in ipairs(tokens) do
 		table.insert(command.commands, token)
 	end

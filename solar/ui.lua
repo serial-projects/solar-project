@@ -1,5 +1,6 @@
 local module = {}
-local utils = require("solar.utils")
+
+local smath = require("solar.smath")
 local consts = require("solar.consts")
 
 --
@@ -35,7 +36,7 @@ function Solar_NewGenericsTable(name, type, posx, posy, force_absolute)
     -- NOTE: position can be absolute or relative, which depends of your usage, it's
     -- recommended to YOU to use the relative as it automatically adjusts to the 
     -- screen's depending of the porcentage.
-    position = utils.Solar_NewVectorXY(posx, posy),
+    position = smath.Solar_NewVectorXY(posx, posy),
     force_absolute = (force_absolute == nil and false or force_absolute),
     draw_using = consts.SOLAR_DRAW_USING_COLOR,
     --
@@ -55,11 +56,11 @@ function Solar_NewLabel(name, font, text, posx, posy, force_absolute)
     --
     font = font,
     text = text,
-    color = utils.Solar_NewColor(255, 255, 255),
+    color = smath.Solar_NewColor(255, 255, 255),
     use_background = false,
-    background_color = utils.Solar_NewColor(0, 0, 0),
+    background_color = smath.Solar_NewColor(0, 0, 0),
     --
-    position = utils.Solar_NewVectorXY(posx, posy),
+    position = smath.Solar_NewVectorXY(posx, posy),
     zindex = 0,
     force_absolute = (force_absolute == nil) and false or force_absolute,
     --
@@ -85,12 +86,12 @@ function Solar_DrawLabel(display, label)
     end
     --
     if label.use_background then
-      love.graphics.setColor(utils.Solar_TranslateColor(label.background_color))
+      love.graphics.setColor(smath.Solar_TranslateColor(label.background_color))
       love.graphics.rectangle("fill", posx, posy, tw, th)
     end
     --
     love.graphics.setFont(label.font)
-    love.graphics.setColor(utils.Solar_TranslateColor(label.color))
+    love.graphics.setColor(smath.Solar_TranslateColor(label.color))
     love.graphics.print(label.text, posx, posy)
   end
 end
@@ -103,11 +104,11 @@ function Solar_NewProgress(name, width, height, posx, posy, force_absolute)
     name = name, type = "progress",
     visible = true,
     --
-    position = utils.Solar_NewVectorXY(posx, posy),
+    position = smath.Solar_NewVectorXY(posx, posy),
     force_absolute = (force_absolute == nil) and false or force_absolute,
-    size = utils.Solar_NewVectorXY(width, height),
-    background_color = utils.Solar_NewColor(0,      0,    0),
-    foreground_color = utils.Solar_NewColor(100,  100,  100),
+    size = smath.Solar_NewVectorXY(width, height),
+    background_color = smath.Solar_NewColor(0,      0,    0),
+    foreground_color = smath.Solar_NewColor(100,  100,  100),
     --
     progress = 0,
     max_progress = 1,
@@ -122,9 +123,9 @@ function Solar_DrawProgress(display, progress)
   if progress.visible then
     local posx, posy = Solar_DecidePosition(display.size, progress.size, progress.position, progress.force_absolute)
     local width = (progress.size.x / progress.max_progress) * progress.progress
-    love.graphics.setColor(utils.Solar_TranslateColor(progress.background_color))
+    love.graphics.setColor(smath.Solar_TranslateColor(progress.background_color))
     love.graphics.rectangle("fill", posx, posy, progress.size.x, progress.size.y)
-    love.graphics.setColor(utils.Solar_TranslateColor(progress.foreground_color))
+    love.graphics.setColor(smath.Solar_TranslateColor(progress.foreground_color))
     love.graphics.rectangle("fill", posx, posy, width, progress.size.y)
   end
 end
@@ -153,7 +154,7 @@ function Solar_NewFrame(name, visible, posx, posy, force_absolute)
     --
     background_canva = nil,
     use_background_canva = false,
-    background_canva_position = utils.Solar_NewVectorXY(posx, posy),
+    background_canva_position = smath.Solar_NewVectorXY(posx, posy),
     background_canva_postion_force_absolute = ((force_absolute == nil) and false or force_absolute),
     --
   }
@@ -174,7 +175,7 @@ end
 function Solar_DrawFrame(display, frame)
   if frame.use_background_canva then
     local posx, posy = Solar_DecidePosition(
-      display.size, utils.Solar_NewVectorXY(frame.background_canva:getWidth(), frame.background_canva:getHeight()),
+      display.size, smath.Solar_NewVectorXY(frame.background_canva:getWidth(), frame.background_canva:getHeight()),
       frame.background_canva_position, frame.background_canva_postion_force_absolute
     )
     love.graphics.setColor(1, 1, 1)
@@ -190,11 +191,11 @@ end
 function Solar_MakeBackgroundCanvaSolidColorFrame(frame, width, height, posx, posy, color)
   --
   frame.background_canva = love.graphics.newCanvas(width, height)
-  frame.background_canva_position = utils.Solar_NewVectorXY(posx, posy)
+  frame.background_canva_position = smath.Solar_NewVectorXY(posx, posy)
   --
   local past_canva = love.graphics.getCanvas()
   love.graphics.setCanvas(frame.background_canva)
-    love.graphics.clear(utils.Solar_TranslateColor(color))
+    love.graphics.clear(smath.Solar_TranslateColor(color))
   love.graphics.setCanvas(past_canva)
   --
 end
@@ -205,15 +206,15 @@ module.Solar_MakeBackgroundCanvaSolidColorFrame = Solar_MakeBackgroundCanvaSolid
 --
 function Solar_NewCursor()
   return {
-    size = utils.Solar_NewVectorXY(consts.SOLAR_CURSOR_WIDTH, consts.SOLAR_CURSOR_HEIGHT),
-    position = utils.Solar_NewVectorXY(0, 0),
-    offset = utils.Solar_NewVectorXY(0, 0),
+    size = smath.Solar_NewVectorXY(consts.SOLAR_CURSOR_WIDTH, consts.SOLAR_CURSOR_HEIGHT),
+    position = smath.Solar_NewVectorXY(0, 0),
+    offset = smath.Solar_NewVectorXY(0, 0),
     visible = true,
     -- LAST position and hiding the cursor when it's not necessary, basically
     -- calculate if the mouse has moved, stores it's new position and check if
     -- the move is inside the tolerance.
-    last_position         = utils.Solar_NewVectorXY(0, 0),
-    last_position_change  = utils.Solar_NewVectorXY(0, 0),
+    last_position         = smath.Solar_NewVectorXY(0, 0),
+    last_position_change  = smath.Solar_NewVectorXY(0, 0),
     change_tolerance = 1,
     hide_timing = 0,
     hide_time = 2,
@@ -221,7 +222,7 @@ function Solar_NewCursor()
     mouse_status = 0,
     mouse_textures = {},
     draw_using = consts.SOLAR_DRAW_USING_COLOR,
-    color = utils.Solar_NewColor(150, 80, 100),
+    color = smath.Solar_NewColor(150, 80, 100),
   }
 end
 module.Solar_NewCursor = Solar_NewCursor
@@ -247,7 +248,7 @@ module.Solar_TickCursor = Solar_TickCursor
 function Solar_DrawCursor(cursor)
   if cursor.visible then
     if cursor.draw_using == consts.SOLAR_DRAW_USING_COLOR then
-      love.graphics.setColor(utils.Solar_TranslateColor(cursor.color))
+      love.graphics.setColor(smath.Solar_TranslateColor(cursor.color))
       love.graphics.rectangle("fill", cursor.position.x, cursor.position.y, cursor.size.x, cursor.size.y)
     end
   end
@@ -256,9 +257,9 @@ end
 function Solar_NewDisplay(name, base_width, base_height)
   return {
     elements = {}, visible = true,
-    offset = utils.Solar_NewVectorXY(0, 0),
+    offset = smath.Solar_NewVectorXY(0, 0),
     cursor = Solar_NewCursor(),
-    size = utils.Solar_NewVectorXY(base_width, base_height),
+    size = smath.Solar_NewVectorXY(base_width, base_height),
   }
 end
 module.Solar_NewDisplay = Solar_NewDisplay

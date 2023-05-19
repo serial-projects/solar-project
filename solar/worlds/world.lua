@@ -1,9 +1,9 @@
 local module  = {}
 
-local utils   = require("solar.utils")
 local consts  = require("solar.consts")
 local scf     = require("solar.scf")
 local storage = require("solar.storage")
+local smath   = require("solar.smath")
 
 local wtile   = require("solar.worlds.tiles")
 local wplayer = require("solar.worlds.player")
@@ -18,8 +18,8 @@ local wplayer = require("solar.worlds.player")
 function Solar_NewWorld(ww, wh, wtw, wth)
   return {
     tiles = {{name="player", generic_name="player00", is_player=true, zindex=1}}, chunks = {},
-    size = utils.Solar_NewVectorXY(ww * wtw, wh * wth),
-    tile_size = utils.Solar_NewVectorXY(wtw, wth),
+    size = smath.Solar_NewVectorXY(ww * wtw, wh * wth),
+    tile_size = smath.Solar_NewVectorXY(wtw, wth),
     -- use_chunks: the chunks are a important optimization made to prevent lag on really large
     -- maps, obviously this rendering requires a longer initialization time.
     use_chunks = (ww > 50 or wh > 50),
@@ -64,7 +64,7 @@ function Solar_BuildTestingWorld(world_mode)
           yindex * consts.SOLAR_TEST_WORLD_TILE_HEIGHT,
           consts.SOLAR_TEST_WORLD_TILE_WIDTH, consts.SOLAR_TEST_WORLD_TILE_HEIGHT
         )
-        proto_tile.color = utils.Solar_NewColor(math.random(1, 255),math.random(1, 255),math.random(1, 255))
+        proto_tile.color = smath.Solar_NewColor(math.random(1, 255),math.random(1, 255),math.random(1, 255))
         proto_tile.collide = true
         Solar_InsertTileWorld(proto_world, proto_tile, true)
       end
@@ -73,7 +73,7 @@ function Solar_BuildTestingWorld(world_mode)
   end
   --
   local proto_tile = Solar_NewTile("MovinTile", "movingtile00", 1, 100, 100, 64, 64, true)
-  proto_tile.color = utils.Solar_NewColor(100, 80, 123)
+  proto_tile.color = smath.Solar_NewColor(100, 80, 123)
   Solar_InsertTileWorld(proto_world, proto_tile)
   table.insert(world_mode.worlds, proto_world)
   world_mode.current_world = 1
@@ -200,8 +200,8 @@ function Solar_GenerateFloorWorld(engine, world, floor)
       local tw, th = ctr.width, ctr.height
       local proto_tile = wtile.Solar_NewTile(Solar_UnpackWorldInformation(ctr))
       proto_tile.draw_using = (ctr.draw_using=='color' and consts.SOLAR_DRAW_USING_COLOR or consts.SOLAR_DRAW_USING_TEXTURE)
-      proto_tile.color = utils.Solar_NewColor(unpack(ctr.color))
-      proto_tile.position = utils.Solar_NewVectorXY(tw * (line_index - 1), th * (line_count - 1))
+      proto_tile.color = smath.Solar_NewColor(unpack(ctr.color))
+      proto_tile.position = smath.Solar_NewVectorXY(tw * (line_index - 1), th * (line_count - 1))
       -- TODO: implement texturing!
       Solar_InsertTileWorld(world, proto_tile, false)
     end
@@ -214,10 +214,10 @@ function Solar_SpawnTilesWorld(engine, world, tile)
       local tile_data = tile[tile_name]
       local proto_tile = Solar_NewTile(Solar_UnpackWorldInformation(tile_data))
       proto_tile.draw_using = (tile_data.draw_using=='color' and consts.SOLAR_DRAW_USING_COLOR or consts.SOLAR_DRAW_USING_TEXTURE)
-      proto_tile.color = utils.Solar_NewColor(unpack(tile_data.color))
+      proto_tile.color = smath.Solar_NewColor(unpack(tile_data.color))
       if tile_data["use_tile_alignment"] then
-        proto_tile.position = utils.Solar_NewVectorXY(tile_data.xpos * world.tile_size.x, tile_data.ypos * world.tile_size.y)
-      else proto_tile.position = utils.Solar_NewVectorXY(tile_data.xpos, tile_data.ypos) end
+        proto_tile.position = smath.Solar_NewVectorXY(tile_data.xpos * world.tile_size.x, tile_data.ypos * world.tile_size.y)
+      else proto_tile.position = smath.Solar_NewVectorXY(tile_data.xpos, tile_data.ypos) end
       --
       if tile_data["when_interaction"] then
         proto_tile.has_action = true

@@ -83,7 +83,6 @@ module.Solar_TerminalPrint = Solar_TerminalPrint
 
 --[[ init terminal ]]--
 function Solar_InitTerminal(engine, terminal, base_display)
-  print(base_display)
   terminal.viewport = love.graphics.newCanvas(base_display.size.x, math.floor(base_display.size.y/2))
   terminal.size = smath.Solar_NewVectorXY(terminal.viewport:getWidth(), terminal.viewport:getHeight())
   terminal.inputbox_font = storage.Solar_StorageLoadFont(engine.storage, consts.SOLAR_TERMINAL_INPUTBOX_FONTNAME, consts.SOLAR_TERMINAL_INPUTBOX_FONTSIZE)

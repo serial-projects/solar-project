@@ -1,7 +1,7 @@
 local module = {} 
-local consts = require("solar.consts")
-local utils = require("solar.utils")
+local smath = require("solar.smath")
 local storage = require("solar.storage")
+local consts = require("solar.consts")
 --
 
 local unpack = unpack or table.unpack
@@ -11,13 +11,13 @@ function Solar_NewTerminal()
     -- terminal buffer: how much things can the terminal have?
     lines = {},
     line_limit = 80,
-    size = utils.Solar_NewVectorXY(0, 0),
+    size = smath.Solar_NewVectorXY(0, 0),
     inputbox_font = nil,
     text_font = nil,
     --[[ canvas & viewport ]]--
     textbox_canva = nil,            textbox_need_redraw = true,
     inputbox_canva = nil,           inputbox_need_redraw = true,
-    viewport  = nil,                viewport_position = utils.Solar_NewVectorXY(0, 0),
+    viewport  = nil,                viewport_position = smath.Solar_NewVectorXY(0, 0),
     enabled   = false,
     current_input = ""
   }
@@ -27,17 +27,17 @@ module.Solar_NewTerminal = Solar_NewTerminal
 --[[ terminal functions ]]--
 function Solar_TerminalDrawCurrentInput(engine, terminal)
   love.graphics.setCanvas(terminal.inputbox_canva)
-    love.graphics.clear(utils.Solar_TranslateColor(consts.SOLAR_TERMINAL_INPUT_BACKGROUND_COLOR))
+    love.graphics.clear(smath.Solar_TranslateColor(consts.SOLAR_TERMINAL_INPUT_BACKGROUND_COLOR))
     love.graphics.setFont(terminal.inputbox_font)
     local th = terminal.inputbox_font:getHeight()
-    love.graphics.setColor(utils.Solar_TranslateColor(consts.SOLAR_TERMINAL_INPUT_FOREGROUND_COLOR))
+    love.graphics.setColor(smath.Solar_TranslateColor(consts.SOLAR_TERMINAL_INPUT_FOREGROUND_COLOR))
     love.graphics.print(terminal.current_input, 0, math.floor(terminal.inputbox_canva:getHeight()/2)-math.floor(th/2))
   love.graphics.setCanvas(terminal.viewport)
 end
 
 function Solar_TerminalDrawTextBox(engine, terminal)
   love.graphics.setCanvas(terminal.textbox_canva)
-    love.graphics.clear(utils.Solar_TranslateColor(consts.SOLAR_TERMINAL_BACKGROUND_COLOR))
+    love.graphics.clear(smath.Solar_TranslateColor(consts.SOLAR_TERMINAL_BACKGROUND_COLOR))
     love.graphics.setFont(terminal.text_font)
     love.graphics.setColor(1, 1, 1, 1)
     --
@@ -85,7 +85,7 @@ module.Solar_TerminalPrint = Solar_TerminalPrint
 function Solar_InitTerminal(engine, terminal, base_display)
   print(base_display)
   terminal.viewport = love.graphics.newCanvas(base_display.size.x, math.floor(base_display.size.y/2))
-  terminal.size = utils.Solar_NewVectorXY(terminal.viewport:getWidth(), terminal.viewport:getHeight())
+  terminal.size = smath.Solar_NewVectorXY(terminal.viewport:getWidth(), terminal.viewport:getHeight())
   terminal.inputbox_font = storage.Solar_StorageLoadFont(engine.storage, consts.SOLAR_TERMINAL_INPUTBOX_FONTNAME, consts.SOLAR_TERMINAL_INPUTBOX_FONTSIZE)
   terminal.text_font = storage.Solar_StorageLoadFont(engine.storage, consts.SOLAR_TERMINAL_TEXT_FONTNAME, consts.SOLAR_TERMINAL_TEXT_FONTSIZE)
   --[[ begin terminal viewport initialization ]]--
@@ -117,7 +117,7 @@ function Solar_ProcessCommandTerminal(terminal, command)
     end,
   }
   --
-  local command_parsed=utils.Solar_Tokenize(command)
+  local command_parsed=string.tokenize(command)
   if #command_parsed <= 0 then
     return
   end
@@ -130,7 +130,7 @@ function Solar_ProcessCommandTerminal(terminal, command)
 end
 
 --[[ keypressed events ]]--
-local SOLAR_TERMINAL_EXTRA_ALLOWED_CHARACTERS = Solar_GenerateExtraCharacterListFromString("{}()[]\"'*!$%:;?~-/=")
+local SOLAR_TERMINAL_EXTRA_ALLOWED_CHARACTERS = string.charseq2list("{}()[]\"'*!$%:;?~-/=")
 local SOLAR_TERMINAL_SHIFT_REPLACEMENT = {
   ['-']='_',  ['9']='(', ['0']=')', ['[']='{', [']']='}',
   ['\'']='"', ['1']='!', ['2']='@', ['3']='#', ['4']='$',
@@ -157,7 +157,7 @@ function Solar_KeypressedEventTerminal(engine, terminal, key)
     if input_key_events[key] then
       input_key_events[key](terminal)
     else
-      if #key <= 1 and Solar_IsValidCharacter(key, SOLAR_TERMINAL_EXTRA_ALLOWED_CHARACTERS) then
+      if #key <= 1 and string.isvalidchar(key, SOLAR_TERMINAL_EXTRA_ALLOWED_CHARACTERS) then
         local should_shift = love.keyboard.isDown("lshift")
         terminal.current_input = terminal.current_input .. (should_shift and (SOLAR_TERMINAL_SHIFT_REPLACEMENT[key] and SOLAR_TERMINAL_SHIFT_REPLACEMENT[key] or string.upper(key)) or key)
       end

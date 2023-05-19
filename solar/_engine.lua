@@ -1,6 +1,6 @@
 local modules = {}
 local world = require("solar.worlds.mode")
-local utils = require("solar.utils")
+local smath = require("solar.smath")
 local consts= require("solar.consts")
 local storage=require("solar.storage")
 --
@@ -8,8 +8,8 @@ function Solar_NewEngine()
   return {
     storage = nil,
     window_width = 0, window_height = 0,
-    world_viewport = utils.Solar_NewVectorXY(0, 0),
-    world_viewport_position = utils.Solar_NewVectorXY(0, 0),
+    world_viewport = smath.Solar_NewVectorXY(0, 0),
+    world_viewport_position = smath.Solar_NewVectorXY(0, 0),
     world_mode = world.Solar_NewWorldMode(),
     current_mode = consts.SOLAR_MODE_WORLD,
     handle_print = function(...) end,
@@ -54,8 +54,8 @@ function Solar_ResizeEngine(engine, new_width, new_height)
   engine.world_viewport_position.x = math.floor(engine.window_width / 2) - math.floor(engine.world_viewport.x / 2)
   engine.world_viewport_position.y = math.floor(engine.window_height/ 2) - math.floor(engine.world_viewport.y / 2)
   --
-  local offsetx = 0+engine.world_viewport_position.x
-  local offsety = 0+engine.world_viewport_position.y
+  local offsetx = engine.world_viewport_position.x
+  local offsety = engine.world_viewport_position.y
   world.Solar_FixResolutionWorldMode(engine, engine.world_mode, offsetx, offsety)
   --
 end

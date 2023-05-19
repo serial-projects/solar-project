@@ -9,10 +9,6 @@ local wtile   = require("solar.worlds.tiles")
 local wplayer = require("solar.worlds.player")
 
 --
---
---
-
---
 -- World
 --
 function Solar_NewWorld(ww, wh, wtw, wth)

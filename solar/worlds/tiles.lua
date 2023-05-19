@@ -1,8 +1,8 @@
 local module = {}
 
-local utils = require("solar.utils")
 local consts = require("solar.consts")
 local com = require("solar.com")
+local smath = require("solar.smath")
 
 --
 -- Tile
@@ -11,11 +11,11 @@ function Solar_NewTile(name, gname, zindex, posx, posy, sizew, sizeh, collide)
   return {
     name = name, generic_name = gname,
     zindex = ( (zindex == 1) and 2 or zindex),
-    position = utils.Solar_NewVectorXY(posx, posy),
-    size = utils.Solar_NewVectorXY(sizew, sizeh),
+    position = smath.Solar_NewVectorXY(posx, posy),
+    size = smath.Solar_NewVectorXY(sizew, sizeh),
     collide = ((collide == nil) and false or collide),
     --
-    color = utils.Solar_NewColor(255, 255, 255),
+    color = smath.Solar_NewColor(255, 255, 255),
     draw_using = consts.SOLAR_DRAW_USING_COLOR,
     textures = {},
     texture_index = 0,
@@ -34,10 +34,10 @@ end
 module.Solar_TickTile = Solar_TickTile
 function Solar_DrawTile(engine, world_mode, world, tile)
   -- rx, ry: relative position
-  local rx, ry = utils.Solar_GetRelativePosition(world_mode.player.rel_position, world_mode.player.abs_position, tile.position)
+  local rx, ry = smath.Solar_GetRelativePosition(world_mode.player.rel_position, world_mode.player.abs_position, tile.position)
   if rx > -tile.size.x and rx < world_mode.viewport:getWidth() and ry > -tile.size.y and ry < world_mode.viewport:getHeight() then
     if tile.draw_using == consts.SOLAR_DRAW_USING_COLOR then
-      love.graphics.setColor  (utils.Solar_TranslateColor(tile.color))
+      love.graphics.setColor  (smath.Solar_TranslateColor(tile.color))
       love.graphics.rectangle ("fill", rx, ry, tile.size.x, tile.size.y)
     end
   end

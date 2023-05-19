@@ -1,5 +1,5 @@
 local module = {}
-local utils = require("solar.utils")
+local system = require("solar.system")
 local scf = require("solar.scf")
 --
 function Solar_NewStorage(path)
@@ -32,7 +32,7 @@ function Solar_StorageLoadImage(storage, image_key)
     return from_cache
   else
     local path = storage.resource_path .. '/images/' .. image_key .. '.png'
-    if utils.Solar_CheckFile(path) then
+    if system.Solar_CheckFile(path) then
       local image = love.graphics.newImage(path)
       storage.images[image_key] = image
       return image
@@ -49,7 +49,7 @@ function Solar_StorageLoadFont(storage, font_key, size)
     return from_cache.font
   else
     local path = storage.resource_path .. '/fonts/' .. font_key .. '.ttf'
-    if utils.Solar_CheckFile(path) then
+    if system.Solar_CheckFile(path) then
       local font = love.graphics.newFont(path, size)
       storage.fonts[font_key..'_'..tostring(size)]={lifespan=0, font=font}
       return font

@@ -18,3 +18,11 @@ section viewport
     define  width, 800
     define  height, 600
 end-section
+
+# Set the keymap settings
+section world_keymap
+    define  walk_up,    "up"
+    define  walk_down,  "down"
+    define  walk_right, "right"
+    define  walk_left,  "left"
+end-section

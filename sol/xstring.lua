@@ -35,3 +35,10 @@ function string.tokenize(str)
   end
   return tokens
 end
+function string.list2table(s)
+  local t = {}
+  for index = 1, #s do
+    t[s:sub(index, index)]=true
+  end
+  return t
+end

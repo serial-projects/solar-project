@@ -1,4 +1,4 @@
 # sadly the default language is english lol
 section texts
-    define  ENGINE_NAME, "Sol RPG Engine"
+    define  WMODE_DISPLAY_DEBUG_UI_FRAME_VERSION_LABEL_TEXT, "Sol Engine \"%s\" (running on LÖVE %d.%d.%d) [Lua: %s (jit? %s)]"
 end-section

@@ -1,5 +1,7 @@
 -- sgen.lua: code generators and object generating functions.
 local module={}
+module.SNIL=string.byte(1)
+
 --[[ 
   Sol_BuildStruct(default, new_values): generates a table containing all the default values, if there is a
   new_value for the default, use it then. DO not set a default value to NIL!
@@ -8,9 +10,9 @@ function Sol_BuildStruct(default, new_values)
   local new_structure = {}
   for key, value in pairs(default) do
     if new_values[key] then
-      new_structure[key] = new_values[key]
+      new_structure[key] = (new_values[key] == module.SNIL) and nil or new_values[key]
     else
-      new_structure[key] = value
+      new_structure[key] = (value == module.SNIL) and nil or value
     end
   end
   return new_structure

@@ -52,6 +52,11 @@ function love.update(deltatime)
   sol_engine.Sol_TickEngine(SolEngineMainInstance)
 end
 
+--[[ love.keypressed() ]]
+function love.keypressed(key)
+  sol_engine.Sol_KeypressEventEngine(SolEngineMainInstance, key)
+end
+
 --[[ love.draw() ]]
 function love.draw()
   sol_engine.Sol_DrawEngine(SolEngineMainInstance)

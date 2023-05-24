@@ -41,3 +41,9 @@ if not _G["makesure"] then
     end
   end
 end
+if not _G["stopexec"] then
+  _G.stopexec=function(message)
+    print(message or "stopexec() was called.")
+    local input=io.read()
+  end
+end

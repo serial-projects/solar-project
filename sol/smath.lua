@@ -28,7 +28,20 @@ function Sol_NewColor4(red, green, blue, alpha)
   }
 end ; module.Sol_NewColor4=Sol_NewColor4
 
+--[[ Vector Functions ]]--
+function Sol_AddVector(avec, bvec)
+  return Sol_NewVector(bvec.x + avec.x, bvec.y + avec.y)
+end ; module.Sol_AddVector=Sol_AddVector
+function Sol_SubVector(avec, bvec)
+  return Sol_NewVector(bvec.x - avec.x, bvec.y - avec.y)
+end ; module.Sol_SubVector=Sol_SubVector
+
 --[[ Rectangle Functions ]]--
+function Sol_CloneRectangle(rectangle)
+  local _np=Sol_NewVector(rectangle.position)
+  local _ns=Sol_NewVector(rectangle.size)
+  return { position = _np, size = _ns }
+end ; module.Sol_CloneRectangle=Sol_CloneRectangle
 function Sol_GetTileRelativePosition(rel_position, abs_position, tile_position)
   return (-abs_position.x + rel_position.x) + tile_position.x, (-abs_position.y + rel_position.y) + tile_position.y
 end ; module.Sol_GetTileRelativePosition=Sol_GetTileRelativePosition
@@ -38,8 +51,25 @@ end ; module.Sol_UnpackVectorXY=Sol_UnpackVectorXY
 function Sol_UnpackRectXYWH(rectangle)
   return rectangle.position.x, rectangle.position.y, rectangle.size.x, rectangle.size.y
 end ; module.Sol_UnpackRectXYWH=Sol_UnpackRectXYWH
-function Sol_TestRectangleCollision(main_rectangle, testing_rectangle)
-  mwarn("not implemented.") return false
+function Sol_TestRectangleCollision(base_rectangle, target_rectangle)
+  if target_rectangle.size.x < base_rectangle.size.x and target_rectangle.size.y < base_rectangle.size.y then
+    local ta, tb = base_rectangle.position.x + 1, base_rectangle.position.x + (base_rectangle.size.x - 1)
+    local tc, td = base_rectangle.position.y + 1, base_rectangle.position.y + (base_rectangle.size.y - 1)
+    local xa, xb = target_rectangle.position.x, target_rectangle.position.x + target_rectangle.size.x
+    local ya, yb = target_rectangle.position.y, target_rectangle.position.y + target_rectangle.size.y
+    local cx = (xa >= ta and xa <= tb) or (xb >= ta and xb <= tb)
+    local cy = (ya >= tc and ya <= td) or (yb >= tc and yb <= td)
+    if cx and cy then return true end
+  else
+    local ta, tb = target_rectangle.position.x, target_rectangle.position.x + target_rectangle.size.x
+    local tc, td = target_rectangle.position.y, target_rectangle.position.y + target_rectangle.size.y
+    local xa, xb = base_rectangle.position.x + 1, base_rectangle.position.x + (base_rectangle.size.x - 1)
+    local ya, yb = base_rectangle.position.y + 1, base_rectangle.position.y + (base_rectangle.size.y - 1)
+    local cx = (xa >= ta and xa <= tb) or (xb >= ta and xb <= tb)
+    local cy = (ya >= tc and ya <= td) or (yb >= tc and yb <= td)
+    if cx and cy then return true end
+  end
+  return false
 end ; module.Sol_TestRectangleCollision=Sol_TestRectangleCollision
 
 --[[ Color Functions ]]

@@ -3,6 +3,7 @@ local smath=require("sol.smath")
 --
 module.SOL_VERSION = "1.0"
 module.SOL_RELEASE = 10
+module.SOL_LOVE_MAJOR, module.SOL_LOVE_MINOR, module.SOL_LOVE_REVISION = love.getVersion()
 
 module.SOL_ENGINE_MODES = table.enum(1, {"MENU", "WORLD", "CREDITS"})
 
@@ -21,5 +22,6 @@ module.SOL_UI_CURSOR_DEFAULT_COLOR = smath.Sol_NewColor4(255, 255, 255)
 module.SOL_UI_CURSOR_DEFAULT_SIZE = smath.Sol_NewVector(16, 16)
 
 module.SOL_PLAYER_SIZE = smath.Sol_NewVector(64, 64)
+module.SOL_PLAYER_LOOK_DIRECTION = table.enum(1,{"UP","DOWN","LEFT","RIGHT"})
 --
 return module

@@ -1,0 +1,59 @@
+## section "info"
+section info
+    define  name, "Niea's Room"
+end-section
+## section "tiles"
+section tiles
+    section A
+        define  name, "floor"
+        define  size, [64, 64]
+        define  position, [0, 0]
+        define  collide, no
+        define  draw_method, 1
+        define  color, [250, 250, 250]
+        define  should_draw, yes
+    end-section
+    section small_tile
+        define  name, "testingtile"
+        define  size, [32, 32]
+        define  position, [200, 200]
+        define  collide, yes
+        define  draw_method, 1
+        define  color, [250, 100, 150]
+        define  should_draw, yes
+    end-section 
+    section big_tile
+        define  name, "largetile"
+        define  size, [64, 64]
+        define  position, [300, 200]
+        define  collide, yes
+        define  draw_method, 1
+        define  color, [100, 250, 150]
+        define  should_draw, yes
+    end-section
+end-section
+## section "geometry"
+section geometry
+    define  enable_world_borders, yes
+    define  bg_size, [10, 10]
+    define  bg_tile_size, [64, 64]
+end-section
+## section "background"
+section background
+    define  matrix, [
+        "AAAAAAAAAA",
+        "AAAAAAAAAA",
+        "AAAAAAAAAA",
+        "AAAAAAAAAA",
+        "AAAAAAAAAA",
+        "AAAAAAAAAA",
+        "AAAAAAAAAA",
+        "AAAAAAAAAA",
+        "AAAAAAAAAA",
+        "AAAAAAAAAA"
+    ]
+end-section
+## section "level"
+section level
+    define  spawn_tiles, ["small_tile", "big_tile"]
+end-section

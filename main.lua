@@ -3,7 +3,7 @@ local sol_argparser=require("sol.argparser")
 
 --[[ Globals ]]
 local SolEngineMainInstance=sol_engine.Sol_NewEngine()
-local SolEnginePathResources="./game/"
+local SolEnginePathResources="game/"
 
 --[[ love.help() ]]
 function love.help()

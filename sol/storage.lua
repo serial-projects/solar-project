@@ -5,7 +5,7 @@ local scf=require("sol.scf")
 local module={}
 --
 function Sol_NewCache(cache)
-  return sgen.Sol_BuildStruct({keep=false, lastuse=0, content=0}, cache)
+  return sgen.Sol_BuildStruct({keep=true, lastuse=0, content=0}, cache)
 end ; module.Sol_NewCache=Sol_NewCache
 function Sol_NewStorage(root)
   return {current_language = "default", texts = {}, cached_elements={}, root=root, maxlifespan=5}

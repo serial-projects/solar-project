@@ -12,7 +12,7 @@ local module={}
 --[[ Create a New Engine ]]
 function Sol_NewEngine()
   return {
-    engine_vars={},
+    vars={PRECISE_WALK=true},
     storage = storage.Sol_NewStorage(nil),
     root = nil,
     window_size = smath.Sol_NewVector(defaults.SOL_WINDOW_WIDTH, defaults.SOL_WINDOW_HEIGHT),

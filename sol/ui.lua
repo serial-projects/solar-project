@@ -21,6 +21,7 @@ function Sol_NewLabel(label)
   local label = label or {}
   return sgen.Sol_BuildStruct({
     type = "label",
+    non_formatted_text = sgen.SNIL,
     text = "",
     font = sgen.SNIL,
     color = smath.Sol_NewColor4(0, 0, 0),
@@ -39,8 +40,8 @@ end
 function Sol_DrawLabel(display, label)
   if label.font then
     label.rectangle.size.x,label.rectangle.size.y = label.font:getWidth(label.text), label.font:getHeight()
-    if label.force_absolute then label.rectangle.position.x,label.rectangle.position.y = label.position.x, label.position.y
-    else label.rectangle.position.x, label.rectangle.position.y = Solar_UITranslateRelativePosition(display.size.x, display.size.y, label.rectangle.size.x, label.rectangle.size.y, label.position.x, label.position.y) end
+    if    label.force_absolute then label.rectangle.position.x,label.rectangle.position.y = label.position.x, label.position.y
+    else  label.rectangle.position.x, label.rectangle.position.y = Solar_UITranslateRelativePosition(display.size.x, display.size.y, label.rectangle.size.x, label.rectangle.size.y, label.position.x, label.position.y) end
     if label.has_background then
       love.graphics.setColor(smath.Sol_TranslateColor(label.background_color))
       love.graphics.rectangle("fill", Sol_UnpackRectXYWH(label.rectangle))

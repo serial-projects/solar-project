@@ -11,7 +11,7 @@ function Sol_NewPlayer()
     name = "player",
     inventory = {},
     pets = {},
-    speed = 4,
+    speed = 7,
     looking_direction=defaults.SOL_PLAYER_LOOK_DIRECTION.DOWN,
     --
     draw_method = defaults.SOL_DRAW_USING.COLOR,
@@ -202,20 +202,51 @@ function Sol_WalkInWorld(engine, world_mode, world, xdirection, ydirection)
   if Sol_CheckPlayerPositionAt(engine, world_mode, world, xposition, yposition) then
     world_mode.player.rectangle.position.x=world_mode.player.rectangle.position.x+xdirection
     world_mode.player.rectangle.position.y=world_mode.player.rectangle.position.y+ydirection
+  else
+    -- NOTE: PRECISE_WALK is KINDA a very expansive function, use it with very caution!
+    if engine.vars["PRECISE_WALK"] then
+      --> for xdirection
+      if xdirection ~= 0 then
+        local x_amount=0
+        while (xdirection < 0 and x_amount >= xdirection or x_amount <= xdirection) do
+          if not Sol_CheckPlayerPositionAt(engine, world_mode, world, world_mode.player.rectangle.position.x+x_amount, world_mode.player.rectangle.position.y) then
+            break
+          else
+            x_amount=x_amount+(xdirection < 0 and -1 or 1)
+          end
+        end
+        -- we remove -1 amount of walking to ignore the last collision we made to check if the player is actually colliding with
+        -- something, if no remove the player will be stuck in some wall. We could have put this inside the loop.
+        world_mode.player.rectangle.position.x=world_mode.player.rectangle.position.x+(xdirection < 0 and x_amount + 1 or x_amount - 1)
+      end
+      --> for ydirection
+      if ydirection ~= 0 then
+        local y_amount=0
+        while (ydirection < 0 and y_amount >= ydirection or y_amount <= ydirection) do
+          if not Sol_CheckPlayerPositionAt(engine, world_mode, world, world_mode.player.rectangle.position.x, world_mode.player.rectangle.position.y+y_amount) then
+            break
+          else
+            y_amount=y_amount+(ydirection < 0 and -1 or 1)
+          end
+        end
+        world_mode.player.rectangle.position.y=world_mode.player.rectangle.position.y+(ydirection < 0 and y_amount + 1 or y_amount - 1)
+      end
+      --> (...)
+    end
   end
 end ; module.Sol_WalkInWorld=Sol_WalkInWorld
 
 function Sol_TickWorld(engine, world_mode, world)
-  if      love.keyboard.isDown(engine.wmode_keymap["walk_up"])    then  
+  if      love.keyboard.isDown(engine.wmode_keymap["walk_up"])    then
     Sol_WalkInWorld(engine, world_mode, world, 0, -world_mode.player.speed)
     world_mode.player.looking_direction=defaults.SOL_PLAYER_LOOK_DIRECTION.UP
-  elseif  love.keyboard.isDown(engine.wmode_keymap["walk_down"])  then  
+  elseif  love.keyboard.isDown(engine.wmode_keymap["walk_down"])  then
     Sol_WalkInWorld(engine, world_mode, world, 0,  world_mode.player.speed)
     world_mode.player.looking_direction=defaults.SOL_PLAYER_LOOK_DIRECTION.DOWN
-  elseif  love.keyboard.isDown(engine.wmode_keymap["walk_left"])  then  
+  elseif  love.keyboard.isDown(engine.wmode_keymap["walk_left"])  then
     Sol_WalkInWorld(engine, world_mode, world, -world_mode.player.speed, 0)
     world_mode.player.looking_direction=defaults.SOL_PLAYER_LOOK_DIRECTION.LEFT
-  elseif  love.keyboard.isDown(engine.wmode_keymap["walk_right"]) then  
+  elseif  love.keyboard.isDown(engine.wmode_keymap["walk_right"]) then
     Sol_WalkInWorld(engine, world_mode, world, world_mode.player.speed,  0)
     world_mode.player.looking_direction=defaults.SOL_PLAYER_LOOK_DIRECTION.RIGHT
   end

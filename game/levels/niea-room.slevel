@@ -10,8 +10,19 @@ section tiles
         define  position, [0, 0]
         define  collide, no
         define  draw_method, 1
-        define  color, [250, 250, 250]
+        define  color, [150, 150, 150]
         define  should_draw, yes
+        define  zindex, 0
+    end-section
+    section B
+        define  name, "floor"
+        define  size, [64, 64]
+        define  position, [0, 0]
+        define  collide, no
+        define  draw_method, 1
+        define  color, [100, 100, 100]
+        define  should_draw, yes
+        define  zindex, 0
     end-section
     section small_tile
         define  name, "testingtile"
@@ -21,6 +32,7 @@ section tiles
         define  draw_method, 1
         define  color, [250, 100, 150]
         define  should_draw, yes
+        define  zindex, 1
     end-section 
     section big_tile
         define  name, "largetile"
@@ -30,27 +42,38 @@ section tiles
         define  draw_method, 1
         define  color, [100, 250, 150]
         define  should_draw, yes
+        define  zindex, 1
     end-section
 end-section
 ## section "geometry"
 section geometry
     define  enable_world_borders, yes
-    define  bg_size, [10, 10]
+    define  bg_size, [20, 20]
     define  bg_tile_size, [64, 64]
 end-section
 ## section "background"
 section background
     define  matrix, [
-        "AAAAAAAAAA",
-        "AAAAAAAAAA",
-        "AAAAAAAAAA",
-        "AAAAAAAAAA",
-        "AAAAAAAAAA",
-        "AAAAAAAAAA",
-        "AAAAAAAAAA",
-        "AAAAAAAAAA",
-        "AAAAAAAAAA",
-        "AAAAAAAAAA"
+        "ABABABABABABABABABAB",
+        "BABABABABABABABABABA",
+        "ABABABABABABABABABAB",
+        "BABABABABABABABABABA",
+        "ABABABABABABABABABAB",
+        "BABABABABABABABABABA",
+        "ABABABABABABABABABAB",
+        "BABABABABABABABABABA",
+        "ABABABABABABABABABAB",
+        "BABABABABABABABABABA",
+        "ABABABABABABABABABAB",
+        "BABABABABABABABABABA",
+        "ABABABABABABABABABAB",
+        "BABABABABABABABABABA",
+        "ABABABABABABABABABAB",
+        "BABABABABABABABABABA",
+        "ABABABABABABABABABAB",
+        "BABABABABABABABABABA",
+        "ABABABABABABABABABAB",
+        "BABABABABABABABABABA"
     ]
 end-section
 ## section "level"

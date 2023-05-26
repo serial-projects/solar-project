@@ -12,7 +12,7 @@ local module={}
 --[[ Create a New Engine ]]
 function Sol_NewEngine()
   return {
-    vars={PRECISE_WALK=true},
+    vars={PRECISE_WALK=true, CHUNK_RENDERING=1, RENDER_CHUNK_AMOUNT = 3, CHUNK_SIZE=64},
     storage = storage.Sol_NewStorage(nil),
     root = nil,
     window_size = smath.Sol_NewVector(defaults.SOL_WINDOW_WIDTH, defaults.SOL_WINDOW_HEIGHT),
@@ -40,8 +40,8 @@ end ; module.Sol_AdjustViewportAtCenter=Sol_AdjustViewportAtCenter
 --[[ Init Related Functions ]]
 function Sol_LoadSettings(engine)
   local settings_loaded=scf.SCF_LoadFile(system.Sol_MergePath({engine.root, "settings.slr"}))
-  local window_section=settings_loaded["window"]
   --> section "window"
+  local window_section=settings_loaded["window"]
   if window_section then
     local window_width=window_section["width"] or engine.window_size.x
     local window_height=window_section["height"] or engine.window_size.y
@@ -57,6 +57,11 @@ function Sol_LoadSettings(engine)
         end
       end
     end
+  end
+  --> section "viewport"
+  local viewport_section=settings_loaded["viewport"]
+  if viewport_section then
+    engine.viewport_size=smath.Sol_NewVector(viewport_section["width"] or engine.viewport_size.x, viewport_section["height"] or engine.viewport_size.y)
   end
   --> section "world_keymap"
   local world_keymap=settings_loaded["world_keymap"]

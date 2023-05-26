@@ -81,6 +81,8 @@ function Sol_NewWorld(world)
   return {
     info={name="n/n", description="?"},
     --
+    chunks={},
+    --
     recipe_tiles={},
     recipe_geometry={},
     recipe_background={},
@@ -131,7 +133,7 @@ function Sol_GenerateWorldBackground(engine, world_mode, world)
       end
     end
   end
-  Sol_SortTiles(world)
+  -- Sol_SortTiles(world)
   --
   return true
 end ; module.Sol_GenerateWorldBackground=Sol_GenerateWorldBackground
@@ -144,6 +146,25 @@ function Sol_WorldSpawnTile(engine, world_mode, world, tile_name)
     return false
   end
 end ; module.Sol_WorldSpawnTile=Sol_WorldSpawnTile
+function Sol_MapChunksInWorld(engine, world_mode, world)
+  -- TODO: on the future make this code threaded to prevent the game lagging when creating a lot of tiles.
+  local begun_mapping_chunks_at=os.clock()
+  world.chunks={}
+  for tile_index, tile in ipairs(world.tiles) do
+    if tile.type == "tile" then
+      local tile_belongs_chunk_inx=math.floor(tile.rectangle.position.x/(world.bg_tile_size.x*defaults.SOL_WORLD_CHUNK_WIDTH))
+      local tile_belongs_chunk_iny=math.floor(tile.rectangle.position.y/(world.bg_tile_size.y*defaults.SOL_WORLD_CHUNK_HEIGHT))
+      local chunk_reference=tostring(tile_belongs_chunk_inx)..'.'..tostring(tile_belongs_chunk_iny)
+      if world.chunks[chunk_reference] then
+        table.insert(world.chunks[chunk_reference], tile_index)
+      else
+        world.chunks[chunk_reference]={}
+        table.insert(world.chunks[chunk_reference], tile_index)
+      end
+    end
+  end
+  dmsg("Sol_MapChunksInWorld() took %ds", os.clock()-begun_mapping_chunks_at)
+end
 function Sol_LoadWorld(engine, world_mode, world, world_name)
   local target_file=system.Sol_MergePath({engine.root,string.format("levels/%s.slevel",world_name)})
   dmsg("Sol_LoadWorld() will attempt to load file: %s for world: %s", target_file, world_name)
@@ -170,6 +191,8 @@ function Sol_LoadWorld(engine, world_mode, world, world_name)
       end
     end
   end
+  --> map the chunks
+  Sol_MapChunksInWorld(engine, world_mode, world)
 end ; module.Sol_LoadWorld=Sol_LoadWorld
 
 --[[ Tick Related Functions ]]
@@ -253,16 +276,57 @@ function Sol_TickWorld(engine, world_mode, world)
 end ; module.Sol_TickWorld=Sol_TickWorld
 
 --[[ Draw Related Functions ]]
-function Sol_DrawWorld(engine, world_mode, world)
-  for _, tile in ipairs(world.tiles) do
-    if tile.zindex == 1 and tile.type=="player" then
-      Sol_DrawPlayer(engine, world_mode, world_mode.player)
-    else
-      if tile.should_draw then
-        Sol_DrawTile(engine, world_mode, world, tile)
+function Sol_DrawWorldChunkWithZIndex(engine, world_mode, world, chunk_name, consider_player)
+  local draw_queue = consider_player and {{zindex=1,target=1,type="player"}} or {}
+  if world.chunks[chunk_name] then
+    --> basically puts on a buffer for follow the order.
+    for _, chunk_target in ipairs(world.chunks[chunk_name]) do
+      table.insert(draw_queue, {target=chunk_target, zindex=world.tiles[chunk_target].zindex})
+    end
+    table.sort(draw_queue, function (a, b) return a.zindex < b.zindex end)
+    --> draw.
+    for _, draw_request in ipairs(draw_queue) do
+      if draw_request["type"] then
+        Sol_DrawPlayer(engine, world_mode, world_mode.player)
+      else
+        Sol_DrawTile(engine, world_mode, world, world.tiles[draw_request.target])
       end
     end
   end
+end
+function Sol_DrawWorld(engine, world_mode, world)
+  -- for _, tile in ipairs(world.tiles) do
+  --   if tile.zindex == 1 and tile.type=="player" then
+  --     Sol_DrawPlayer(engine, world_mode, world_mode.player)
+  --   else
+  --     if tile.should_draw then
+  --       Sol_DrawTile(engine, world_mode, world, tile)
+  --     end
+  --   end
+  -- end
+  --> determine the player current chunk.
+  local player_current_chunk_x=math.floor(world_mode.player.rectangle.position.x/(world.bg_tile_size.x*defaults.SOL_WORLD_CHUNK_WIDTH))
+  local player_current_chunk_y=math.floor(world_mode.player.rectangle.position.y/(world.bg_tile_size.y*defaults.SOL_WORLD_CHUNK_HEIGHT))
+  --> render the player vision based on the amount to render.
+  --> this will always render in a square form.
+  
+  -- TODO: for better performance, check if the player is near the rendering border (aka. the end of the chunk)
+  -- this prevent a lower zindex tile of being drawn on the front the player cuz' the chunk is ignoring the order.
+  for yindex = player_current_chunk_y - engine.vars["RENDER_CHUNK_AMOUNT"], player_current_chunk_y + engine.vars["RENDER_CHUNK_AMOUNT"] do
+    for xindex = player_current_chunk_x - engine.vars["RENDER_CHUNK_AMOUNT"], player_current_chunk_x + engine.vars["RENDER_CHUNK_AMOUNT"] do
+      local chunk_target=tostring(xindex)..'.'..tostring(yindex)
+      if xindex == player_current_chunk_x and yindex == player_current_chunk_y then
+        Sol_DrawWorldChunkWithZIndex(engine, world_mode, world, chunk_target, true)
+      else
+        Sol_DrawWorldChunkWithZIndex(engine, world_mode, world, chunk_target, true)
+      end
+    end
+  end
+
+  -- --> does the chunk exist? if yes, then render the main chunk.
+  -- local player_current_chunk=tostring(player_current_chunk_x)..'.'..tostring(player_current_chunk_y)
+  -- dmsg("chunk: %s", player_current_chunk)
+  -- Sol_DrawWorldChunkWithZIndex(engine, world_mode, world, player_current_chunk, true)
 end ; module.Sol_DrawWorld=Sol_DrawWorld
 
 --

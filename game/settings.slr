@@ -6,8 +6,10 @@ section window
         define  resizable, yes
     end-section
     # window geometry
-    define  width, 1336
-    define  height, 728
+    #define  width, 1336
+    #define  height, 728
+    define width, 800
+    define height, 600
     # window title
     define  title, "[Sol Engine]"
 end-section
@@ -15,8 +17,10 @@ end-section
 # the viewport is not changed if the window is resized so make sure
 # this is really the size you wish.
 section viewport
-    define  width, 1336
-    define  height, 728
+    #define  width, 1336
+    #define  height, 728
+    define width, 800
+    define height, 600
 end-section
 
 # Set the keymap settings

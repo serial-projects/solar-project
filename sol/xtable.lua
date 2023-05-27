@@ -6,6 +6,13 @@ function table.sub(t, begin, ends)
   end
   return subtable
 end
+function table.unimerge(target, source)
+  if source then
+    for _, value in ipairs(source) do
+      table.insert(target, value)
+    end
+  end
+end
 function table.getnkeys(t, only_keys)
   local count, only_keys = 0, only_keys or false
   for key, _ in pairs(t) do

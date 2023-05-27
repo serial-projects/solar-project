@@ -1,5 +1,5 @@
 local defaults = require "sol.defaults"
-local wmode = require "sol.wmode"
+local wmode = require "sol.worldm.mode"
 local smath = require "sol.smath"
 local graphics = require "sol.graphics"
 local storage = require "sol.storage"
@@ -12,7 +12,7 @@ local module={}
 --[[ Create a New Engine ]]
 function Sol_NewEngine()
   return {
-    vars={PRECISE_WALK=true, CHUNK_RENDERING=1, RENDER_CHUNK_AMOUNT = 3, CHUNK_SIZE=64},
+    vars={PRECISE_WALK=true, CHUNK_RENDERING=1, RENDER_CHUNK_AMOUNT = 2, CHUNK_SIZE=64},
     storage = storage.Sol_NewStorage(nil),
     root = nil,
     window_size = smath.Sol_NewVector(defaults.SOL_WINDOW_WIDTH, defaults.SOL_WINDOW_HEIGHT),

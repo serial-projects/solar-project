@@ -1,11 +1,12 @@
 local module={}
 local world=require("sol.worldm.world")
+local tiles=require("sol.worldm.tiles")
 local smath=require("sol.smath")
 --
 function Sol_GenerateTestingWorld(world_mode, width, height)
   local generating_world_begun_at = os.clock()
   local proto_world=world.Sol_NewWorld({name="testing-world00",description="test the powah!!!"})
-  proto_world.bg_size=smath.Sol_NewVector(100, 100)
+  proto_world.bg_size=smath.Sol_NewVector(1000, 1000)
   proto_world.bg_tile_size=smath.Sol_NewVector(width, height)
   proto_world.world_size=smath.Sol_MultiplicateVector(proto_world.bg_size, proto_world.bg_tile_size)
   proto_world.enable_world_borders = true
@@ -17,7 +18,7 @@ function Sol_GenerateTestingWorld(world_mode, width, height)
       local current_tile=(yindex % 2 == 0) and 1 or 0
       current_tile = current_tile + ((xindex % 2 == 0) and 1 or 0)
       local select_tile =(current_tile == 1) and "A" or "B"
-      local proto_tile = world.Sol_NewTile(proto_world.recipe_tiles[select_tile])
+      local proto_tile = tiles.Sol_NewTile(proto_world.recipe_tiles[select_tile])
       proto_tile.rectangle.position.x=xindex*proto_world.bg_tile_size.x
       proto_tile.rectangle.position.y=yindex*proto_world.bg_tile_size.y
       table.insert(proto_world.tiles, proto_tile)
@@ -57,7 +58,7 @@ function Sol_GenerateTestingWorld(world_mode, width, height)
     for xindex = 1, proto_world.bg_size.x do
       local gen_tile = matrix[yindex][xindex]
       if gen_tile ~= 0 then
-        local proto_tile = world.Sol_NewTile(proto_world.recipe_tiles[gen_tile])
+        local proto_tile = tiles.Sol_NewTile(proto_world.recipe_tiles[gen_tile])
         proto_tile.rectangle.position.x = xindex * proto_world.bg_tile_size.x
         proto_tile.rectangle.position.y = yindex * proto_world.bg_tile_size.y
         table.insert(proto_world.tiles, proto_tile)

@@ -3,13 +3,18 @@ local sgen=require("sol.sgen")
 local system=require("sol.system")
 local scf=require("sol.scf")
 local module={}
---
+
+-- Storage/CacheOperations section:
 function Sol_NewCache(cache)
   return sgen.Sol_BuildStruct({keep=true, lastuse=0, content=0}, cache)
 end ; module.Sol_NewCache=Sol_NewCache
+
+-- Storage/NewStorage section:
 function Sol_NewStorage(root)
   return {current_language = "default", texts = {}, cached_elements={}, root=root, maxlifespan=5}
 end ; module.Sol_NewStorage=Sol_NewStorage
+
+-- Storage/Image, Sprite and Font Section:
 function Sol_LoadFontFromStorage(storage, name, size)
   local cache_entry,path_resource=string.format("font:%s:%d",name,size),system.Sol_MergePath({storage.root,"fonts/",(name..".ttf")})
   if storage.cached_elements[cache_entry] then
@@ -23,6 +28,8 @@ function Sol_LoadFontFromStorage(storage, name, size)
     return new_font
   end
 end ; module.Sol_LoadFontFromStorage=Sol_LoadFontFromStorage
+
+-- Storage/CacheCleaningAndManagement Section:
 function Sol_CleanCacheInStorage(storage)
   local marktoremove, timestamp={}, os.time()
   for key, cache_element in pairs(storage.cached_elements) do
@@ -40,6 +47,8 @@ function Sol_CleanCacheInStorage(storage)
     storage.cached_elements[key]=nil
   end
 end ; module.Sol_CleanCacheInStorage=Sol_CleanCacheInStorage
+
+-- Storage/Language Section:
 function Sol_ReplaceTexts(storage, texts)
   for text_key, text in pairs(texts) do
     if storage.texts[text_key] then

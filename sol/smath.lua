@@ -35,6 +35,9 @@ end ; module.Sol_AddVector=Sol_AddVector
 function Sol_SubVector(avec, bvec)
   return Sol_NewVector(bvec.x - avec.x, bvec.y - avec.y)
 end ; module.Sol_SubVector=Sol_SubVector
+function Sol_MultiplicateVector(avec, bvec)
+  return Sol_NewVector(bvec.x * avec.x, bvec.y * avec.y)
+end ; module.Sol_MultiplicateVector=Sol_MultiplicateVector
 
 --[[ Rectangle Functions ]]--
 function Sol_CloneRectangle(rectangle)

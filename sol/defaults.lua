@@ -24,7 +24,7 @@ module.SOL_UI_CURSOR_DEFAULT_SIZE = smath.Sol_NewVector(16, 16)
 module.SOL_PLAYER_SIZE = smath.Sol_NewVector(64, 64)
 module.SOL_PLAYER_LOOK_DIRECTION = table.enum(1,{"UP","DOWN","LEFT","RIGHT"})
 
-module.SOL_WORLD_CHUNK_WIDTH = 3
-module.SOL_WORLD_CHUNK_HEIGHT= 3
+module.SOL_WORLD_CHUNK_WIDTH = 5
+module.SOL_WORLD_CHUNK_HEIGHT= 5
 --
 return module

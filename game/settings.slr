@@ -8,8 +8,8 @@ section window
     # window geometry
     #define  width, 1336
     #define  height, 728
-    define width, 800
-    define height, 600
+    define width, 900
+    define height, 680
     # window title
     define  title, "[Sol Engine]"
 end-section
@@ -19,8 +19,8 @@ end-section
 section viewport
     #define  width, 1336
     #define  height, 728
-    define width, 800
-    define height, 600
+    define width, 900
+    define height, 680
 end-section
 
 # Set the keymap settings

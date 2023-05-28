@@ -1,0 +1,26 @@
+section frame01
+    # define the size of the cut
+    define  cut_width,  128
+    define  cut_height, 128
+    # where to begin the cut
+    define  cut_x,      0
+    define  cut_y,      0
+end-section
+section frame02
+    define  cut_width,  128
+    define  cut_height, 128
+    define  cut_x,      128
+    define  cut_y,      0
+end-section
+section frame03
+    define  cut_width,  128
+    define  cut_height, 128
+    define  cut_x,      0
+    define  cut_y,      128
+end-section
+section frame04
+    define  cut_width,  128
+    define  cut_height, 128
+    define  cut_x,      128
+    define  cut_y,      128
+end-section

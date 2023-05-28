@@ -9,20 +9,11 @@ section tiles
         define  size, [64, 64]
         define  position, [0, 0]
         define  collide, no
-        define  draw_method, 1
+        define  draw_method, 2
         define  color, [150, 150, 150]
+        define  textures, "usualgrass00"
         define  should_draw, yes
-        define  zindex, 0
-    end-section
-    section B
-        define  name, "floor"
-        define  size, [64, 64]
-        define  position, [0, 0]
-        define  collide, no
-        define  draw_method, 1
-        define  color, [100, 100, 100]
-        define  should_draw, yes
-        define  zindex, 0
+        define  zindex, -1
     end-section
     section small_tile
         define  name, "testingtile"
@@ -38,45 +29,47 @@ section tiles
         define  name, "largetile"
         define  size, [64, 64]
         define  position, [300, 200]
-        define  collide, yes
-        define  draw_method, 1
+        define  collide, no
+        define  draw_method, 2
+        define  textures, ["usualflower00:frame01","usualflower00:frame02","usualflower00:frame03","usualflower00:frame04"]
+        define  texture_timing, 0.1
         define  color, [100, 250, 150]
         define  should_draw, yes
-        define  zindex, 1
+        define  zindex, 0
     end-section
 end-section
 ## section "geometry"
 section geometry
     define  enable_world_borders, yes
     define  bg_size, [20, 20]
-    define  bg_tile_size, [64, 64]
+    define  bg_tile_size, [128, 128]
 end-section
 ## section "background"
 section background
     define  matrix, [
-        "ABABABABABABABABABAB",
-        "BABABABABABABABABABA",
-        "ABABABABABABABABABAB",
-        "BABABABABABABABABABA",
-        "ABABABABABABABABABAB",
-        "BABABABABABABABABABA",
-        "ABABABABABABABABABAB",
-        "BABABABABABABABABABA",
-        "ABABABABABABABABABAB",
-        "BABABABABABABABABABA",
-        "ABABABABABABABABABAB",
-        "BABABABABABABABABABA",
-        "ABABABABABABABABABAB",
-        "BABABABABABABABABABA",
-        "ABABABABABABABABABAB",
-        "BABABABABABABABABABA",
-        "ABABABABABABABABABAB",
-        "BABABABABABABABABABA",
-        "ABABABABABABABABABAB",
-        "BABABABABABABABABABA"
+        "AAAAAAAAAAAAAAAAAAAA",
+        "AAAAAAAAAAAAAAAAAAAA",
+        "AAAAAAAAAAAAAAAAAAAA",
+        "AAAAAAAAAAAAAAAAAAAA",
+        "AAAAAAAAAAAAAAAAAAAA",
+        "AAAAAAAAAAAAAAAAAAAA",
+        "AAAAAAAAAAAAAAAAAAAA",
+        "AAAAAAAAAAAAAAAAAAAA",
+        "AAAAAAAAAAAAAAAAAAAA",
+        "AAAAAAAAAAAAAAAAAAAA",
+        "AAAAAAAAAAAAAAAAAAAA",
+        "AAAAAAAAAAAAAAAAAAAA",
+        "AAAAAAAAAAAAAAAAAAAA",
+        "AAAAAAAAAAAAAAAAAAAA",
+        "AAAAAAAAAAAAAAAAAAAA",
+        "AAAAAAAAAAAAAAAAAAAA",
+        "AAAAAAAAAAAAAAAAAAAA",
+        "AAAAAAAAAAAAAAAAAAAA",
+        "AAAAAAAAAAAAAAAAAAAA",
+        "AAAAAAAAAAAAAAAAAAAA",
     ]
 end-section
 ## section "level"
 section level
-    define  spawn_tiles, ["small_tile", "big_tile"]
+    define  spawn_tiles, ["big_tile"]
 end-section

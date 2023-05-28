@@ -20,16 +20,19 @@ function Sol_GenerateLayer(world, layer)
       local line=layer_matrix[yindex]
       for xindex = 1, layer_width do
         local matrix_block=line:sub(xindex,xindex)
-        if world.recipe_tiles[matrix_block] == nil then
-          mwarn("unable to find \"%s\" block for layer \"%s\"", matrix_block, layer)
-        else
-          local proto_tile=tiles.Sol_NewTile(world.recipe_tiles[matrix_block])
-          proto_tile.rectangle.position.x=(xindex-1)*world.bg_tile_size.x
-          proto_tile.rectangle.position.y=(yindex-1)*world.bg_tile_size.y
-          table.insert(world.tiles, proto_tile)
+        if matrix_block ~= "0" then
+          if world.recipe_tiles[matrix_block] == nil then
+            mwarn("unable to find \"%s\" block for layer \"%s\"", matrix_block, layer)
+          else
+            local proto_tile=tiles.Sol_NewTile(world.recipe_tiles[matrix_block])
+            proto_tile.rectangle.position.x=(xindex-1)*world.bg_tile_size.x
+            proto_tile.rectangle.position.y=(yindex-1)*world.bg_tile_size.y
+            table.insert(world.tiles, proto_tile)
+          end
         end
       end
     end
+    --> end.
   end
 end ; module.Sol_GenerateLayer=Sol_GenerateLayer
 

@@ -44,32 +44,37 @@ section geometry
     define  bg_size, [20, 20]
     define  bg_tile_size, [128, 128]
 end-section
-## section "background"
-section background
-    define  matrix, [
-        "AAAAAAAAAAAAAAAAAAAA",
-        "AAAAAAAAAAAAAAAAAAAA",
-        "AAAAAAAAAAAAAAAAAAAA",
-        "AAAAAAAAAAAAAAAAAAAA",
-        "AAAAAAAAAAAAAAAAAAAA",
-        "AAAAAAAAAAAAAAAAAAAA",
-        "AAAAAAAAAAAAAAAAAAAA",
-        "AAAAAAAAAAAAAAAAAAAA",
-        "AAAAAAAAAAAAAAAAAAAA",
-        "AAAAAAAAAAAAAAAAAAAA",
-        "AAAAAAAAAAAAAAAAAAAA",
-        "AAAAAAAAAAAAAAAAAAAA",
-        "AAAAAAAAAAAAAAAAAAAA",
-        "AAAAAAAAAAAAAAAAAAAA",
-        "AAAAAAAAAAAAAAAAAAAA",
-        "AAAAAAAAAAAAAAAAAAAA",
-        "AAAAAAAAAAAAAAAAAAAA",
-        "AAAAAAAAAAAAAAAAAAAA",
-        "AAAAAAAAAAAAAAAAAAAA",
-        "AAAAAAAAAAAAAAAAAAAA",
-    ]
-end-section
 ## section "level"
 section level
+    define  spawn_layers, ["layer_background"]
     define  spawn_tiles, ["big_tile"]
+end-section
+## Layers here :)
+section layers
+    section layer_background
+        define  width, 20
+        define  height, 20
+        define  matrix, [
+            "AAAAAAAAAAAAAAAAAAAA",
+            "AAAAAAAAAAAAAAAAAAAA",
+            "AAAAAAAAAAAAAAAAAAAA",
+            "AAAAAAAAAAAAAAAAAAAA",
+            "AAAAAAAAAAAAAAAAAAAA",
+            "AAAAAAAAAAAAAAAAAAAA",
+            "AAAAAAAAAAAAAAAAAAAA",
+            "AAAAAAAAAAAAAAAAAAAA",
+            "AAAAAAAAAAAAAAAAAAAA",
+            "AAAAAAAAAAAAAAAAAAAA",
+            "AAAAAAAAAAAAAAAAAAAA",
+            "AAAAAAAAAAAAAAAAAAAA",
+            "AAAAAAAAAAAAAAAAAAAA",
+            "AAAAAAAAAAAAAAAAAAAA",
+            "AAAAAAAAAAAAAAAAAAAA",
+            "AAAAAAAAAAAAAAAAAAAA",
+            "AAAAAAAAAAAAAAAAAAAA",
+            "AAAAAAAAAAAAAAAAAAAA",
+            "AAAAAAAAAAAAAAAAAAAA",
+            "AAAAAAAAAAAAAAAAAAAA",
+        ]
+    end-section
 end-section

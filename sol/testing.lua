@@ -6,7 +6,7 @@ local smath=require("sol.smath")
 function Sol_GenerateTestingWorld(world_mode, width, height)
   local generating_world_begun_at = os.clock()
   local proto_world=world.Sol_NewWorld({name="testing-world00",description="test the powah!!!"})
-  proto_world.bg_size=smath.Sol_NewVector(1000, 1000)
+  proto_world.bg_size=smath.Sol_NewVector(100, 100)
   proto_world.bg_tile_size=smath.Sol_NewVector(width, height)
   proto_world.world_size=smath.Sol_MultiplicateVector(proto_world.bg_size, proto_world.bg_tile_size)
   proto_world.enable_world_borders = true

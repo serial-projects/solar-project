@@ -14,8 +14,71 @@ function Sol_NewStorage(root)
   return {current_language = "default", texts = {}, cached_elements={}, root=root, maxlifespan=5}
 end ; module.Sol_NewStorage=Sol_NewStorage
 
--- Storage/Image, Sprite and Font Section:
-function Sol_LoadFontFromStorage(storage, name, size)
+-- Storage/Image:
+function Sol_LoadImageFromStorage(storage, name, base_directory, keep_around)
+  local base_directory = base_directory or "images/"
+  local keep_around = keep_around == nil and true or keep_around
+  local cache_entry,path_resource=(base_directory..name),system.Sol_MergePath({storage.root,base_directory,(name..".png")})
+  if storage.cached_elements[cache_entry] then
+    storage.cached_elements[cache_entry].lastuse=os.time()
+    return storage.cached_elements[cache_entry].content
+  else
+    dmsg("Sol_LoadImageFromStorage() is loading element: "..path_resource)
+    local new_image=love.graphics.newImage(path_resource)
+    local proto_cache=Sol_NewCache({keep=keep_around, lastuse=os.time(), content=new_image})
+    storage.cached_elements[cache_entry]=proto_cache
+    return new_image
+  end
+end ; module.Sol_LoadImageFromStorage=Sol_LoadImageFromStorage
+
+-- Storage/Sprites:
+--[[
+  NOTE: sprites are kinda heavy on the memory or on the CPU time for some reasons:
+  * It requires us to cut from the image.
+  * To load the sprite instruction file (aka. slsp file).
+  * To run SCF_LoadFile() on the .slsp file.
+  --
+  * Things that are kept on the memory are: the .slsp file of the sprite.
+    SCF_LoadFile() is a heavy function: it needs to tokenize the file -> build a tree of it.
+    Using this function less often is the best option to prevent lag.
+  * The sprite huge image.
+    Makes easy to just cut, although, on the future this may change.
+  
+  __Sol_AdquireSpriteNameAndFrameFromSpriteTag() -> sprite_name, sprite_frame
+  __Sol_MakeSpriteFrameToLoveQuad() -> love_quad
+  Sol_LoadSpriteFromStorage() -> original_image, love_quad
+]]
+function __Sol_AdquireSpriteNameAndFrameFromSpriteTag(sprite_tag)
+  local sep_position=string.findch(sprite_tag, ':') ; assert(sep_position ~= nil, "invalid sprite_tag: "..sprite_tag)
+  return sprite_tag:sub(1,sep_position-1), sprite_tag:sub(sep_position+1, #sprite_tag)
+end
+function __Sol_MakeSpriteFrameToLoveQuad(sprite_frame, original_image)
+  return love.graphics.newQuad(sprite_frame["cut_x"], sprite_frame["cut_y"], sprite_frame["cut_width"], sprite_frame["cut_height"], original_image:getDimensions())
+end
+function Sol_LoadSpriteFromStorage(storage, sprite_tag, keep_around)
+  -- cache.content={instructions={}}
+  local keep_around = keep_around == nil and true or keep_around
+  local sprite_name, sprite_frame = __Sol_AdquireSpriteNameAndFrameFromSpriteTag(sprite_tag)
+  local cache_entry="sprited:"..sprite_name
+  local original_image=Sol_LoadImageFromStorage(storage, sprite_name, "sprites/", keep_around)
+  if storage.cached_elements[cache_entry] then
+    local cached_content=storage.cached_elements[cache_entry].content
+    storage.cached_elements[cache_entry].lastuse=os.time()
+    return original_image, __Sol_MakeSpriteFrameToLoveQuad(cached_content.instructions[sprite_frame], original_image)
+  else
+    local sprite_instruction=system.Sol_MergePath({storage.root,"sprites/",(sprite_name..".slsp")})
+    dmsg("Sol_LoadSpriteFromStorage() is loading sprite instruction file: "..sprite_instruction)
+    sprite_instruction=scf.SCF_LoadFile(sprite_instruction)
+    --
+    local proto_cache=Sol_NewCache({keep=keep_around, lastuse=os.time(), content={instructions=sprite_instruction}})
+    storage.cached_elements[cache_entry]=proto_cache
+    return original_image, __Sol_MakeSpriteFrameToLoveQuad(sprite_instruction[sprite_frame], original_image)
+  end
+end ; module.Sol_LoadSpriteFromStorage=Sol_LoadSpriteFromStorage
+
+-- Storage/Font:
+function Sol_LoadFontFromStorage(storage, name, size, keep_around)
+  local keep_around = keep_around == nil and true or keep_around
   local cache_entry,path_resource=string.format("font:%s:%d",name,size),system.Sol_MergePath({storage.root,"fonts/",(name..".ttf")})
   if storage.cached_elements[cache_entry] then
     storage.cached_elements[cache_entry].lastuse=os.time()
@@ -23,7 +86,7 @@ function Sol_LoadFontFromStorage(storage, name, size)
   else
     dmsg("Sol_LoadFontFromStorage() is loading element: "..path_resource)
     local new_font=love.graphics.newFont(path_resource, size)
-    local proto_cache=Sol_NewCache({lastuse=os.time(), content=new_font})
+    local proto_cache=Sol_NewCache({keep=keep_around, lastuse=os.time(), content=new_font})
     storage.cached_elements[cache_entry]=proto_cache
     return new_font
   end

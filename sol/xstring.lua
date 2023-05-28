@@ -42,3 +42,11 @@ function string.list2table(s)
   end
   return t
 end
+function string.findch(s, ch)
+  for index = 1, #s do
+    if s:sub(index, index)==ch then
+      return index
+    end
+  end
+  return nil
+end

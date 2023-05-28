@@ -15,17 +15,7 @@ section tiles
         define  should_draw, yes
         define  zindex, -1
     end-section
-    section small_tile
-        define  name, "testingtile"
-        define  size, [32, 32]
-        define  position, [200, 200]
-        define  collide, yes
-        define  draw_method, 1
-        define  color, [250, 100, 150]
-        define  should_draw, yes
-        define  zindex, 1
-    end-section 
-    section big_tile
+    section F
         define  name, "largetile"
         define  size, [64, 64]
         define  position, [300, 200]
@@ -46,12 +36,12 @@ section geometry
 end-section
 ## section "level"
 section level
-    define  spawn_layers, ["layer_background"]
-    define  spawn_tiles, ["big_tile"]
+    define  spawn_layers, ["background", "world_deco"]
+    define  spawn_tiles, []
 end-section
 ## Layers here :)
 section layers
-    section layer_background
+    section background
         define  width, 20
         define  height, 20
         define  matrix, [
@@ -75,6 +65,32 @@ section layers
             "AAAAAAAAAAAAAAAAAAAA",
             "AAAAAAAAAAAAAAAAAAAA",
             "AAAAAAAAAAAAAAAAAAAA",
+        ]
+    end-section
+    section world_deco
+        define  width, 20
+        define  height, 20
+        define matrix, [
+            "00F00000000000000000",
+            "00000000000000000000",
+            "0000F00000000F000000",
+            "00000000000000000000",
+            "00000000000000000000",
+            "00FF0000000F00000000",
+            "00000000000000000000",
+            "000000F0000000000000",
+            "00000000000FF0000000",
+            "00000000000000000000",
+            "0000F0000000000F0000",
+            "00000000000000000000",
+            "00000000000000000000",
+            "0000000000000FF00000",
+            "00000000000000000000",
+            "00000FF0000000000000",
+            "000000000000F0000000",
+            "00000000000000000000",
+            "000000000F0000000000",
+            "00000000000000000000",
         ]
     end-section
 end-section

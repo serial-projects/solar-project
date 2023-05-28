@@ -2,11 +2,13 @@ local defaults=require("sol.defaults")
 local smath=require("sol.smath")
 local scf=require("sol.scf")
 local system=require("sol.system")
+
+-- world module:
 local player=require("sol.worldm.player")
 local tiles=require("sol.worldm.tiles")
 local chunk=require("sol.worldm.chunk")
-local module={}
 
+local module={}
 --
 function Sol_NewWorld(world)
   return {
@@ -26,101 +28,6 @@ function Sol_NewWorld(world)
     tiles={{zindex=1, type="player"}},
   }
 end ; module.Sol_NewWorld=Sol_NewWorld
-
---[[ Init Related Functions ]]
-function Sol_GenerateWorldBackground(engine, world_mode, world)
-  local valid, position=table.find({
-    recipe_background               =world.recipe_background,
-    recipe_geometry                 =world.recipe_geometry,
-    recipe_level                    =world.recipe_level,
-    recipe_background_matrix        =world.recipe_background["matrix"],
-    recipe_geometry_bg_size         =world.recipe_geometry["bg_size"],
-    recipe_geometry_bg_tile_size    =world.recipe_geometry["bg_tile_size"],
-  }, nil)
-  if valid then
-    mwarn("Sol_GenerateWorldBackground() failed to generate world due lack of: %s section/define!", position)
-    return false
-  end
-  world.bg_size=smath.Sol_NewVector(world.recipe_geometry.bg_size)
-  world.bg_tile_size=smath.Sol_NewVector(world.recipe_geometry.bg_tile_size)
-  world.world_size=smath.Sol_NewVector((world.bg_size.x-1)*world.bg_tile_size.x,(world.bg_size.y-1)*world.bg_tile_size.y)
-  world.enable_world_borders=(world.recipe_geometry["enable_world_borders"] == true)
-  -- A - Z, a - z, 0 - 9 amount of blocks for you to play on the background.
-  for yindex = 1, world.bg_size.y do
-    local line=world.recipe_background.matrix[yindex]
-    for xindex = 1, world.bg_size.x do
-      local matrix_block=line:sub(xindex,xindex)
-      if world.recipe_tiles[matrix_block] == nil then
-        mwarn("unable to find %s block.", matrix_block)
-      else
-        local proto_tile=tiles.Sol_NewTile(world.recipe_tiles[matrix_block])
-        proto_tile.rectangle.position.x=(xindex-1)*world.bg_tile_size.x
-        proto_tile.rectangle.position.y=(yindex-1)*world.bg_tile_size.y
-        table.insert(world.tiles, proto_tile)
-      end
-    end
-  end
-  return true
-end ; module.Sol_GenerateWorldBackground=Sol_GenerateWorldBackground
-function Sol_WorldSpawnTile(engine, world_mode, world, tile_name)
-  if world.recipe_tiles[tile_name] then
-    local proto_tile=tiles.Sol_NewTile(world.recipe_tiles[tile_name])
-    table.insert(world.tiles, proto_tile)
-    return true
-  else
-    return false
-  end
-end ; module.Sol_WorldSpawnTile=Sol_WorldSpawnTile
-function Sol_MapChunksInWorld(world)
-  -- TODO: on the future make this code threaded to prevent the game lagging when creating a lot of tiles.
-  local begun_mapping_chunks_at=os.clock()
-  world.chunks={}
-  for tile_index, tile in ipairs(world.tiles) do
-    if tile.type == "tile" then
-      local tile_belongs_chunk_inx=math.floor(tile.rectangle.position.x/(world.bg_tile_size.x*defaults.SOL_WORLD_CHUNK_WIDTH))
-      local tile_belongs_chunk_iny=math.floor(tile.rectangle.position.y/(world.bg_tile_size.y*defaults.SOL_WORLD_CHUNK_HEIGHT))
-      local chunk_reference=tostring(tile_belongs_chunk_inx)..'.'..tostring(tile_belongs_chunk_iny)
-      if world.chunks[chunk_reference] then
-        table.insert(world.chunks[chunk_reference], tile_index)
-        table.insert(tile.current_chunk, chunk_reference)
-      else
-        world.chunks[chunk_reference]={}
-        table.insert(world.chunks[chunk_reference], tile_index)
-        table.insert(tile.current_chunk, chunk_reference)
-      end
-    end
-  end
-  dmsg("Sol_MapChunksInWorld() took %fs", os.clock()-begun_mapping_chunks_at)
-end ; module.Sol_MapChunksInWorld=Sol_MapChunksInWorld
-function Sol_LoadWorld(engine, world_mode, world, world_name)
-  local target_file=system.Sol_MergePath({engine.root,string.format("levels/%s.slevel",world_name)})
-  dmsg("Sol_LoadWorld() will attempt to load file: %s for world: %s", target_file, world_name)
-  --> clean the old tiles and load everything again.
-  world.tiles={{zindex=1,type="player"}}
-  collectgarbage("collect")
-  --> load the "recipes" and the world information from the target file.
-  target_file                 =scf.SCF_LoadFile(target_file)
-  world.info                  =target_file["info"]        or world.info
-  world.recipe_tiles          =target_file["tiles"]       or world.recipe_tiles
-  world.recipe_geometry       =target_file["geometry"]    or world.recipe_geometry
-  world.recipe_background     =target_file["background"]  or world.recipe_background
-  world.recipe_level          =target_file["level"]       or world.recipe_level
-  --> for the section "background"
-  local _worked=Sol_GenerateWorldBackground(engine, world_mode, world)
-  if not _worked then mwarn("WORLD did not generate BACKGROUND!") end
-  --> "level" section stuff.
-  if world.recipe_level then
-    local spawn_tiles=world.recipe_level["spawn_tiles"]
-    if spawn_tiles and type(spawn_tiles) == "table" then
-      for _, tile in ipairs(spawn_tiles) do
-        local sucess=Sol_WorldSpawnTile(engine, world_mode, world, tile)
-        if not sucess then mwarn("couldn't generate tile: %s!", tile) end
-      end
-    end
-  end
-  --> map the chunks
-  Sol_MapChunksInWorld(world)
-end ; module.Sol_LoadWorld=Sol_LoadWorld
 
 --[[ Tick Related Functions ]]
 function Sol_CheckPlayerPositionAt(engine, world_mode, world, xposition, yposition)

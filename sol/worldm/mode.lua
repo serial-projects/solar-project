@@ -61,11 +61,6 @@ function Sol_InitWorldMode(engine, world_mode)
   world.Sol_LoadWorld(engine, world_mode, proto_world, "niea-room")
   world_mode.worlds["niea-room"]=proto_world
   world_mode.current_world="niea-room"
-
-  -- --> cool testing world
-  local proto_testing_world=testing.Sol_GenerateTestingWorld(world_mode, 32, 32)
-  world_mode.worlds["testing-world00"]=proto_testing_world
-  world_mode.current_world="testing-world00"
 end ; module.Sol_InitWorldMode=Sol_InitWorldMode
 
 --[[ Tick Related Functions ]]

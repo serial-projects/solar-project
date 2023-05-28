@@ -7,6 +7,7 @@ local testing = require("sol.testing")
 
 local player=require("sol.worldm.player")
 local world = require("sol.worldm.world")
+local wload = require("sol.worldm.wload")
 
 local module={}
 --
@@ -58,7 +59,7 @@ function Sol_InitWorldMode(engine, world_mode)
 
   --> in-case no world is loaded, load the internal level called "niea-room"
   local proto_world=world.Sol_NewWorld()
-  world.Sol_LoadWorld(engine, world_mode, proto_world, "niea-room")
+  wload.Sol_LoadWorld(engine, world_mode, proto_world, "niea-room")
   world_mode.worlds["niea-room"]=proto_world
   world_mode.current_world="niea-room"
 end ; module.Sol_InitWorldMode=Sol_InitWorldMode

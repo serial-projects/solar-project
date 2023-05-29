@@ -59,6 +59,7 @@ function Sol_LoadWorld(engine, world_mode, world, world_name)
   world.recipe_geometry       =target_file["geometry"]    or world.recipe_geometry
   world.recipe_level          =target_file["level"]       or world.recipe_level
   world.recipe_layers         =target_file["layers"]      or world.recipe_layers
+  world.recipe_player         =target_file["player"]      or world.recipe_player
   --> load the level geometry
   world.bg_size             =smath.Sol_NewVector(world.recipe_geometry.bg_size)
   world.bg_tile_size        =smath.Sol_NewVector(world.recipe_geometry.bg_tile_size)
@@ -78,6 +79,18 @@ function Sol_LoadWorld(engine, world_mode, world, world_name)
       for _, layer in ipairs(spawn_layers) do
         Sol_GenerateLayer(world, layer)
       end
+    end
+  end
+  --> "player" section
+  if world.recipe_player then
+    local spawn_position = world.recipe_player["spawn"]
+    if spawn_position then
+      local xpos, ypos = spawn_position["xpos"] or 0, spawn_position["ypos"] or 0
+      if spawn_position["use_tile_alignment"] then
+        xpos = xpos * world.bg_tile_size.x
+        ypos = ypos * world.bg_tile_size.y
+      end
+      world_mode.player.rectangle.position.x,world_mode.player.rectangle.position.y=xpos, ypos
     end
   end
   --> map the chunks

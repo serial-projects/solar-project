@@ -19,9 +19,17 @@ function Sol_NewTile(tile)
     texture_index = 1,
     texture_timing = tile["texture_timing"] or 1,
     texture_nextupdate=0,
-    current_chunk = {}
+    current_chunk = {},
+    --
+    when_touched = tile["when_touched"] or 0,
+    when_interacted = tile["when_interacted"] or 0,
   }
 end ; module.Sol_NewTile=Sol_NewTile
+
+--[[ Tick Related Functions ]]
+function Sol_TickTile(engine, world_mode, world, tile)
+
+end
 
 --[[ Draw Related Functions ]]
 function Sol_DrawTile(engine, world_mode, world, tile)

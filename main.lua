@@ -7,8 +7,8 @@ local SolEnginePathResources="game/"
 
 --[[ love.help() ]]
 function love.help()
-  os.exit(
-    (function(lines) for _, line in ipairs(lines) do print(line) end return 0 end)(
+  -- TODO: on the future, implement translation to this.
+  os.exit((function(lines) for _, line in ipairs(lines) do print(line) end return 0 end)(
       {
         ">> This is a list of commands you can use on the Sol Engine",
         "--root/-r:               defines the path for the game folder.",
@@ -23,14 +23,17 @@ end
 function love.load(args)
   sol_argparser.Sol_UserArgumentsDecode(args, {
     --
-    ["--debug"]={nargs=0, wrap=function() _G.dmsg_en=true end},
-    ["-d"]="--debug",
+    ["--debug"]={nargs=0, wrap=function()
+      _G.dmsg_en=true
+    end}, ["-d"]="--debug",
     --
-    ["--help"] ={nargs=0, wrap=function() love.help() end},
-    ["-h"]="--help",
+    ["--help"] ={nargs=0, wrap=function()
+      love.help()
+    end}, ["-h"]="--help",
     --
-    ["--root"] ={nargs=1, wrap=function(path) SolEnginePathResources=path end},
-    ["-r"]="--root",
+    ["--root"] ={nargs=1, wrap=function(path)
+      SolEnginePathResources=path
+    end}, ["-r"]="--root",
     --
     ["default"]=function(argument)
       dmsg("unknown argument \"%s\", ignoring...", argument)

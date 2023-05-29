@@ -19,12 +19,14 @@ function Sol_NewWorld(world)
     recipe_layers       ={},
     recipe_level        ={},
     recipe_player       ={},
+    recipe_actions      ={},
     --
     bg_size=nil,
     bg_tile_size=nil,
     world_size=smath.Sol_NewVector(0, 0),
     enable_world_borders=true,
     tiles={{zindex=1, type="player"}},
+    scripts={},
   }
 end ; module.Sol_NewWorld=Sol_NewWorld
 

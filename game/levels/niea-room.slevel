@@ -2,6 +2,7 @@
 section info
     define  name, "Niea's Room"
 end-section
+
 ## section "tiles"
 section tiles
     section A
@@ -28,17 +29,29 @@ section tiles
         define  zindex, 0
     end-section
 end-section
+
 ## section "geometry"
 section geometry
     define  enable_world_borders, yes
     define  bg_size, [20, 20]
     define  bg_tile_size, [128, 128]
 end-section
+
+## section "player"
+section player
+    section  spawn
+        define  use_tile_alignment, yes
+        define  xpos, 10
+        define  ypos, 10
+    end-section
+end-section
+
 ## section "level"
 section level
     define  spawn_layers, ["background", "world_deco"]
     define  spawn_tiles, []
 end-section
+
 ## Layers here :)
 section layers
     section background
@@ -74,7 +87,7 @@ section layers
             "00F00000000000000000",
             "00000000000000000000",
             "0000F00000000F000000",
-            "00000000000000000000",
+            "000000000FF000000000",
             "00000000000000000000",
             "00FF0000000F00000000",
             "00000000000000000000",
@@ -82,7 +95,7 @@ section layers
             "00000000000FF0000000",
             "00000000000000000000",
             "0000F0000000000F0000",
-            "00000000000000000000",
+            "0000FF00000000000000",
             "00000000000000000000",
             "0000000000000FF00000",
             "00000000000000000000",

@@ -1,7 +1,5 @@
 local defaults=require("sol.defaults")
 local smath=require("sol.smath")
-local scf=require("sol.scf")
-local system=require("sol.system")
 
 -- world module:
 local player=require("sol.worldm.player")
@@ -16,10 +14,11 @@ function Sol_NewWorld(world)
     --
     chunks={},
     --
-    recipe_tiles={},
-    recipe_geometry={},
-    recipe_background={},
-    recipe_level={},
+    recipe_tiles        ={},
+    recipe_geometry     ={},
+    recipe_layers       ={},
+    recipe_level        ={},
+    recipe_player       ={},
     --
     bg_size=nil,
     bg_tile_size=nil,
@@ -37,8 +36,8 @@ function Sol_CheckPlayerPositionAt(engine, world_mode, world, xposition, ypositi
   player_rectangle.position.y=yposition
   --> check if the player is inside the world borders.
   if world.enable_world_borders then
-    local inside_x=player_rectangle.position.x>=0 and player_rectangle.position.x<=world.world_size.x
-    local inside_y=player_rectangle.position.y>=0 and player_rectangle.position.y<=world.world_size.y
+    local inside_x=player_rectangle.position.x>=0 and player_rectangle.position.x-player_rectangle.size.x<=world.world_size.x
+    local inside_y=player_rectangle.position.y>=0 and player_rectangle.position.y-player_rectangle.size.y<=world.world_size.y
     if not (inside_x and inside_y) then return false end
   end
   --> check the player current chunk.
@@ -52,7 +51,8 @@ function Sol_CheckPlayerPositionAt(engine, world_mode, world, xposition, ypositi
   end
   return true
 end ; module.Sol_CheckPlayerPositionAt=Sol_CheckPlayerPositionAt
-function Sol_WalkInWorld(engine, world_mode, world, xdirection, ydirection)
+function Sol_WalkInWorld(engine, world_mode, world, looking_direction, xdirection, ydirection)
+  world_mode.player.looking_direction=looking_direction
   -- TODO: make more precise movements.
   local xposition, yposition=world_mode.player.rectangle.position.x+xdirection, world_mode.player.rectangle.position.y+ydirection
   if Sol_CheckPlayerPositionAt(engine, world_mode, world, xposition, yposition) then
@@ -91,21 +91,20 @@ function Sol_WalkInWorld(engine, world_mode, world, xdirection, ydirection)
     end
   end
 end ; module.Sol_WalkInWorld=Sol_WalkInWorld
-function Sol_TickWorld(engine, world_mode, world)
+function Sol_CheckSingleDirectionWalking(engine, world_mode, world)
   world_mode.player.current_speed = love.keyboard.isDown("lshift") and world_mode.player.run_speed or world_mode.player.walk_speed
   if      love.keyboard.isDown(engine.wmode_keymap["walk_up"])    then
-    Sol_WalkInWorld(engine, world_mode, world, 0, -world_mode.player.current_speed)
-    world_mode.player.looking_direction=defaults.SOL_PLAYER_LOOK_DIRECTION.UP
+    Sol_WalkInWorld(engine, world_mode, world, defaults.SOL_PLAYER_LOOK_DIRECTION.UP,   0, -world_mode.player.current_speed)
   elseif  love.keyboard.isDown(engine.wmode_keymap["walk_down"])  then
-    Sol_WalkInWorld(engine, world_mode, world, 0,  world_mode.player.current_speed)
-    world_mode.player.looking_direction=defaults.SOL_PLAYER_LOOK_DIRECTION.DOWN
+    Sol_WalkInWorld(engine, world_mode, world, defaults.SOL_PLAYER_LOOK_DIRECTION.DOWN, 0,  world_mode.player.current_speed)
   elseif  love.keyboard.isDown(engine.wmode_keymap["walk_left"])  then
-    Sol_WalkInWorld(engine, world_mode, world, -world_mode.player.current_speed, 0)
-    world_mode.player.looking_direction=defaults.SOL_PLAYER_LOOK_DIRECTION.LEFT
+    Sol_WalkInWorld(engine, world_mode, world, defaults.SOL_PLAYER_LOOK_DIRECTION.LEFT, -world_mode.player.current_speed, 0)
   elseif  love.keyboard.isDown(engine.wmode_keymap["walk_right"]) then
-    Sol_WalkInWorld(engine, world_mode, world, world_mode.player.current_speed,  0)
-    world_mode.player.looking_direction=defaults.SOL_PLAYER_LOOK_DIRECTION.RIGHT
+    Sol_WalkInWorld(engine, world_mode, world, defaults.SOL_PLAYER_LOOK_DIRECTION.RIGHT, world_mode.player.current_speed, 0)
   end
+end
+function Sol_TickWorld(engine, world_mode, world)
+  Sol_CheckSingleDirectionWalking(engine, world_mode, world)
 end ; module.Sol_TickWorld=Sol_TickWorld
 
 --[[ Draw Related Functions ]]

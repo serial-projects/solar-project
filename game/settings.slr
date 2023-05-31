@@ -1,0 +1,32 @@
+# set the window geometry + flags.
+section window
+    # keep the flags inside this section.
+    section flags
+        define  vsync, yes
+        define  resizable, yes
+    end-section
+    # window geometry
+    #define  width, 1336
+    #define  height, 728
+    define width, 900
+    define height, 680
+    # window title
+    define  title, "[Sol Engine]"
+end-section
+
+# the viewport is not changed if the window is resized so make sure
+# this is really the size you wish.
+section viewport
+    #define  width, 1336
+    #define  height, 728
+    define width, 900
+    define height, 680
+end-section
+
+# Set the keymap settings
+section world_keymap
+    define  walk_up,    "up"
+    define  walk_down,  "down"
+    define  walk_right, "right"
+    define  walk_left,  "left"
+end-section

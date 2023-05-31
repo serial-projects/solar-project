@@ -1,0 +1,125 @@
+## section "info"
+section info
+    define  name, "Niea's Room"
+end-section
+
+## section "actions"
+section actions
+    # >> To define a script job:
+    # tick_per_frame:   how much ticks will the game dedicate to the script
+    #                   usually, you want to keep it like 10 ticks per frame
+    #                   to prevent lag and possible crashes.
+    # source:           the path to the script in relation to $GAME_ROOT/scripts/<your-script>.slss
+    # begin:            what label will the script begin.
+    section main
+        define  ticks_per_frame, 10
+        define  source, "nr-main"
+        define  begin, "main"
+    end-section
+end-section
+
+## section "tiles" ##
+# >> Tiles are the fundamental building blocks on the Sol Engine.
+section tiles
+    section A
+        define  name, "floor"
+        define  size, [64, 64]
+        define  position, [0, 0]
+        define  collide, no
+        define  draw_method, 2
+        define  color, [150, 150, 150]
+        define  textures, "usualgrass00"
+        define  should_draw, yes
+        define  zindex, -1
+    end-section
+    section F
+        define  name, "largetile"
+        define  size, [64, 64]
+        define  position, [300, 200]
+        define  collide, no
+        define  draw_method, 2
+        define  textures, ["usualflower00:frame01","usualflower00:frame02","usualflower00:frame03","usualflower00:frame04"]
+        define  texture_timing, 0.1
+        define  color, [100, 250, 150]
+        define  should_draw, yes
+        define  zindex, 0
+    end-section
+end-section
+
+## section "geometry"
+section geometry
+    define  enable_world_borders, yes
+    define  bg_size, [20, 20]
+    define  bg_tile_size, [128, 128]
+end-section
+
+## section "player"
+section player
+    section  spawn
+        define  use_tile_alignment, yes
+        define  xpos, 10
+        define  ypos, 10
+    end-section
+end-section
+
+## section "level"
+section level
+    define  spawn_layers, ["background", "world_deco"]
+    define  spawn_tiles, []
+end-section
+
+## Layers here :)
+section layers
+    section background
+        define  width, 20
+        define  height, 20
+        define  matrix, [
+            "AAAAAAAAAAAAAAAAAAAA",
+            "AAAAAAAAAAAAAAAAAAAA",
+            "AAAAAAAAAAAAAAAAAAAA",
+            "AAAAAAAAAAAAAAAAAAAA",
+            "AAAAAAAAAAAAAAAAAAAA",
+            "AAAAAAAAAAAAAAAAAAAA",
+            "AAAAAAAAAAAAAAAAAAAA",
+            "AAAAAAAAAAAAAAAAAAAA",
+            "AAAAAAAAAAAAAAAAAAAA",
+            "AAAAAAAAAAAAAAAAAAAA",
+            "AAAAAAAAAAAAAAAAAAAA",
+            "AAAAAAAAAAAAAAAAAAAA",
+            "AAAAAAAAAAAAAAAAAAAA",
+            "AAAAAAAAAAAAAAAAAAAA",
+            "AAAAAAAAAAAAAAAAAAAA",
+            "AAAAAAAAAAAAAAAAAAAA",
+            "AAAAAAAAAAAAAAAAAAAA",
+            "AAAAAAAAAAAAAAAAAAAA",
+            "AAAAAAAAAAAAAAAAAAAA",
+            "AAAAAAAAAAAAAAAAAAAA",
+        ]
+    end-section
+    section world_deco
+        define  width, 20
+        define  height, 20
+        define matrix, [
+            "00F00000000000000000",
+            "00000000000000000000",
+            "0000F00000000F000000",
+            "000000000FF000000000",
+            "00000000000000000000",
+            "00FF0000000F00000000",
+            "00000000000000000000",
+            "000000F0000000000000",
+            "00000000000FF0000000",
+            "00000000000000000000",
+            "0000F0000000000F0000",
+            "0000FF00000000000000",
+            "00000000000000000000",
+            "0000000000000FF00000",
+            "00000000000000000000",
+            "00000FF0000000000000",
+            "000000000000F0000000",
+            "00000000000000000000",
+            "000000000F0000000000",
+            "00000000000000000000",
+        ]
+    end-section
+end-section

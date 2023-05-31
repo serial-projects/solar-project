@@ -13,7 +13,8 @@ function love.help()
         ">> This is a list of commands you can use on the Sol Engine",
         "--root/-r:               defines the path for the game folder.",
         "--debug/-d:              shows additional information runtime.",
-        "--help/-h:               shows this text and quit."
+        "--help/-h:               shows this text and quit.",
+        "--version/-v:            shows the version of the engine."
       }
     )
   )
@@ -34,6 +35,11 @@ function love.load(args)
     ["--root"] ={nargs=1, wrap=function(path)
       SolEnginePathResources=path
     end}, ["-r"]="--root",
+    --
+    ["--version"]={nargs=0, wrap=function(path)
+      local _defaults=require("sol.defaults")
+      print(string.format("Sol Engine Version: \"%s\" by Pipes Studios", _defaults.SOL_VERSION))
+    end}, ["-v"]="--version",
     --
     ["default"]=function(argument)
       dmsg("unknown argument \"%s\", ignoring...", argument)

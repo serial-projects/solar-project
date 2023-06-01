@@ -41,9 +41,9 @@ function Sol_DrawTile(engine, world_mode, world, tile)
     love.graphics.rectangle("fill", rxpos, rypos, width, height)
   else
     --[[ Draw using the texture ]]--
-    local current_texture
+    -- TODO: this method of rendering textures is BAD, rewrite please.
     if type(tile.textures) == "string" then
-      current_texture=storage.Sol_LoadImageFromStorage(engine.storage, tile.textures)
+      local current_texture=storage.Sol_LoadImageFromStorage(engine.storage, tile.textures)
       love.graphics.setColor(1, 1, 1, 1)
       love.graphics.draw(current_texture, rxpos, rypos)
     elseif type(tile.textures) == "table" then

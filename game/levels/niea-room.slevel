@@ -60,6 +60,22 @@ section player
         define  xpos, 10
         define  ypos, 10
     end-section
+    section  textures
+        section walk_up
+            define  textures, ["playerwalkup:frame01","playerwalkup:frame02","playerwalkup:frame03","playerwalkup:frame04"]
+        end-section
+        section walk_down
+            define  textures, ["playerwalkdown:frame01","playerwalkdown:frame02","playerwalkdown:frame03","playerwalkdown:frame04"]
+        end-section
+        section walk_left
+            define  textures, ["playerwalkleft:frame01","playerwalkleft:frame02","playerwalkleft:frame03","playerwalkleft:frame04"]
+        end-section
+        section walk_right
+            define  textures, ["playerwalkright:frame01","playerwalkright:frame02","playerwalkright:frame03","playerwalkright:frame04"]
+        end-section
+    end-section
+    define  draw_method, 2
+    define  size, [128, 128]
 end-section
 
 ## section "level"

@@ -1,4 +1,6 @@
 -- xlog.lua: load the logging functions :^)
+
+-- TODO: implement a log file for less terminal usage.
 if not _G["genericPrint"] then
   _G.genericPrintWrappers={print}
   _G.genericPrint=function(fmt, ...)
@@ -43,7 +45,11 @@ if not _G["makesure"] then
 end
 if not _G["stopexec"] then
   _G.stopexec=function(message)
-    print(message or "stopexec() was called.")
-    local input=io.read()
+    print(string.format("stopexec() was called, reason: \"%s\"", message or "??"))
+    print(debug.traceback(""))
+    io.write("[K] = keep executing, [D] = join debug.debug(), [E] = exit (not saving!): ")
+    local input=string.lower(io.read())
+    if      input == "d" then  debug.debug()
+    elseif  input == "e" then  love.event.quit(-1) ; os.exit(-1) end
   end
 end

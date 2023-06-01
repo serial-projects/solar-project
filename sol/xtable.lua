@@ -39,7 +39,7 @@ function table.show(t)
     local text=""
     for key, value in pairs(ts) do
       if type(value)~="table" then
-        text=text..(prefix..string.format("[key=\"%s\"]: %s", key, tostring(value)).."\n")
+        text=text..(prefix..string.format("[key=\"%s\" (type: %s)]: %s", key, type(key), tostring(value)).."\n")
       else
         text=text..(prefix..string.format("[key=\"%s\"] >>", key)..'\n')
         text=text..(_show(value, depth+2))

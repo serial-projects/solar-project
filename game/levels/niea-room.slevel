@@ -26,23 +26,45 @@ section tiles
         define  size, [64, 64]
         define  position, [0, 0]
         define  collide, no
-        define  draw_method, 2
-        define  color, [150, 150, 150]
-        define  textures, "usualgrass00"
-        define  should_draw, yes
         define  zindex, -1
+
+        # draw structure.
+        section draw
+            section recipes
+                section main
+                    define  draw_method, 4
+                    define  textures, ["usualgrass00"]
+                    define  texture_index, 1
+                    define  texture_timing, 0.1
+                    define  texture_autoupdate, yes
+                end-section
+            end-section
+            define  using_recipe, "main"
+        end-section
+        
     end-section
     section F
         define  name, "largetile"
         define  size, [64, 64]
         define  position, [300, 200]
         define  collide, no
-        define  draw_method, 2
-        define  textures, ["usualflower00:frame01","usualflower00:frame02","usualflower00:frame03","usualflower00:frame04"]
-        define  texture_timing, 0.1
-        define  color, [100, 250, 150]
         define  should_draw, yes
         define  zindex, 0
+
+        # draw structure
+        section draw
+            section recipes
+                section main
+                    define  draw_method, 3
+                    define  textures, ["usualflower00:frame01","usualflower00:frame02","usualflower00:frame03","usualflower00:frame04"]
+                    define  texture_timing, 0.1
+                    define  texture_index, 1
+                    define  texture_autoupdate, yes
+                end-section
+            end-section
+            define  using_recipe, "main"
+        end-section
+
     end-section
 end-section
 
@@ -60,21 +82,33 @@ section player
         define  xpos, 10
         define  ypos, 10
     end-section
-    section  textures
-        section walk_up
-            define  textures, ["playerwalkup:frame01","playerwalkup:frame02","playerwalkup:frame03","playerwalkup:frame04"]
+    section draw
+        section  recipes
+            section 1
+                define  draw_method, 3
+                define  texture_autoupdate, no
+                define  textures, ["playerwalkup:frame01","playerwalkup:frame02","playerwalkup:frame03","playerwalkup:frame04"]
+            end-section
+            section 2
+                define  draw_method, 3
+                define  texture_autoupdate, no
+                define  textures, ["playerwalkdown:frame01","playerwalkdown:frame02","playerwalkdown:frame03","playerwalkdown:frame04"]
+            end-section
+            section 3
+                define  draw_method, 3
+                define  texture_autoupdate, no
+                define  textures, ["playerwalkleft:frame01","playerwalkleft:frame02","playerwalkleft:frame03","playerwalkleft:frame04"]
+            end-section
+            section 4
+                define  draw_method, 3
+                define  texture_autoupdate, no
+                define  textures, ["playerwalkright:frame01","playerwalkright:frame02","playerwalkright:frame03","playerwalkright:frame04"]
+            end-section
         end-section
-        section walk_down
-            define  textures, ["playerwalkdown:frame01","playerwalkdown:frame02","playerwalkdown:frame03","playerwalkdown:frame04"]
-        end-section
-        section walk_left
-            define  textures, ["playerwalkleft:frame01","playerwalkleft:frame02","playerwalkleft:frame03","playerwalkleft:frame04"]
-        end-section
-        section walk_right
-            define  textures, ["playerwalkright:frame01","playerwalkright:frame02","playerwalkright:frame03","playerwalkright:frame04"]
-        end-section
+        define  counter, 0
+        define  max_counter, 5
     end-section
-    define  draw_method, 2
+    define  using_recipe, 1
     define  size, [128, 128]
 end-section
 

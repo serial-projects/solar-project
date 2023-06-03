@@ -3,6 +3,7 @@ local defaults=require("sol.defaults")
 local system=require("sol.system")
 local scf=require("sol.scf")
 local player = require("sol.worldm.player")
+local drawrec= require("sol.drawrec")
 
 -- world module:
 local tiles=require("sol.worldm.tiles")
@@ -94,29 +95,8 @@ function Sol_LoadWorld(engine, world_mode, world, world_name)
       world_mode.player.rectangle.position.x,world_mode.player.rectangle.position.y=xpos, ypos
     end
     --
-    local textures = world.recipe_player["textures"]
-    dmsg(table.show(textures))
-    if textures then
-      local targets={
-        [defaults.SOL_PLAYER_LOOK_DIRECTION.UP]   ="walk_up",
-        [defaults.SOL_PLAYER_LOOK_DIRECTION.DOWN] ="walk_down",
-        [defaults.SOL_PLAYER_LOOK_DIRECTION.LEFT] ="walk_left",
-        [defaults.SOL_PLAYER_LOOK_DIRECTION.RIGHT]="walk_right"
-      }
-      for value, entry in ipairs(targets) do
-        local handled_value=textures[entry]
-        if handled_value then
-          dmsg("applied texture for target = \"%s\" in player.", entry)
-          world_mode.player.textures[value]=handled_value
-        else
-          dmsg("not defined texture for target = \"%s\" in player.", entry)
-          world_mode.player.textures[value]={}
-        end
-      end
-    end
+    world_mode.player.draw = drawrec.Sol_NewDrawRecipe(world.recipe_player["draw"])
     --
-    dmsg(table.show(world_mode.player.textures))
-    world_mode.player.draw_method = world.recipe_player["draw_method"] or world_mode.player.draw_method
     world_mode.player.rectangle.size = world.recipe_player["size"] and smath.Sol_NewVector(world.recipe_player["size"]) or world_mode.player.size
     player.Sol_LoadPlayerRelativePosition(world_mode, world_mode.player)
     --

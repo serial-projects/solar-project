@@ -54,7 +54,9 @@ function Sol_CheckPlayerPositionAt(engine, world_mode, world, xposition, ypositi
   return true
 end ; module.Sol_CheckPlayerPositionAt=Sol_CheckPlayerPositionAt
 function Sol_WalkInWorld(engine, world_mode, world, looking_direction, xdirection, ydirection)
+  -- TODO: check when the player is running more efficiently by using a function argument or something else.
   world_mode.player.looking_direction=looking_direction
+  world_mode.player.draw.counter = world_mode.player.draw.counter + (world_mode.player.current_speed == world_mode.player.walk_speed and world_mode.player.walk_speed_texture_counter_add or world_mode.player.run_speed_texture_counter_add)
   -- TODO: make more precise movements.
   local xposition, yposition=world_mode.player.rectangle.position.x+xdirection, world_mode.player.rectangle.position.y+ydirection
   if Sol_CheckPlayerPositionAt(engine, world_mode, world, xposition, yposition) then

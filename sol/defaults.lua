@@ -16,7 +16,7 @@ module.SOL_VIEWPORT_WIDTH = 800
 module.SOL_VIEWPORT_HEIGHT = 600
 module.SOL_VIEWPORT_BACKGROUND = smath.Sol_NewColor4(84, 72, 122)
 
-module.SOL_DRAW_USING = table.enum(1, {"COLOR", "TEXTURE"})
+module.SOL_DRAW_USING = table.enum(1, {"COLOR", "TEXTURE", "SPRITES", "IMAGES"})
 
 module.SOL_UI_CURSOR_DEFAULT_COLOR = smath.Sol_NewColor4(255, 255, 255)
 module.SOL_UI_CURSOR_DEFAULT_SIZE = smath.Sol_NewVector(16, 16)

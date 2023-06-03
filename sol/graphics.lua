@@ -1,5 +1,6 @@
 -- graphics.lua: functions related to graphics.
 local module={}
+--
 function Sol_DrawCanvas(canva, position)
   love.graphics.setBlendMode("alpha")
   love.graphics.setColor(1, 1, 1, 1)

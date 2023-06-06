@@ -38,8 +38,8 @@ function Sol_CheckPlayerPositionAt(engine, world_mode, world, xposition, ypositi
   player_rectangle.position.y=yposition
   --> check if the player is inside the world borders.
   if world.enable_world_borders then
-    local inside_x=player_rectangle.position.x>=0 and player_rectangle.position.x-player_rectangle.size.x<=world.world_size.x
-    local inside_y=player_rectangle.position.y>=0 and player_rectangle.position.y-player_rectangle.size.y<=world.world_size.y
+    local inside_x=player_rectangle.position.x>=0 and player_rectangle.position.x<=world.world_size.x
+    local inside_y=player_rectangle.position.y>=0 and player_rectangle.position.y<=world.world_size.y
     if not (inside_x and inside_y) then return false end
   end
   --> check the player current chunk.
@@ -64,7 +64,6 @@ function Sol_WalkInWorld(engine, world_mode, world, looking_direction, xdirectio
     world_mode.player.rectangle.position.y=world_mode.player.rectangle.position.y+ydirection
   else
     -- NOTE: PRECISE_WALK is KINDA a very expansive function, use it with very caution!
-    _G.stopexec("boo!")
     if engine.vars["PRECISE_WALK"] then
       --> for xdirection
       if xdirection ~= 0 then

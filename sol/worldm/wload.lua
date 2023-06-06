@@ -96,10 +96,8 @@ function Sol_LoadWorld(engine, world_mode, world, world_name)
     end
     --
     world_mode.player.draw = drawrec.Sol_NewDrawRecipe(world.recipe_player["draw"])
-    --
     world_mode.player.rectangle.size = world.recipe_player["size"] and smath.Sol_NewVector(world.recipe_player["size"]) or world_mode.player.size
     player.Sol_LoadPlayerRelativePosition(world_mode, world_mode.player)
-    --
   end
   --> map the chunks
   chunk.Sol_MapChunksInWorld(world)

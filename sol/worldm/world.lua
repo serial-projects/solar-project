@@ -64,6 +64,7 @@ function Sol_WalkInWorld(engine, world_mode, world, looking_direction, xdirectio
     world_mode.player.rectangle.position.y=world_mode.player.rectangle.position.y+ydirection
   else
     -- NOTE: PRECISE_WALK is KINDA a very expansive function, use it with very caution!
+    _G.stopexec("boo!")
     if engine.vars["PRECISE_WALK"] then
       --> for xdirection
       if xdirection ~= 0 then

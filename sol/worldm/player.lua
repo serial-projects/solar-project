@@ -1,6 +1,5 @@
 local smath=require("sol.smath")
 local defaults=require("sol.defaults")
-local storage=require("sol.storage")
 local drawrec= require("sol.drawrec")
 local module={}
 

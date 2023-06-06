@@ -40,6 +40,6 @@ luac.out
 *.hex
 *.vscode
 
-# Sol Building Tool
+# Sol Building Tool & Love files (run ./build.sh package)
 build/
-solar-build*
+*.love

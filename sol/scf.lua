@@ -191,9 +191,11 @@ end
 module.SCF_LoadBuffer = SCF_LoadBuffer
 
 function SCF_LoadFile(file)
+  -- TODO: when compressing the file to a single .zip file, some problems may happen.
   assert(type(file)=="string", "invalid type for file.")
   local tokenized_file = {}
-  local fp = io.open(file, "r")
+  -- local fp = io.open(file, "r")
+  local fp = love.filesystem.newFile(file, "r")
   assert(fp ~= nil, "failed to open file: "..file)
   for line in fp:lines() do
     local clean_line=line:gsub("\n",""):gsub("\t",SCF_TAB_REPLACEMENT)

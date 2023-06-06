@@ -56,8 +56,13 @@ section tiles
             section recipes
                 section main
                     define  draw_method, 3
-                    define  textures, ["usualflower00:frame01","usualflower00:frame02","usualflower00:frame03","usualflower00:frame04"]
-                    define  texture_timing, 0.1
+                    define  textures, [
+                        "usualflower00:frame01",
+                        "usualflower00:frame02",
+                        "usualflower00:frame03",
+                        "usualflower00:frame04"
+                    ]
+                    define  texture_timing, 0.2
                     define  texture_index, 1
                     define  texture_autoupdate, yes
                 end-section

@@ -14,7 +14,6 @@ function Sol_NewTile(tile)
     zindex                      = (tile["zindex"] == 1 and 2 or tile["zindex"]) or 0,
     collide                     = tile["collide"] or false,
     should_draw                 = tile["should_draw"] or true,
-    draw_method                 = tile["draw_method"] or defaults.SOL_DRAW_USING.COLOR,
     current_chunk               = {},
     --[[ draw ]]--
     draw = drawrec.Sol_NewDrawRecipe(tile["draw"]),

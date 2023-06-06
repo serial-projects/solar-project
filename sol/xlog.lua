@@ -45,11 +45,13 @@ if not _G["makesure"] then
 end
 if not _G["stopexec"] then
   _G.stopexec=function(message)
-    print(string.format("stopexec() was called, reason: \"%s\"", message or "??"))
+    print(string.format("\n-- _G.stopexec() was called, reason: \"%s\"", message or "??"))
     print(debug.traceback(""))
-    io.write("[K] = keep executing, [D] = join debug.debug(), [E] = exit (not saving!): ")
+    ::top::
+    io.write("[k] = keep executing, [d] = join debug.debug(), [e] = exit (not saving!): ")
     local input=string.lower(io.read())
     if      input == "d" then  debug.debug()
-    elseif  input == "e" then  love.event.quit(-1) ; os.exit(-1) end
+    elseif  input == "e" then  love.event.quit(-1) ; os.exit(-1)
+    elseif  input ~= "k" then  goto top end
   end
 end

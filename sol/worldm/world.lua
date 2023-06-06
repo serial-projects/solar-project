@@ -71,9 +71,7 @@ function Sol_WalkInWorld(engine, world_mode, world, looking_direction, xdirectio
         while (xdirection < 0 and x_amount >= xdirection or x_amount <= xdirection) do
           if not Sol_CheckPlayerPositionAt(engine, world_mode, world, world_mode.player.rectangle.position.x+x_amount, world_mode.player.rectangle.position.y) then
             break
-          else
-            x_amount=x_amount+(xdirection < 0 and -1 or 1)
-          end
+          else x_amount=x_amount+(xdirection < 0 and -1 or 1) end
         end
         -- we remove -1 amount of walking to ignore the last collision we made to check if the player is actually colliding with
         -- something, if no remove the player will be stuck in some wall. We could have put this inside the loop.
@@ -85,9 +83,7 @@ function Sol_WalkInWorld(engine, world_mode, world, looking_direction, xdirectio
         while (ydirection < 0 and y_amount >= ydirection or y_amount <= ydirection) do
           if not Sol_CheckPlayerPositionAt(engine, world_mode, world, world_mode.player.rectangle.position.x, world_mode.player.rectangle.position.y+y_amount) then
             break
-          else
-            y_amount=y_amount+(ydirection < 0 and -1 or 1)
-          end
+          else y_amount=y_amount+(ydirection < 0 and -1 or 1) end
         end
         world_mode.player.rectangle.position.y=world_mode.player.rectangle.position.y+(ydirection < 0 and y_amount + 1 or y_amount - 1)
       end

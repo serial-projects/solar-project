@@ -19,7 +19,7 @@ _die(){
 # run_cmd(): wrapper for running commands.
 run_cmd(){
     _COMMAND=$1 ; printf "${COLOR_PURPLE}[build.sh]${NO_COLOR}: running command: ${COLOR_BLUE}\"$_COMMAND\"${NO_COLOR} ... "
-    $_COMMAND >> $BUILD_LOG ; if [[ $? != 0 ]]; then
+    echo "[build.sh]: $_COMMAND" >> $BUILD_LOG ; $_COMMAND >> $BUILD_LOG ; if [[ $? != 0 ]]; then
         printf "failed.\n" ; _die "failed to run command: \"$_COMMAND\"!"
     else
         printf "done!\n"
@@ -28,7 +28,7 @@ run_cmd(){
 
 # check_dirs(): check if the building directory is there.
 check_dirs(){
-    [[ -e "./build" ]] || mkdir ./build
+    [[ -e "./build" ]] || run_cmd "mkdir ./build"
 }
 
 # create_love_package(): creates a new love package.
@@ -44,18 +44,27 @@ create_love_package(){
     run_cmd "zip -9 -r $LOVE_SOLAR_BUILD_FILE $LOVE_ZIP_INCLUDE_FILES"
 }
 
-# main
-echo "build.sh $(date): begun!" > $BUILD_LOG
-echo -e "${COLOR_PURPLE}[build.sh]${NO_COLOR}: Solar Engine's build tool $_VERSION"
-if [[ "$#" == 0 ]]; then
+# help(): show the help
+help(){
     echo -e "some options you can run: "
     echo -e "\tpackage:                 builds a new solar-build.love file."
+    echo -e "\thelp:                    show this message."
     exit 0
+}
+
+# main
+echo "[build.sh]: $(date): begun!" > $BUILD_LOG
+echo -e "${COLOR_PURPLE}[build.sh]${NO_COLOR}: Solar Engine's build tool $_VERSION"
+if [[ "$#" == 0 ]]; then
+    help
 else
     for arg in "$@"; do
         case $arg in
             package)
                 create_love_package
+                ;;
+            help)
+                help
                 ;;
             *)
                 echo "[!] invalid option: $arg"
@@ -64,3 +73,4 @@ else
         esac
     done
 fi
+echo "[build.sh]: finished script --" >> $BUILD_LOG

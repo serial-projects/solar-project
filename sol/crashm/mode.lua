@@ -16,7 +16,7 @@ end
 
 --[[ Init related functions ]]--
 function module.Sol_InitCrashMode(engine, crash_mode)
-
+  
 end
 
 --[[ Tick related functions ]]--

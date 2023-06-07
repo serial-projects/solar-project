@@ -1,11 +1,14 @@
 #!/bin/sh
 
+# TODO: make a print function to prevent writting "[build.sh]" every ECHO.
+# TODO: remove COLORS for terminals that doesn't support color.
+
 # build.sh: contains some utils for the building of new releases for the Solar Project.
 # this will touch some important files and other misc. stuff to run the game as it is
 # intended. More info, run "-h" option.
-_VERSION="1.0"
+_VERSION="1.0 (Zenith)"
 LOVE_ZIP_INCLUDE_FILES="./sol ./game ./main.lua ./README.md ./LICENSE ./build.sh"
-BUILD_LOG="./build/log" ;
+BUILD_LOG="./build/log-report.txt"
 NO_COLOR="\e[0m"
 COLOR_RED="\e[31m"
 COLOR_BLUE="\e[36m"
@@ -54,7 +57,7 @@ help(){
 
 # main
 echo "[build.sh]: $(date): begun!" > $BUILD_LOG
-echo -e "${COLOR_PURPLE}[build.sh]${NO_COLOR}: Solar Engine's build tool $_VERSION"
+echo -e "${COLOR_PURPLE}[build.sh]${NO_COLOR}: Solar Engine's build tool \"$_VERSION\""
 if [[ "$#" == 0 ]]; then
     help
 else
@@ -67,8 +70,7 @@ else
                 help
                 ;;
             *)
-                echo "[!] invalid option: $arg"
-                exit -1
+                echo -e "${COLOR_PURPLE}[build.sh]${NO_COLOR}: invalid option: ${COLOR_RED}\"$arg\"${NO_COLOR}?"
                 ;;
         esac
     done

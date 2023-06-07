@@ -10,7 +10,7 @@ local module={}
 --
 
 --[[ Create a New Engine ]]
-function Sol_NewEngine()
+function module.Sol_NewEngine()
   return {
     vars={PRECISE_WALK=true, CHUNK_RENDERING=1, RENDER_CHUNK_AMOUNT = 2, CHUNK_SIZE=64},
     storage = storage.Sol_NewStorage(nil),
@@ -26,19 +26,20 @@ function Sol_NewEngine()
     credits_mode = nil,
     wmode_keymap={walk_up="up", walk_down="down", walk_left="left", walk_right="right"},
   }
-end ; module.Sol_NewEngine=Sol_NewEngine
+end
 
 --[[ Engine Functions ]]
-function Sol_SetWindowFromEngine(engine)
+function module.Sol_SetWindowFromEngine(engine)
   love.window.setMode(engine.window_size.x, engine.window_size.y, engine.window_flags)
   love.window.setTitle(engine.window_title)
-end ; module.Sol_SetWindowFromEngine=Sol_SetWindowFromEngine
-function Sol_AdjustViewportAtCenter(engine)
+end
+
+function module.Sol_AdjustViewportAtCenter(engine)
   engine.viewport_position = smath.Sol_NewVector(math.floor(engine.window_size.x / 2)-math.floor(engine.viewport_size.x / 2), math.floor(engine.window_size.y / 2)-math.floor(engine.viewport_size.y / 2))
-end ; module.Sol_AdjustViewportAtCenter=Sol_AdjustViewportAtCenter
+end
 
 --[[ Init Related Functions ]]
-function Sol_LoadSettings(engine)
+function module.Sol_LoadSettings(engine)
   local settings_loaded=scf.SCF_LoadFile(system.Sol_MergePath({engine.root, "settings.slr"}))
   --> section "window"
   local window_section=settings_loaded["window"]
@@ -75,28 +76,30 @@ function Sol_LoadSettings(engine)
     end
   end
   --
-end ; module.Sol_LoadSettings=Sol_LoadSettings
-function Sol_InitEngine(engine, path_resources)
+end
+
+function module.Sol_InitEngine(engine, path_resources)
   local begun=os.clock()
   engine.root, engine.storage.root = path_resources, path_resources ; dmsg("engine.root: "..engine.root)
-  Sol_LoadSettings(engine)
+  module.Sol_LoadSettings(engine)
   --
-  Sol_SetWindowFromEngine(engine)
-  Sol_AdjustViewportAtCenter(engine)
+  module.Sol_SetWindowFromEngine(engine)
+  module.Sol_AdjustViewportAtCenter(engine)
   storage.Sol_LoadLanguage(engine.storage, "en_US")
   --
   wmode.Sol_InitWorldMode(engine, engine.world_mode)
   dmsg("Sol_InitEngine() took %s seconds.", os.clock() - begun)
-end ; module.Sol_InitEngine=Sol_InitEngine
+end
 
 --[[ Tick Related Functions ]]
-function Sol_NewResizeEventEngine(engine, new_width, new_height)
+function module.Sol_NewResizeEventEngine(engine, new_width, new_height)
   engine.window_size = smath.Sol_NewVector(new_width, new_height)
-  Sol_AdjustViewportAtCenter(engine)
-  Sol_SetWindowFromEngine(engine)
+  module.Sol_AdjustViewportAtCenter(engine)
+  module.Sol_SetWindowFromEngine(engine)
   wmode.Sol_ResizeEventWorldMode(engine, engine.world_mode)
-end ; module.Sol_NewResizeEventEngine=Sol_NewResizeEventEngine
-function Sol_KeypressEventEngine(engine, key)
+end
+
+function module.Sol_KeypressEventEngine(engine, key)
   if engine.current_mode == defaults.SOL_ENGINE_MODES.MENU then
     mwarn("engine.current_mode is not yet implemented.")
   elseif engine.current_mode == defaults.SOL_ENGINE_MODES.WORLD then
@@ -104,8 +107,9 @@ function Sol_KeypressEventEngine(engine, key)
   else
     mwarn("engine.current_mode is not yet implemented.")
   end
-end ; module.Sol_KeypressEventEngine=Sol_KeypressEventEngine
-function Sol_TickEngine(engine)
+end
+
+function module.Sol_TickEngine(engine)
   storage.Sol_CleanCacheInStorage(engine.storage)
   if engine.current_mode == defaults.SOL_ENGINE_MODES.MENU then
     mwarn("engine.current_mode is not yet implemented.")
@@ -114,11 +118,10 @@ function Sol_TickEngine(engine)
   else
     mwarn("engine.current_mode is not yet implemented.")
   end
-  --
-end ; module.Sol_TickEngine=Sol_TickEngine
+end
 
 --[[ Draw Related Functions ]]
-function Sol_DrawEngine(engine)
+function module.Sol_DrawEngine(engine)
   if engine.current_mode == defaults.SOL_ENGINE_MODES.MENU then
     mwarn("engine.current_mode is not yet implemented.")
   elseif engine.current_mode == defaults.SOL_ENGINE_MODES.WORLD then
@@ -127,7 +130,7 @@ function Sol_DrawEngine(engine)
   else
     mwarn("engine.current_mode is not yet implemented.")
   end
-end ; module.Sol_DrawEngine=Sol_DrawEngine
+end
 
 --
 return module

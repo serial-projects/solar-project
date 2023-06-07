@@ -4,7 +4,7 @@ local drawrec= require("sol.drawrec")
 local module={}
 
 --
-function Sol_NewPlayer()
+function module.Sol_NewPlayer()
   return {
     type = "player",
     name = "player",
@@ -26,20 +26,21 @@ function Sol_NewPlayer()
     rel_position = smath.Sol_NewVector(0, 0),
     rectangle = smath.Sol_NewRectangle(nil, defaults.SOL_PLAYER_SIZE),
   }
-end ; module.Sol_NewPlayer=Sol_NewPlayer
-function Sol_LoadPlayerRelativePosition(world_mode, player)
+end
+
+function module.Sol_LoadPlayerRelativePosition(world_mode, player)
   player.rel_position.x=math.floor(world_mode.viewport_size.x/2)-math.floor(player.rectangle.size.x/2)
   player.rel_position.y=math.floor(world_mode.viewport_size.y/2)-math.floor(player.rectangle.size.y/2)
   dmsg("Sol_LoadPlayerRelativePosition() set the player.rel_position to x = %d and y = %d", player.rel_position.x, player.rel_position.y)
-end ; module.Sol_LoadPlayerRelativePosition=Sol_LoadPlayerRelativePosition
+end
 
 --[[ Draw Related Functions ]]
-function Sol_DrawPlayer(engine, world_mode, player)
+function module.Sol_DrawPlayer(engine, world_mode, player)
   local posx, posy    =smath.Sol_UnpackVectorXY(player.rel_position)
   local width, height =smath.Sol_UnpackVectorXY(player.rectangle.size)
   player.draw.using_recipe = player.looking_direction
   drawrec.Sol_DrawRecipe(engine, player.draw, posx, posy, width, height)
-end ; module.Sol_DrawPlayer=Sol_DrawPlayer
+end
 
 --
 return module

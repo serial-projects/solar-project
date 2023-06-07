@@ -5,7 +5,7 @@ local drawrec=require("sol.drawrec")
 local module={}
 
 --
-function Sol_NewTile(tile)
+function module.Sol_NewTile(tile)
   local tile = tile or {}
   return {
     type                        = "tile",
@@ -21,19 +21,19 @@ function Sol_NewTile(tile)
     when_touched                = tile["when_touched"] or 0,
     when_interacted             = tile["when_interacted"] or 0,
   }
-end ; module.Sol_NewTile=Sol_NewTile
+end
 
 --[[ Tick Related Functions ]]
-function Sol_TickTile(engine, world_mode, world, tile)
+function module.Sol_TickTile(engine, world_mode, world, tile)
 
 end
 
 --[[ Draw Related Functions ]]
-function Sol_DrawTile(engine, world_mode, world, tile)
+function module.Sol_DrawTile(engine, world_mode, world, tile)
   local rxpos, rypos = smath.Sol_GetTileRelativePosition(world_mode.player.rel_position, world_mode.player.rectangle.position, tile.rectangle.position)
   local width, height= smath.Sol_UnpackVectorXY(tile.rectangle.size)
   drawrec.Sol_DrawRecipe(engine, tile.draw, rxpos, rypos, width, height)
-end ; module.Sol_DrawTile=Sol_DrawTile
+end
 
 --
 return module

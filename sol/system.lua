@@ -1,9 +1,13 @@
 -- system.lua: functions related to the system.
 local module={}
-function Sol_CheckOperatingSystem()
+
+-- Sol_CheckOperatingSystem: return the OS.
+function module.Sol_CheckOperatingSystem()
   mwarn("Sol_CheckOperatingSystem() is not yet implemented") ; return "?"
-end ; module.Sol_CheckOperatingSystem=Sol_CheckOperatingSystem
-function Sol_MergePath(path_entries)
+end
+
+-- Sol_MergePath: set the real path for something.
+function module.Sol_MergePath(path_entries)
   local final_path,last_dir_had_endslash="",false
   for index, entry in ipairs(path_entries) do
     local current_dir_beginslash=entry:sub(1,1)=='/'
@@ -19,5 +23,6 @@ function Sol_MergePath(path_entries)
     final_path=final_path..entry
   end
   return final_path
-end ; module.Sol_MergePath=Sol_MergePath
+end
+
 return module

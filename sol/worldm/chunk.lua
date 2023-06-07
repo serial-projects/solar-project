@@ -2,13 +2,13 @@ local defaults=require("sol.defaults")
 local module = {}
 
 -- General Chunk Stuff
-function Sol_GetPlayerCurrentChunk(world_mode, world)
+module.Sol_GetPlayerCurrentChunk=function(world_mode, world)
   local player_current_chunk_x=math.floor(world_mode.player.rectangle.position.x/(world.bg_tile_size.x*defaults.SOL_WORLD_CHUNK_WIDTH))
   local player_current_chunk_y=math.floor(world_mode.player.rectangle.position.y/(world.bg_tile_size.y*defaults.SOL_WORLD_CHUNK_HEIGHT))
   return player_current_chunk_x, player_current_chunk_y
-end ; module.Sol_GetPlayerCurrentChunk=Sol_GetPlayerCurrentChunk
+end
 
-function Sol_MapChunksInWorld(world)
+module.Sol_MapChunksInWorld=function(world)
   -- TODO: on the future make this code threaded to prevent the game lagging when creating a lot of tiles.
   local begun_mapping_chunks_at=os.clock()
   world.chunks={}
@@ -28,10 +28,10 @@ function Sol_MapChunksInWorld(world)
     end
   end
   dmsg("Sol_MapChunksInWorld() took %fs", os.clock()-begun_mapping_chunks_at)
-end ; module.Sol_MapChunksInWorld=Sol_MapChunksInWorld
+end
 
 --[[ Functions used in Tick ]]
-function Sol_GetChunksReferencedTiles(world, indexx, indexy, range)
+module.Sol_GetChunksReferencedTiles=function(world, indexx, indexy, range)
   local adquired_references = {}
   for yindex = indexy - range, indexy + range do
     for xindex = indexx - range, indexx + range do
@@ -45,10 +45,10 @@ function Sol_GetChunksReferencedTiles(world, indexx, indexy, range)
     end
   end
   return adquired_references
-end ; module.Sol_GetChunksReferencedTiles=Sol_GetChunksReferencedTiles
+end
 
 --[[ Functions used in Drawing ]]
-function Sol_AdquireChunksConsideringZIndex(world, chunk_name, consider_player)
+module.Sol_AdquireChunksConsideringZIndex=function(world, chunk_name, consider_player)
   local draw_queue = consider_player and {{zindex=1,target=1,type="player"}} or {}
   if world.chunks[chunk_name] then
     --> basically puts on a buffer for follow the order.
@@ -57,25 +57,26 @@ function Sol_AdquireChunksConsideringZIndex(world, chunk_name, consider_player)
     end
     return draw_queue
   end
-end ; module.Sol_AdquireChunksConsideringZIndex=Sol_AdquireChunksConsideringZIndex
-function Sol_GetChunksOrdered(engine, world_mode, world)
+end
+
+module.Sol_GetChunksOrdered=function(engine, world_mode, world)
   --> determine the player current chunk + all the sorroundings tiles.
-  local player_current_chunk_x, player_current_chunk_y=Sol_GetPlayerCurrentChunk(world_mode, world)
+  local player_current_chunk_x, player_current_chunk_y=module.Sol_GetPlayerCurrentChunk(world_mode, world)
   local draw_tile_queue = {}
   for yindex = player_current_chunk_y - engine.vars["RENDER_CHUNK_AMOUNT"], player_current_chunk_y + engine.vars["RENDER_CHUNK_AMOUNT"] do
     for xindex = player_current_chunk_x - engine.vars["RENDER_CHUNK_AMOUNT"], player_current_chunk_x + engine.vars["RENDER_CHUNK_AMOUNT"] do
       local chunk_target=tostring(xindex)..'.'..tostring(yindex)
       if xindex == player_current_chunk_x and yindex == player_current_chunk_y then
-        table.unimerge(draw_tile_queue, Sol_AdquireChunksConsideringZIndex(world, chunk_target, true))
+        table.unimerge(draw_tile_queue, module.Sol_AdquireChunksConsideringZIndex(world, chunk_target, true))
       else
-        table.unimerge(draw_tile_queue, Sol_AdquireChunksConsideringZIndex(world, chunk_target, true))
+        table.unimerge(draw_tile_queue, module.Sol_AdquireChunksConsideringZIndex(world, chunk_target, true))
       end
     end
   end
   --> begin organizing the stuff...
   table.sort(draw_tile_queue, function (a, b) return a.zindex < b.zindex end)
   return draw_tile_queue
-end ; module.Sol_GetChunksOrdered=Sol_GetChunksOrdered
+end
 
 --
 return module

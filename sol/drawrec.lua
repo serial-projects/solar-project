@@ -6,7 +6,7 @@ local storage=require("sol.storage")
 local sgen=require("sol.sgen")
 local module={}
 --
-function Sol_NewDrawRecipe(draw)
+function module.Sol_NewDrawRecipe(draw)
   -- _NewRecipe() build a recipe with the default values.
   local function _NewRecipe(recipe)
     return sgen.Sol_BuildStruct({
@@ -33,7 +33,7 @@ function Sol_NewDrawRecipe(draw)
     counter = draw["counter"] or 0,
     max_counter = draw["max_counter"] or 5,
   }
-end ; module.Sol_NewDrawRecipe=Sol_NewDrawRecipe
+end
 
 -- _DrawImage(): draw some image on the screen.
 local function _DrawSimpleRectangle(draw, rxpos, rypos, width, height)
@@ -89,7 +89,7 @@ local function _DrawImages(engine, draw, recipe, rxpos, rypos)
 end
 
 -- Sol_DrawUsingRecipe(): 
-function Sol_DrawUsingRecipe(engine, draw, recipe, rxpos, rypos, width, height)
+function module.Sol_DrawUsingRecipe(engine, draw, recipe, rxpos, rypos, width, height)
   if recipe.draw_method == defaults.SOL_DRAW_USING.COLOR then
     _DrawSimpleRectangle(recipe, rxpos, rypos, width, height)
   elseif recipe.draw_method == defaults.SOL_DRAW_USING.TEXTURE then
@@ -99,14 +99,14 @@ function Sol_DrawUsingRecipe(engine, draw, recipe, rxpos, rypos, width, height)
   elseif recipe.draw_method == defaults.SOL_DRAW_USING.IMAGES then
     _DrawImages(engine, draw, recipe, rxpos, rypos)
   end
-end ; module.Sol_DrawUsingRecipe=Sol_DrawUsingRecipe
+end
 
 -- Sol_DrawRecipe():
-function Sol_DrawRecipe(engine, draw, rxpos, rypos, width, height)
+function module.Sol_DrawRecipe(engine, draw, rxpos, rypos, width, height)
   if draw.using_recipe ~= 0 or draw.using_recipe ~= "0" then
-    Sol_DrawUsingRecipe(engine, draw, draw.recipes[tostring(draw.using_recipe)], rxpos, rypos, width, height)
+    module.Sol_DrawUsingRecipe(engine, draw, draw.recipes[tostring(draw.using_recipe)], rxpos, rypos, width, height)
   end
-end ; module.Sol_DrawRecipe=Sol_DrawRecipe
+end
 
 --
 return module

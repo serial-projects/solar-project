@@ -1,4 +1,6 @@
 -- Sectionized Configuration File: SCF for short.
+-- TODO: remove global exportation.
+
 local module = {}
 local sfmt = string.format
 

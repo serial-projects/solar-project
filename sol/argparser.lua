@@ -1,6 +1,7 @@
 -- argparser.lua: simple user argument parser.
 local module={}
-function Sol_UserArgumentsDecode(arglist, argtable)
+
+function module.Sol_UserArgumentsDecode(arglist, argtable)
   local index,length,has_default=1,#arglist,argtable["default"]~=nil
   while index<=length do
     local argument=arglist[index]
@@ -23,6 +24,7 @@ function Sol_UserArgumentsDecode(arglist, argtable)
     end
     index=index+1
   end
-end ; module.Sol_UserArgumentsDecode=Sol_UserArgumentsDecode
+end
+
 --
 return module

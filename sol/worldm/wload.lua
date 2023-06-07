@@ -11,7 +11,7 @@ local chunk=require("sol.worldm.chunk")
 
 local module={}
 
-function Sol_GenerateLayer(world, layer)
+function module.Sol_GenerateLayer(world, layer)
   if world.recipe_layers[layer] then
     local current_layer = world.recipe_layers[layer]
     local layer_width = current_layer["width"]
@@ -36,9 +36,9 @@ function Sol_GenerateLayer(world, layer)
     end
     --> end.
   end
-end ; module.Sol_GenerateLayer=Sol_GenerateLayer
+end
 
-function Sol_WorldSpawnTile(engine, world_mode, world, tile_name)
+function module.Sol_WorldSpawnTile(engine, world_mode, world, tile_name)
   if world.recipe_tiles[tile_name] then
     local proto_tile=tiles.Sol_NewTile(world.recipe_tiles[tile_name])
     table.insert(world.tiles, proto_tile)
@@ -46,9 +46,9 @@ function Sol_WorldSpawnTile(engine, world_mode, world, tile_name)
   else
     return false
   end
-end ; module.Sol_WorldSpawnTile=Sol_WorldSpawnTile
+end
 
-function Sol_LoadWorld(engine, world_mode, world, world_name)
+function module.Sol_LoadWorld(engine, world_mode, world, world_name)
   local target_file=system.Sol_MergePath({engine.root,string.format("levels/%s.slevel",world_name)})
   dmsg("Sol_LoadWorld() will attempt to load file: %s for world: %s", target_file, world_name)
   --> clean the old tiles and load everything again.
@@ -72,14 +72,14 @@ function Sol_LoadWorld(engine, world_mode, world, world_name)
     local spawn_tiles=world.recipe_level["spawn_tiles"]
     if spawn_tiles and type(spawn_tiles) == "table" then
       for _, tile in ipairs(spawn_tiles) do
-        local sucess=Sol_WorldSpawnTile(engine, world_mode, world, tile)
+        local sucess=module.Sol_WorldSpawnTile(engine, world_mode, world, tile)
         if not sucess then mwarn("couldn't generate tile: %s!", tile) end
       end
     end
     local spawn_layers=world.recipe_level["spawn_layers"]
     if spawn_layers and type(spawn_layers) == "table" then
       for _, layer in ipairs(spawn_layers) do
-        Sol_GenerateLayer(world, layer)
+        module.Sol_GenerateLayer(world, layer)
       end
     end
   end
@@ -101,7 +101,7 @@ function Sol_LoadWorld(engine, world_mode, world, world_name)
   end
   --> map the chunks
   chunk.Sol_MapChunksInWorld(world)
-end ; module.Sol_LoadWorld=Sol_LoadWorld
+end
 
 --
 return module

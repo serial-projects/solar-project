@@ -105,7 +105,7 @@ local function Sol_DrawFrame(display, frame)
     end
   end
 end
-Sol_UIElementTypesWrap["frame"]={tick=Sol_TickFrame, draw=Sol_DrawFrame}
+Sol_UIElementTypesWrap["frame"]={tick=Sol_TickFrame, draw=Sol_DrawFrame, keypress=nil}
 
 --[[ Begin the "Cursor" functions ]]
 local SOL_CURSOR_STATES = table.enum(1, {"NORMAL", "LOADING", "FAILED"}) ; module.SOL_CURSOR_STATES=SOL_CURSOR_STATES

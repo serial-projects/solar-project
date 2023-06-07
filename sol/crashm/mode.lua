@@ -7,10 +7,10 @@ local module={}
 function module.Sol_NewCrashMode()
   return {
     -- the main UI ::
-    main_window = nil,
+    main_window     = nil,
     -- extra contextual information ::
-    current_reason = nil,
-    traceback = nil,
+    current_reason  = nil,
+    traceback       = nil,
   }
 end
 

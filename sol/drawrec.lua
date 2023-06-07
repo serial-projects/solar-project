@@ -10,13 +10,13 @@ function module.Sol_NewDrawRecipe(draw)
   -- _NewRecipe() build a recipe with the default values.
   local function _NewRecipe(recipe)
     return sgen.Sol_BuildStruct({
-      draw_method = 0,
-      textures = {},
-      texture_index = 1,
-      texture_timing = 0.1,
-      texture_nextupdate = 0,
-      texture_autoupdate = false,
-      texture_counter = 0,
+      draw_method             = 0,
+      textures                = {},
+      texture_index           = 1,
+      texture_timing          = 0.1,
+      texture_nextupdate      = 0,
+      texture_autoupdate      = false,
+      texture_counter         = 0,
     }, recipe)
   end
   -- _InitializeRecipes(): initializes all the recipes to prevent 'nil' accesses.

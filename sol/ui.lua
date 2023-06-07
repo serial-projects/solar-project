@@ -21,18 +21,18 @@ end
 function module.Sol_NewLabel(label)
   local label = label or {}
   return sgen.Sol_BuildStruct({
-    type = "label",
-    non_formatted_text = sgen.SNIL,
-    text = "",
-    font = sgen.SNIL,
-    color = smath.Sol_NewColor4(0, 0, 0),
-    rectangle = smath.Sol_NewRectangle(),
-    position = smath.Sol_NewVector(0, 0),
-    has_background = false,
-    background_color = smath.Sol_NewColor4(0, 0, 0),
-    force_absolute = false,
-    when_left_click=0,
-    when_right_click=0,
+    type                = "label",
+    non_formatted_text  = sgen.SNIL,
+    text                = "",
+    font                = sgen.SNIL,
+    color               = smath.Sol_NewColor4(0, 0, 0),
+    rectangle           = smath.Sol_NewRectangle(),
+    position            = smath.Sol_NewVector(0, 0),
+    has_background      = false,
+    background_color    = smath.Sol_NewColor4(0, 0, 0),
+    force_absolute      = false,
+    when_left_click     = 0,
+    when_right_click    = 0,
   }, label)
 end
 local function Sol_TickLabel(display, label)
@@ -76,12 +76,12 @@ local Sol_UIElementTypesWrap={
 function module.Sol_NewFrame(frame)
   local frame = frame or {}
   return sgen.Sol_BuildStruct({
-    type = "frame",
-    elements = {},
-    visible = true,
-    enable_bg = false,
-    bg_canvas = sgen.SNIL,
-    bg_position = smath.Sol_NewVector(0, 0),
+    type          = "frame",
+    elements      = {},
+    visible       = true,
+    enable_bg     = false,
+    bg_canvas     = sgen.SNIL,
+    bg_position   = smath.Sol_NewVector(0, 0),
   }, frame)
 end
 function module.Sol_InsertElementInFrame(frame, element)
@@ -111,14 +111,14 @@ Sol_UIElementTypesWrap["frame"]={tick=Sol_TickFrame, draw=Sol_DrawFrame}
 local SOL_CURSOR_STATES = table.enum(1, {"NORMAL", "LOADING", "FAILED"}) ; module.SOL_CURSOR_STATES=SOL_CURSOR_STATES
 function module.Sol_NewCursor(cursor)
   return sgen.Sol_BuildStruct({
-    draw_method = defaults.SOL_DRAW_USING.COLOR,
-    textures = {},
-    current_mode = SOL_CURSOR_STATES.NORMAL,
-    texture_timing = 0,
-    texture_index = 0,
-    color = defaults.SOL_UI_CURSOR_DEFAULT_COLOR,
-    rectangle = smath.Sol_NewRectangle(nil, defaults.SOL_UI_CURSOR_DEFAULT_SIZE),
-    lastpos = smath.Sol_NewVector(0, 0),
+    draw_method     = defaults.SOL_DRAW_USING.COLOR,
+    textures        = {},
+    current_mode    = SOL_CURSOR_STATES.NORMAL,
+    texture_timing  = 0,
+    texture_index   = 0,
+    color           = defaults.SOL_UI_CURSOR_DEFAULT_COLOR,
+    rectangle       = smath.Sol_NewRectangle(nil, defaults.SOL_UI_CURSOR_DEFAULT_SIZE),
+    lastpos         = smath.Sol_NewVector(0, 0),
     position_offset = smath.Sol_NewVector(0, 0)
   }, cursor or {})
 end
@@ -142,11 +142,11 @@ end
 --[[ Begin the "Display" object functions ]]
 function module.Sol_NewDisplay(display)
   return sgen.Sol_BuildStruct({
-    elements = {},
-    cursor = module.Sol_NewCursor(),
-    name = "display",
-    type = "display",
-    size = smath.Sol_NewVector(0, 0)
+    elements  = {},
+    cursor    = module.Sol_NewCursor(),
+    name      = "display",
+    type      = "display",
+    size      = smath.Sol_NewVector(0, 0)
   }, display or {})
 end
 

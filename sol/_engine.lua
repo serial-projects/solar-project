@@ -12,19 +12,19 @@ local module={}
 --[[ Create a New Engine ]]
 function module.Sol_NewEngine()
   return {
-    vars={PRECISE_WALK=true, CHUNK_RENDERING=1, RENDER_CHUNK_AMOUNT = 2, CHUNK_SIZE=64},
-    storage = storage.Sol_NewStorage(nil),
-    root = nil,
-    window_size = smath.Sol_NewVector(defaults.SOL_WINDOW_WIDTH, defaults.SOL_WINDOW_HEIGHT),
-    window_title = defaults.SOL_WINDOW_TITLE,
-    window_flags = defaults.SOL_WINDOW_FLAGS,
-    viewport_size = smath.Sol_NewVector(defaults.SOL_VIEWPORT_WIDTH, defaults.SOL_VIEWPORT_HEIGHT),
+    vars              = {PRECISE_WALK=true, CHUNK_RENDERING=1, RENDER_CHUNK_AMOUNT = 2, CHUNK_SIZE=64},
+    storage           = storage.Sol_NewStorage(nil),
+    root              = nil,
+    window_size       = smath.Sol_NewVector(defaults.SOL_WINDOW_WIDTH, defaults.SOL_WINDOW_HEIGHT),
+    window_title      = defaults.SOL_WINDOW_TITLE,
+    window_flags      = defaults.SOL_WINDOW_FLAGS,
+    viewport_size     = smath.Sol_NewVector(defaults.SOL_VIEWPORT_WIDTH, defaults.SOL_VIEWPORT_HEIGHT),
     viewport_position = smath.Sol_NewVector(0, 0),
-    current_mode = defaults.SOL_ENGINE_MODES.WORLD,
-    menu_mode = nil,
-    world_mode = wmode.Sol_NewWorldMode(),
-    credits_mode = nil,
-    wmode_keymap={walk_up="up", walk_down="down", walk_left="left", walk_right="right"},
+    current_mode      = defaults.SOL_ENGINE_MODES.WORLD,
+    menu_mode         = nil,
+    world_mode        = wmode.Sol_NewWorldMode(),
+    credits_mode      = nil,
+    wmode_keymap      = {walk_up="up", walk_down="down", walk_left="left", walk_right="right"},
   }
 end
 

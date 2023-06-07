@@ -10,7 +10,7 @@ function module.Sol_NewPlayer()
     name = "player",
     --[[ inv. and pets :) ]]
     inventory = {},
-    pets = {},
+    pets      = {},
     --[[ walking ]]
     walk_speed = 4,
     walk_speed_texture_counter_add = 0.1,
@@ -18,13 +18,13 @@ function module.Sol_NewPlayer()
     run_speed = 8,
     run_speed_texture_counter_add = 0.5,
     --[[ speed and looking_direction ]]
-    current_speed = 0,
-    looking_direction=defaults.SOL_PLAYER_LOOK_DIRECTION.DOWN,
+    current_speed     = 0,
+    looking_direction = defaults.SOL_PLAYER_LOOK_DIRECTION.DOWN,
     --[[ draw ]]
     draw = nil,
     --[[ rel_position and other. ]]
-    rel_position = smath.Sol_NewVector(0, 0),
-    rectangle = smath.Sol_NewRectangle(nil, defaults.SOL_PLAYER_SIZE),
+    rel_position  = smath.Sol_NewVector(0, 0),
+    rectangle     = smath.Sol_NewRectangle(nil, defaults.SOL_PLAYER_SIZE),
   }
 end
 
@@ -36,8 +36,8 @@ end
 
 --[[ Draw Related Functions ]]
 function module.Sol_DrawPlayer(engine, world_mode, player)
-  local posx, posy    =smath.Sol_UnpackVectorXY(player.rel_position)
-  local width, height =smath.Sol_UnpackVectorXY(player.rectangle.size)
+  local posx, posy    = smath.Sol_UnpackVectorXY(player.rel_position)
+  local width, height = smath.Sol_UnpackVectorXY(player.rectangle.size)
   player.draw.using_recipe = player.looking_direction
   drawrec.Sol_DrawRecipe(engine, player.draw, posx, posy, width, height)
 end

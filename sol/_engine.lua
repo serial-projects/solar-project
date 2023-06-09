@@ -5,6 +5,7 @@ local graphics = require "sol.graphics"
 local storage = require "sol.storage"
 local scf = require "sol.scf"
 local system = require "sol.system"
+local ssen_load = require "sol.ssen.load"
 
 local module={}
 --
@@ -25,6 +26,7 @@ function module.Sol_NewEngine()
     world_mode        = wmode.Sol_NewWorldMode(),
     credits_mode      = nil,
     wmode_keymap      = {walk_up="up", walk_down="down", walk_left="left", walk_right="right"},
+    main_ssen_thread  = nil,
   }
 end
 
@@ -88,6 +90,9 @@ function module.Sol_InitEngine(engine, path_resources)
   storage.Sol_LoadLanguage(engine.storage, "en_US")
   --
   wmode.Sol_InitWorldMode(engine, engine.world_mode)
+  --
+  engine.main_ssen_thread = ssen_load.SSEN_LoadFile(system.Sol_MergePath({engine.root, "scripts/", "main.ssen"}))
+  --
   dmsg("Sol_InitEngine() took %s seconds.", os.clock() - begun)
 end
 

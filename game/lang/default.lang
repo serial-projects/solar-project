@@ -2,4 +2,7 @@
 section texts
     define  WMODE_DISPLAY_DEBUG_UI_FRAME_VERSION_LABEL_TEXT, "Sol Engine \"%s\" (running on LÖVE %d.%d.%d) [Lua: %s (jit? %s)]"
     define  WMODE_DISPLAY_DEBUG_UI_FRAME_MEMORYUSAGE_LABEL_TEXT, "Using: %sm"
+    define  WMODE_DISPLAY_EXIT_UI_ASK_LABEL_TEXT, "Do you want to leave?"
+    define  WMODE_DISPLAY_YES_TEXT, "Yes"
+    define  WMODE_DISPLAY_NO_TEXT, "No"
 end-section

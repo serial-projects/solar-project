@@ -14,6 +14,9 @@ COLOR_RED="\e[31m"
 COLOR_BLUE="\e[36m"
 COLOR_PURPLE="\e[35m"
 
+# PRE_REQ:
+[[ ! -e './build' ]] || mkdir ./build
+
 # _die(): die :)
 _die(){
     echo "[build.sh die()]: $1" ; exit -1
@@ -56,6 +59,7 @@ help(){
 }
 
 # main
+
 echo "[build.sh]: $(date): begun!" > $BUILD_LOG
 echo -e "${COLOR_PURPLE}[build.sh]${NO_COLOR}: Solar Engine's build tool \"$_VERSION\""
 if [[ "$#" == 0 ]]; then

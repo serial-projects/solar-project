@@ -1,4 +1,5 @@
 local defaults=require("sol.defaults")
+local consts=require("sol.consts")
 local smath=require("sol.smath")
 
 -- world module:
@@ -96,13 +97,13 @@ end
 function module.Sol_CheckSingleDirectionWalking(engine, world_mode, world)
   world_mode.player.current_speed = love.keyboard.isDown("lshift") and world_mode.player.run_speed or world_mode.player.walk_speed
   if      love.keyboard.isDown(engine.wmode_keymap["walk_up"])    then
-    module.Sol_WalkInWorld(engine, world_mode, world, defaults.SOL_PLAYER_LOOK_DIRECTION.UP,   0, -world_mode.player.current_speed)
+    module.Sol_WalkInWorld(engine, world_mode, world, consts.player_directions.UP,   0, -world_mode.player.current_speed)
   elseif  love.keyboard.isDown(engine.wmode_keymap["walk_down"])  then
-    module.Sol_WalkInWorld(engine, world_mode, world, defaults.SOL_PLAYER_LOOK_DIRECTION.DOWN, 0,  world_mode.player.current_speed)
+    module.Sol_WalkInWorld(engine, world_mode, world, consts.player_directions.DOWN, 0,  world_mode.player.current_speed)
   elseif  love.keyboard.isDown(engine.wmode_keymap["walk_left"])  then
-    module.Sol_WalkInWorld(engine, world_mode, world, defaults.SOL_PLAYER_LOOK_DIRECTION.LEFT, -world_mode.player.current_speed, 0)
+    module.Sol_WalkInWorld(engine, world_mode, world, consts.player_directions.LEFT, -world_mode.player.current_speed, 0)
   elseif  love.keyboard.isDown(engine.wmode_keymap["walk_right"]) then
-    module.Sol_WalkInWorld(engine, world_mode, world, defaults.SOL_PLAYER_LOOK_DIRECTION.RIGHT, world_mode.player.current_speed, 0)
+    module.Sol_WalkInWorld(engine, world_mode, world, consts.player_directions.RIGHT, world_mode.player.current_speed, 0)
   end
 end
 

@@ -1,4 +1,5 @@
 local smath=require("sol.smath")
+local consts=require("sol.consts")
 local defaults=require("sol.defaults")
 local drawrec= require("sol.drawrec")
 local module={}
@@ -19,7 +20,7 @@ function module.Sol_NewPlayer()
     run_speed_texture_counter_add = 0.5,
     --[[ speed and looking_direction ]]
     current_speed     = 0,
-    looking_direction = defaults.SOL_PLAYER_LOOK_DIRECTION.DOWN,
+    looking_direction = consts.player_directions.DOWN,
     --[[ draw ]]
     draw = nil,
     --[[ rel_position and other. ]]

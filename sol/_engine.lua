@@ -1,4 +1,5 @@
 local defaults = require "sol.defaults"
+local consts = require "sol.consts"
 local wmode = require "sol.worldm.mode"
 local smath = require "sol.smath"
 local graphics = require "sol.graphics"
@@ -21,7 +22,7 @@ function module.Sol_NewEngine()
     window_flags      = defaults.SOL_WINDOW_FLAGS,
     viewport_size     = smath.Sol_NewVector(defaults.SOL_VIEWPORT_WIDTH, defaults.SOL_VIEWPORT_HEIGHT),
     viewport_position = smath.Sol_NewVector(0, 0),
-    current_mode      = defaults.SOL_ENGINE_MODES.WORLD,
+    current_mode      = consts.engine_modes.WORLD,
     menu_mode         = nil,
     world_mode        = wmode.Sol_NewWorldMode(),
     credits_mode      = nil,
@@ -105,9 +106,9 @@ function module.Sol_NewResizeEventEngine(engine, new_width, new_height)
 end
 
 function module.Sol_KeypressEventEngine(engine, key)
-  if engine.current_mode == defaults.SOL_ENGINE_MODES.MENU then
+  if      engine.current_mode == consts.engine_modes.MENU   then
     mwarn("engine.current_mode is not yet implemented.")
-  elseif engine.current_mode == defaults.SOL_ENGINE_MODES.WORLD then
+  elseif  engine.current_mode == consts.engine_modes.WORLD  then
     wmode.Sol_KeypressEventWorld(engine, engine.world_mode, key)
   else
     mwarn("engine.current_mode is not yet implemented.")
@@ -116,9 +117,9 @@ end
 
 function module.Sol_TickEngine(engine)
   storage.Sol_CleanCacheInStorage(engine.storage)
-  if engine.current_mode == defaults.SOL_ENGINE_MODES.MENU then
+  if      engine.current_mode == consts.engine_modes.MENU   then
     mwarn("engine.current_mode is not yet implemented.")
-  elseif engine.current_mode == defaults.SOL_ENGINE_MODES.WORLD then
+  elseif  engine.current_mode == consts.engine_modes.WORLD  then
     wmode.Sol_TickWorldMode(engine, engine.world_mode)
   else
     mwarn("engine.current_mode is not yet implemented.")
@@ -127,9 +128,9 @@ end
 
 --[[ Draw Related Functions ]]
 function module.Sol_DrawEngine(engine)
-  if engine.current_mode == defaults.SOL_ENGINE_MODES.MENU then
+  if      engine.current_mode == consts.engine_modes.MENU   then
     mwarn("engine.current_mode is not yet implemented.")
-  elseif engine.current_mode == defaults.SOL_ENGINE_MODES.WORLD then
+  elseif  engine.current_mode == consts.engine_modes.WORLD  then
     wmode.Sol_DrawWorldMode(engine, engine.world_mode)
     graphics.Sol_DrawCanvas(engine.world_mode.viewport, engine.viewport_position)
   else

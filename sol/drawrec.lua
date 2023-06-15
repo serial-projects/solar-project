@@ -1,6 +1,7 @@
 -- TODO: optimize the function arguments (specially rxpos, rypos)
 
 local defaults=require("sol.defaults")
+local consts=require("sol.consts")
 local smath=require("sol.smath")
 local storage=require("sol.storage")
 local sgen=require("sol.sgen")
@@ -90,13 +91,13 @@ end
 
 -- Sol_DrawUsingRecipe(): 
 function module.Sol_DrawUsingRecipe(engine, draw, recipe, rxpos, rypos, width, height)
-  if recipe.draw_method == defaults.SOL_DRAW_USING.COLOR then
+  if      recipe.draw_method == consts.draw_using.COLOR   then
     _DrawSimpleRectangle(recipe, rxpos, rypos, width, height)
-  elseif recipe.draw_method == defaults.SOL_DRAW_USING.TEXTURE then
+  elseif  recipe.draw_method == consts.draw_using.TEXTURE then
     -- TODO: remove this option.
-  elseif recipe.draw_method == defaults.SOL_DRAW_USING.SPRITES then
+  elseif  recipe.draw_method == consts.draw_using.SPRITES then
     _DrawSprites(engine, draw, recipe, rxpos, rypos)
-  elseif recipe.draw_method == defaults.SOL_DRAW_USING.IMAGES then
+  elseif  recipe.draw_method == consts.draw_using.IMAGES  then
     _DrawImages(engine, draw, recipe, rxpos, rypos)
   end
 end

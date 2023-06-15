@@ -1,11 +1,12 @@
 local defaults=require("sol.defaults")
+local consts=require("sol.consts")
 local smath=require("sol.smath")
 local sgen=require("sol.sgen")
 local module={}
 local SOL_CURSOR_STATES = table.enum(1, {"NORMAL", "LOADING", "FAILED"}) ; module.SOL_CURSOR_STATES=SOL_CURSOR_STATES
 function module.Sol_NewCursor(cursor)
   return sgen.Sol_BuildStruct({
-    draw_method     = defaults.SOL_DRAW_USING.COLOR,
+    draw_method     = consts.draw_using.COLOR,
     textures        = {},
     current_mode    = SOL_CURSOR_STATES.NORMAL,
     texture_timing  = 0,
@@ -24,12 +25,12 @@ function module.Sol_TickCursor(cursor)
 end
 
 function module.Sol_DrawCursor(cursor)
-  if cursor.draw_method == defaults.SOL_DRAW_USING.COLOR then
+  if cursor.draw_method == consts.draw_using.COLOR then
     love.graphics.setColor(smath.Sol_TranslateColor(cursor.color))
     love.graphics.rectangle("fill", smath.Sol_UnpackRectXYWH(cursor.rectangle))
   else
     mwarn("drawing method not yet implemented for Sol_Cursor!")
-    cursor.draw_method = defaults.SOL_DRAW_USING.COLOR
+    cursor.draw_method = consts.draw_using.COLOR
   end
 end
 

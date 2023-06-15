@@ -53,7 +53,8 @@ function module.Sol_InitWorldModeGUI(engine, world_mode)
     module.Sol_QuitWorldMode(engine, world_mode)
   end
   local function __display_exit_ui_no_button_action()
-    world_mode.display_exit_ui_frame.visible=false
+    world_mode.display_exit_ui_frame.visible = false
+    world_mode.do_world_tick = true
   end
   --> display_debug_ui: frame
   world_mode.display_debug_ui_frame=ui_frame.Sol_NewFrame()
@@ -78,17 +79,26 @@ function module.Sol_InitWorldModeGUI(engine, world_mode)
   world_mode.display_exit_ui_frame.visible=false
     world_mode.display_exit_ui_ask_label=ui_label.Sol_NewLabel({font=normal_title_font, color=consts.colors.WHITE})
       world_mode.display_exit_ui_ask_label.position=smath.Sol_NewVector(50, 30)
+      world_mode.display_exit_ui_ask_label.color=smath.Sol_NewColor4(255, 255, 255)
       world_mode.display_exit_ui_ask_label.text=storage.Sol_GetText(engine.storage,"WMODE_DISPLAY_EXIT_UI_ASK_LABEL_TEXT")
     ui_frame.Sol_InsertElementInFrame(world_mode.display_exit_ui_frame, world_mode.display_exit_ui_ask_label)
     world_mode.display_exit_ui_yes_button=ui_button.Sol_NewButton({font=normal_font})
-      world_mode.display_exit_ui_yes_button.size=smath.Sol_NewVector(150, 40)
+      world_mode.display_exit_ui_yes_button.background_color=smath.Sol_NewColor4(150, 150, 150, 100)
+      world_mode.display_exit_ui_yes_button.background_hovering_color=smath.Sol_NewColor4(150, 150, 150, 200)
+      world_mode.display_exit_ui_yes_button.has_borders=true
+      world_mode.display_exit_ui_yes_button.border_color=smath.Sol_NewColor4(0, 0, 0)
+      world_mode.display_exit_ui_yes_button.size=smath.Sol_NewVector(150, 30)
       world_mode.display_exit_ui_yes_button.position=smath.Sol_NewVector(20, 70)
       world_mode.display_exit_ui_yes_button.text=storage.Sol_GetText(engine.storage,"WMODE_DISPLAY_YES_TEXT")
       world_mode.display_exit_ui_yes_button.force_absolute=false
       world_mode.display_exit_ui_yes_button.when_left_click=__display_exit_ui_yes_button_action
     ui_frame.Sol_InsertElementInFrame(world_mode.display_exit_ui_frame, world_mode.display_exit_ui_yes_button)
     world_mode.display_exit_ui_no_button=ui_button.Sol_NewButton({font=normal_font})
-      world_mode.display_exit_ui_no_button.size=smath.Sol_NewVector(150, 40)
+      world_mode.display_exit_ui_no_button.background_color=smath.Sol_NewColor4(150, 150, 150, 100)
+      world_mode.display_exit_ui_no_button.background_hovering_color=smath.Sol_NewColor4(150, 150, 150, 200)
+      world_mode.display_exit_ui_no_button.has_borders=true
+      world_mode.display_exit_ui_no_button.border_color=smath.Sol_NewColor4(0, 0, 0)
+      world_mode.display_exit_ui_no_button.size=smath.Sol_NewVector(150, 30)
       world_mode.display_exit_ui_no_button.position=smath.Sol_NewVector(80, 70)
       world_mode.display_exit_ui_no_button.text=storage.Sol_GetText(engine.storage,"WMODE_DISPLAY_NO_TEXT")
       world_mode.display_exit_ui_no_button.force_absolute=false
@@ -139,8 +149,8 @@ function module.Sol_KeypressEventWorld(engine, world_mode, key)
       world_mode.display_debug_ui_frame.visible = not world_mode.display_debug_ui_frame.visible 
     end,
     ["escape"] =function()
-      world_mode.display_exit_ui_frame.visible = true
-      world_mode.do_world_tick = false
+      world_mode.display_exit_ui_frame.visible = not world_mode.display_exit_ui_frame.visible
+      world_mode.do_world_tick = not world_mode.do_world_tick
     end,
   }
   if _keytable[key] then _keytable[key]() end

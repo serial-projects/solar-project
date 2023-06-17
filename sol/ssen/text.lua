@@ -16,7 +16,7 @@ function module.SSEN_Tokenize(str)
   local function append_token(prefix, suffix)
     if suffix then acc = acc .. suffix end
     if #acc > 0 then
-      tokens[#tokens+1]=acc
+      table.insert(tokens, acc)
     end
     acc=prefix ~= nil and prefix or ""
   end
@@ -25,6 +25,8 @@ function module.SSEN_Tokenize(str)
     local cch = str:sub(index, index)
     -- for empty spaces:
     if (cch == ' ') and not instr then
+      append_token()
+    elseif (cch == ',') and not instr then
       append_token()
     -- for comments:
     elseif (cch == ';') and not instr then

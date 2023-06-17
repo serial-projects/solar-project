@@ -1,15 +1,19 @@
 local module={}
 local text=require("sol.ssen.text")
+local interpreter=require("sol.ssen.interpreter")
 --
-function module.SSEN_LoadBuffer(buffer)
-  local tokenized_buffer=text.SSEN_Tokenize(text.SSEN_PurifyString(buffer))
-  dmsg(table.show(tokenized_buffer))
-end
 function module.SSEN_LoadFile(path)
-  local fp = love.filesystem.newFile(path, "r")
-    local loaded_buffer=fp:read()
-  fp:close()
-  loaded_buffer=module.SSEN_LoadBuffer(loaded_buffer)
+  local tokenized_buffer={}
+  local fp=love.filesystem.newFile(path,"r")
+  for line in fp:lines() do
+    local purified_line =text.SSEN_PurifyString(line)
+    local tokenized_line=text.SSEN_Tokenize(purified_line)
+    table.unimerge(tokenized_buffer, tokenized_line)
+  end
+  --
+  local proto_ir = interpreter.SSEN_NewInterpreter({name=path.."#thread"})
+  interpreter.SSEN_InitInterpreter(proto_ir, tokenized_buffer)
+  return proto_ir
 end
 --
 return module

@@ -30,6 +30,7 @@ function module.Sol_TickFrame(display, frame)
         end
       end
     end
+    --
   end
 end
 function module.Sol_DrawFrame(display, frame)

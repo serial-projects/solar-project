@@ -4,6 +4,10 @@ local system=require("sol.system")
 local scf=require("sol.scf")
 local player = require("sol.worldm.player")
 local drawrec= require("sol.drawrec")
+local consts = require("sol.consts")
+
+-- ssen module:
+local ssen_load=require("sol.ssen.load")
 
 -- world module:
 local tiles=require("sol.worldm.tiles")
@@ -11,6 +15,15 @@ local chunk=require("sol.worldm.chunk")
 
 local module={}
 
+-- Sol_SystemCalls: this is all the system calls that can be done by the
+-- intepreter using the "sysc" instruction.
+module.Sol_SystemCalls={
+  ["SolOutput"]=function(ir)
+    dmsg("[syscall in thread: \"%s\" (SolOutput)]: %s", ir.name, tostring(ir.registers.A))
+  end,
+}
+
+-- Sol_GenerateLayer(world: world, layer: layer): generate a layer by its name.
 function module.Sol_GenerateLayer(world, layer)
   if world.recipe_layers[layer] then
     local current_layer = world.recipe_layers[layer]
@@ -38,6 +51,7 @@ function module.Sol_GenerateLayer(world, layer)
   end
 end
 
+-- Sol_WorldSpawnTile: creates a new tile.
 function module.Sol_WorldSpawnTile(engine, world_mode, world, tile_name)
   if world.recipe_tiles[tile_name] then
     local proto_tile=tiles.Sol_NewTile(world.recipe_tiles[tile_name])
@@ -48,6 +62,8 @@ function module.Sol_WorldSpawnTile(engine, world_mode, world, tile_name)
   end
 end
 
+-- Sol_LoadWorld(engine, world_mode, world, world_name: string): automatically loads the world
+-- recipe file and build the world from the recipe provided.
 function module.Sol_LoadWorld(engine, world_mode, world, world_name)
   local target_file=system.Sol_MergePath({engine.root,string.format("levels/%s.slevel",world_name)})
   dmsg("Sol_LoadWorld() will attempt to load file: %s for world: %s", target_file, world_name)
@@ -62,7 +78,8 @@ function module.Sol_LoadWorld(engine, world_mode, world, world_name)
   world.recipe_level          =target_file["level"]       or world.recipe_level
   world.recipe_layers         =target_file["layers"]      or world.recipe_layers
   world.recipe_player         =target_file["player"]      or world.recipe_player
-  --> load the level geometry
+  world.recipe_scripts        =target_file["scripts"]     or world.recipe_scripts
+  --> "geometry" section stuff.
   world.bg_size             =smath.Sol_NewVector(world.recipe_geometry.bg_size)
   world.bg_tile_size        =smath.Sol_NewVector(world.recipe_geometry.bg_tile_size)
   world.world_size          =smath.Sol_NewVector((world.bg_size.x-1)*world.bg_tile_size.x,(world.bg_size.y-1)*world.bg_tile_size.y)
@@ -83,23 +100,42 @@ function module.Sol_LoadWorld(engine, world_mode, world, world_name)
       end
     end
   end
-  --> "player" section
-  if world.recipe_player then
-    local spawn_position = world.recipe_player["spawn"]
-    if spawn_position then
-      local xpos, ypos = spawn_position["xpos"] or 0, spawn_position["ypos"] or 0
-      if spawn_position["use_tile_alignment"] then
-        xpos = xpos * world.bg_tile_size.x
-        ypos = ypos * world.bg_tile_size.y
+  --> "player" section 
+  -- NOTE: the player section is actually loaded during the world firstrun routine.
+  local function wload_AdjustPlayerOneshot_FirstRun(engine, world_mode, world, routine)
+    dmsg("%s is adjust the player for the first time run on the world: \"%s\"!", routine.name, world.name)
+    if world.recipe_player then
+      local spawn_position = world.recipe_player["spawn"]
+      if spawn_position then
+        local xpos, ypos = spawn_position["xpos"] or 0, spawn_position["ypos"] or 0
+        if spawn_position["use_tile_alignment"] then
+          xpos = xpos * world.bg_tile_size.x
+          ypos = ypos * world.bg_tile_size.y
+        end
+        world_mode.player.rectangle.position.x,world_mode.player.rectangle.position.y=xpos, ypos
       end
-      world_mode.player.rectangle.position.x,world_mode.player.rectangle.position.y=xpos, ypos
+      --
+      world_mode.player.draw = drawrec.Sol_NewDrawRecipe(world.recipe_player["draw"])
+      world_mode.player.rectangle.size = world.recipe_player["size"] and smath.Sol_NewVector(world.recipe_player["size"]) or world_mode.player.size
+      player.Sol_LoadPlayerRelativePosition(world_mode, world_mode.player)
     end
-    --
-    world_mode.player.draw = drawrec.Sol_NewDrawRecipe(world.recipe_player["draw"])
-    world_mode.player.rectangle.size = world.recipe_player["size"] and smath.Sol_NewVector(world.recipe_player["size"]) or world_mode.player.size
-    player.Sol_LoadPlayerRelativePosition(world_mode, world_mode.player)
+    return consts.routine_status.FINISHED
   end
-  --> map the chunks
+  table.insert(world.routines, {name="wload.AdjustPlayerOneshot", status=consts.routine_status.FIRSTRUN, wrap={[consts.routine_status.FIRSTRUN]=wload_AdjustPlayerOneshot_FirstRun}})
+  --> "script" section
+  if world.recipe_scripts then
+    for script_name, script in pairs(world.recipe_scripts) do
+      -- TODO: due limitation in SCF, ignore all '__type' keywords.
+      if script_name ~= "__type" then
+        local source        = system.Sol_MergePath({engine.root, "scripts/", script.source..".ssen"})
+        local proto_script  = {name=script.name, instance=ssen_load.SSEN_LoadFile(source), priority=(source["ticks_per_frame"] or 10)}
+        proto_script.instance.globals=engine.vars
+        proto_script.instance.syscalls=module.Sol_SystemCalls
+        table.insert(world.scripts, proto_script)
+      end
+    end
+  end
+  --> build all the chunks in the map.
   chunk.Sol_MapChunksInWorld(world)
 end
 

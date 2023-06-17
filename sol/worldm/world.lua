@@ -1,11 +1,15 @@
 local defaults=require("sol.defaults")
 local consts=require("sol.consts")
 local smath=require("sol.smath")
+local wload= require("sol.worldm.wload")
 
 -- world module:
 local player=require("sol.worldm.player")
 local tiles=require("sol.worldm.tiles")
 local chunk=require("sol.worldm.chunk")
+
+-- ssen module:
+local ssen_interpreter=require("sol.ssen.interpreter")
 
 local module={}
 --
@@ -13,7 +17,9 @@ function module.Sol_NewWorld(world)
   return {
     info={name="n/n", description="?"},
     --
-    chunks={},
+    chunks      ={},
+    routines    ={},
+    scripts     ={},
     --
     recipe_tiles        ={},
     recipe_geometry     ={},
@@ -27,8 +33,13 @@ function module.Sol_NewWorld(world)
     world_size=smath.Sol_NewVector(0, 0),
     enable_world_borders=true,
     tiles={{zindex=1, type="player"}},
-    scripts={},
   }
+end
+
+--[[ Init Related Functions ]]
+function module.Sol_InitWorld(engine, world_mode, world, name)
+  --> load the world primitives: geometry, level and player
+  wload.Sol_LoadWorld(engine, world_mode, world, name)
 end
 
 --[[ Tick Related Functions ]]
@@ -107,8 +118,52 @@ function module.Sol_CheckSingleDirectionWalking(engine, world_mode, world)
   end
 end
 
+function module.Sol_DoWorldRoutines(engine, world_mode, world)
+  if #world.routines > 0 then
+    for routine_index = 1, #world.routines do
+      local routine = world.routines[routine_index]
+      local wrap    = routine.wrap[routine.status]
+      if type(wrap) == "function" then
+        routine.status = wrap(engine, world_mode, world, routine)
+      end
+      if routine.status == consts.routine_status.FINISHED or routine.status == consts.routine_status.DIED then
+        dmsg("routine %s was deleted, last status: %d", routine.name, routine.status)
+        world.routines[routine_index]=nil
+      end
+    end
+  end
+end
+
+function module.Sol_DoScripts(engine, world_mode, world)
+  local function _run(instance, n_ticks)
+    local ir_code = 0
+    for _ = 1, n_ticks do
+      ir_code = ssen_interpreter.SSEN_TickIntepreter(instance)
+      if ir_code == ssen_interpreter.SSEN_Status.FINISHED or ir_code == ssen_interpreter.SSEN_Status.DIED then
+        break
+      end
+    end
+    return ir_code
+  end
+  if #world.scripts > 0 then
+    for ir_index = 1, #world.scripts do
+      local script  = world.scripts[ir_index]
+      local ir_code = _run(script.instance, script.priority)
+      if ir_code == ssen_interpreter.SSEN_Status.FINISHED then
+        dmsg("script %s is finished!", script.name)
+        world.scripts[ir_index]=nil
+      elseif ir_code == ssen_interpreter.SSEN_Status.DIED then
+        stopexec(string.format("script %s DIED! (ir.fail: %s)", script.name, script.instance.fail))
+        world.scripts[ir_index]=nil
+      end
+    end
+  end
+end
+
 function module.Sol_TickWorld(engine, world_mode, world)
   module.Sol_CheckSingleDirectionWalking(engine, world_mode, world)
+  module.Sol_DoWorldRoutines(engine, world_mode, world)
+  module.Sol_DoScripts(engine, world_mode, world)
 end
 
 --[[ Draw Related Functions ]]

@@ -24,7 +24,8 @@ function module.Sol_NewWorldMode()
     main_display    = nil,
     player          = player.Sol_NewPlayer(),
     do_world_tick = true,
-    do_world_draw = true
+    do_world_draw = true,
+    main_script   = nil
   }
 end
 
@@ -117,10 +118,13 @@ function module.Sol_InitWorldMode(engine, world_mode)
   player.Sol_LoadPlayerRelativePosition(world_mode, world_mode.player)
 
   --> incase no world is loaded, load the internal level called "niea-room"
-  local proto_world=world.Sol_NewWorld()
-  wload.Sol_LoadWorld(engine, world_mode, proto_world, "niea-room")
-  world_mode.worlds["niea-room"]=proto_world
-  world_mode.current_world="niea-room"
+  -- local proto_world=world.Sol_NewWorld()
+  -- wload.Sol_LoadWorld(engine, world_mode, proto_world, "niea-room")
+  -- world_mode.worlds["niea-room"]=proto_world
+  -- world_mode.current_world="niea-room"
+  local proto_world = world.Sol_NewWorld()
+  world.Sol_InitWorld(engine, world_mode, proto_world, "niea-room")
+  world_mode.worlds["niea-room"], world_mode.current_world=proto_world, "niea-room"
 end
 
 --[[ Tick Related Functions ]]

@@ -123,6 +123,15 @@ section level
     define  spawn_tiles, []
 end-section
 
+## section "script"
+section scripts
+    section main
+        define  name,               "main#niea-room"
+        define  source,             "main"
+        define  ticks_per_frame,    10
+    end-section
+end-section
+
 ## Layers here :)
 section layers
     section background

@@ -1,2 +1,19 @@
+;; example of code, read the DOC for more info.
 main:
-    jump        main
+    define  problem, 0
+    cmpr    @problem, 0
+    ce      say_something_good
+    cne     say_something_bad
+    move    "Done!", $A
+    sysc    "SolOutput"
+    add     10, 10, $A
+    sysc    "SolOutput"
+    halt
+say_something_bad:
+    move    "Bad!", $A
+    sysc    "SolOutput"
+    retn
+say_something_good:
+    move    "Good!", $A
+    sysc    "SolOutput"
+    retn

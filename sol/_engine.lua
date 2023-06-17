@@ -92,8 +92,6 @@ function module.Sol_InitEngine(engine, path_resources)
   --
   wmode.Sol_InitWorldMode(engine, engine.world_mode)
   --
-  engine.main_ssen_thread = ssen_load.SSEN_LoadFile(system.Sol_MergePath({engine.root, "scripts/", "main.ssen"}))
-  --
   dmsg("Sol_InitEngine() took %s seconds.", os.clock() - begun)
 end
 

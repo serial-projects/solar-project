@@ -1,3 +1,5 @@
+local unpack = unpack or table.unpack
+
 local smath=require("sol.smath")
 local defaults=require("sol.defaults")
 local system=require("sol.system")
@@ -14,14 +16,6 @@ local tiles=require("sol.worldm.tiles")
 local chunk=require("sol.worldm.chunk")
 
 local module={}
-
--- Sol_SystemCalls: this is all the system calls that can be done by the
--- intepreter using the "sysc" instruction.
-module.Sol_SystemCalls={
-  ["SolOutput"]=function(ir)
-    dmsg("[syscall in thread: \"%s\" (SolOutput)]: %s", ir.name, tostring(ir.registers.A))
-  end,
-}
 
 -- Sol_GenerateLayer(world: world, layer: layer): generate a layer by its name.
 function module.Sol_GenerateLayer(world, layer)
@@ -60,6 +54,39 @@ function module.Sol_WorldSpawnTile(engine, world_mode, world, tile_name)
   else
     return false
   end
+end
+
+-- Sol_LoadInterpreterSystemCalls(engine, world_mode, world, ir): load the interpreter functions.
+local function Sol_LoadInterpreterSystemCalls(engine, world_mode, world, ir)
+  local function __syscall_print(sysc_name, t_name, fmt, ...)
+    dmsg("[syscall in thread: \"%s\" (%s)]: %s", t_name, sysc_name, fmt, ...)
+  end
+  ir.syscalls={
+    --[[ Sol Output ]]
+    ["SolOutput"]=function(ir) __syscall_print("SolOutput", ir.name, tostring(ir.registers.A)) end,
+    ["SolForceGameQuit"]=function(ir)
+      __syscall_print("SolForceGameQuit", ir.name, "forcing the game to QUIT.")
+      love.event.quit((type(ir.registers.A)=="number" and ir.registers.A or 0))
+    end,
+    --[[ Set/Get Absolute Position ]]
+    ["SolGetAbsolutePlayerPosition"]=function(ir)
+      ir.registers.A = world_mode.player.rectangle.position.x
+      ir.registers.B = world_mode.player.rectangle.position.y
+    end,
+    ["SolSetAbsolutePlayerPosition"]=function(ir)
+      assert(type(ir.registers.A)=="number", "SolSetAbsolutePlayerPosition requires $A to be number.") ; world_mode.player.rectangle.position.x = ir.registers.A
+      assert(type(ir.registers.B)=="number", "SolSetAbsolutePlayerPosition requires $B to be number.") ; world_mode.player.rectangle.position.y = ir.registers.B
+    end,
+    --[[ Set/Get Relative Position ]]
+    ["SolGetRelativePosition"]=function(ir)
+      ir.registers.A = world_mode.player.rel_position.x
+      ir.registers.B = world_mode.player.rel_position.y
+    end,
+    ["SolSetRelativePosition"]=function(ir)
+      assert(type(ir.registers.A)=="number", "SolSetRelativePlayerPosition requires $A to be number.") ; world_mode.player.rel_position.x = ir.registers.A
+      assert(type(ir.registers.B)=="number", "SolSetRelativePlayerPosition requires $B to be number.") ; world_mode.player.rel_position.y = ir.registers.B
+    end,
+  }
 end
 
 -- Sol_LoadWorld(engine, world_mode, world, world_name: string): automatically loads the world
@@ -130,7 +157,7 @@ function module.Sol_LoadWorld(engine, world_mode, world, world_name)
         local source        = system.Sol_MergePath({engine.root, "scripts/", script.source..".ssen"})
         local proto_script  = {name=script.name, instance=ssen_load.SSEN_LoadFile(source), priority=(source["ticks_per_frame"] or 10)}
         proto_script.instance.globals=engine.vars
-        proto_script.instance.syscalls=module.Sol_SystemCalls
+        Sol_LoadInterpreterSystemCalls(engine, world_mode, world, proto_script.instance)
         table.insert(world.scripts, proto_script)
       end
     end

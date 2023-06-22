@@ -11,7 +11,8 @@ local ui_label = require("sol.ui.label")
 
 local player=require("sol.worldm.player")
 local world = require("sol.worldm.world")
-local wload = require("sol.worldm.wload")
+-- local wload = require("sol.worldm.wload")
+local msg = require("sol.worldm.msg")
 
 local module={}
 --
@@ -23,9 +24,10 @@ function module.Sol_NewWorldMode()
     current_world   = nil,
     main_display    = nil,
     player          = player.Sol_NewPlayer(),
-    do_world_tick = true,
-    do_world_draw = true,
-    main_script   = nil
+    do_world_tick   = true,
+    do_world_draw   = true,
+    main_script     = nil,
+    msg_service     = msg.Sol_NewMsgService()
   }
 end
 
@@ -149,7 +151,7 @@ end
 
 function module.Sol_KeypressEventWorld(engine, world_mode, key)
   local _keytable={
-    ["f3"]  =function() 
+    ["f3"]  =function()
       world_mode.display_debug_ui_frame.visible = not world_mode.display_debug_ui_frame.visible 
     end,
     ["escape"] =function()

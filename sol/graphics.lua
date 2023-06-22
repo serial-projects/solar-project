@@ -1,5 +1,24 @@
 -- graphics.lua: functions related to graphics.
+local smath=require("sol.smath")
 local module={}
+
+-- Sol_SaveLastCanvaAndPerformFunction(canva: love.canva, todo: function)
+function module.Sol_SaveLastCanvaAndPerformFunction(canva, todo)
+  local pastc=love.graphics.getCanvas()
+  love.graphics.setCanvas(canva)
+    local to_return = todo()
+  love.graphics.setCanvas(pastc)
+  return to_return
+end
+
+-- Sol_QuickGenerateCanva(size: Sol_Vector, color: Sol_Color)
+function module.Sol_QuickGenerateCanva(size, color)
+  local new_canva=love.graphics.newCanvas(smath.Sol_UnpackVectorXY(size))
+  module.Sol_SaveLastCanvaAndPerformFunction(new_canva, function()
+    love.graphics.clear(smath.Sol_TranslateColor(color))
+  end)
+  return new_canva
+end
 
 -- Sol_GeneratePixelatedPatternUsingAlpha(canva)
 function module.Sol_GeneratePixelatedPatternUsingAlpha(canva, properties)

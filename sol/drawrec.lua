@@ -93,8 +93,6 @@ end
 function module.Sol_DrawUsingRecipe(engine, draw, recipe, rxpos, rypos, width, height)
   if      recipe.draw_method == consts.draw_using.COLOR   then
     _DrawSimpleRectangle(recipe, rxpos, rypos, width, height)
-  elseif  recipe.draw_method == consts.draw_using.TEXTURE then
-    -- TODO: remove this option.
   elseif  recipe.draw_method == consts.draw_using.SPRITES then
     _DrawSprites(engine, draw, recipe, rxpos, rypos)
   elseif  recipe.draw_method == consts.draw_using.IMAGES  then

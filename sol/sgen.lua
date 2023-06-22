@@ -1,7 +1,7 @@
 -- sgen.lua: code generators and object generating functions.
 local module={}
-module.SNIL     =string.byte(1)
-module.SFALSE   =string.byte(2)
+module.SNIL     ='\0'
+module.SFALSE   ='\1'
 
 --[[ 
   Sol_BuildStruct(default, new_values): generates a table containing all the default values, if there is a

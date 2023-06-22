@@ -5,6 +5,8 @@ local ui_wrap=require("sol.ui.wrap")
 local module={}
 
 --[[ Begin the "Frame" functions ]]
+
+-- Sol_NewFrame(frame: {type, elements, visible, enable_bg, bg_canvas, bg_position})
 function module.Sol_NewFrame(frame)
   local frame = frame or {}
   return sgen.Sol_BuildStruct({
@@ -14,6 +16,7 @@ function module.Sol_NewFrame(frame)
     enable_bg     = false,
     bg_canvas     = sgen.SNIL,
     bg_position   = smath.Sol_NewVector(0, 0),
+    bg_size       = smath.Sol_NewVector(0, 0)
   }, frame)
 end
 function module.Sol_InsertElementInFrame(frame, element)

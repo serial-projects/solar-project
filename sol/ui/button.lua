@@ -8,6 +8,7 @@ local BUTTON_LEFT   = 1
 local BUTTON_MIDDLE = 2
 local BUTTON_RIGHT  = 3
 
+-- Sol_NewButton(button: {type, font, text, non_formatted_text, background_color, background_hovering_color, foreground_color, rectangle, position, force_absolute, has_borders, border_color, visible, hovering, when_left_click, when_right_click })
 function module.Sol_NewButton(button)
   local button = button or {}
   return sgen.Sol_BuildStruct({

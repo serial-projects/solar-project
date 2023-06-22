@@ -6,7 +6,6 @@ local graphics = require "sol.graphics"
 local storage = require "sol.storage"
 local scf = require "sol.scf"
 local system = require "sol.system"
-local ssen_load = require "sol.ssen.load"
 
 local module={}
 --

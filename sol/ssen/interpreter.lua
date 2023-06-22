@@ -1,7 +1,7 @@
 local unpack = unpack or table.unpack
 local module = {}
 --[[ Status ]]
-module.SSEN_Status = table.enum(1, {"RUNNING", "FINISHED", "DIED", "SLEEPING"})
+module.SSEN_Status = table.enum(1, {"RUNNING", "FINISHED", "DIED", "SLEEPING", "WAITING"})
 
 --[[ New Interpreter ]]
 function module.SSEN_NewInterpreter(in_properties)
@@ -60,7 +60,7 @@ function module.SSEN_IrGetData(ir, token)
   -- TODO: implement the globals :)
   local function _CheckTableAndReturnIfAvailable(t, k, e)
     if type(t)=="table" then
-      if t[k] then 
+      if t[k] then
         return t[k]
       else
         error(e)
@@ -74,7 +74,7 @@ function module.SSEN_IrGetData(ir, token)
   if            prefix == '@' then
     return _CheckTableAndReturnIfAvailable(ir.vars, noprefix, "no variable with name: "..noprefix)
   elseif        prefix == '$' then
-    return _CheckTableAndReturnIfAvailable(ir.registers, noprefix, "no register with name: "..noprefix)
+    return _CheckTableAndReturnIfAvailable(ir.registers, string.upper(noprefix), "no register with name: "..noprefix)
   elseif        (STRING_TOKENS[prefix] and STRING_TOKENS[token:sub(#token,#token)]) then
     return token:sub(2, #token-1)
   elseif        prefix == '%' then
@@ -161,15 +161,20 @@ function module.SSEN_PerformCLE (ir, src) if not  ir.registers.GT then module.SS
 
 -- register all the instructions on a table:
 module.SSEN_IrInstructionTable={
+  -- move data around:
   move          ={nargs=2, wrap=module.SSEN_PerformMove   },
+  -- math operations:
   add           ={nargs=3, wrap=module.SSEN_PerformAdd    },
   sub           ={nargs=3, wrap=module.SSEN_PerformSub    },
   mul           ={nargs=3, wrap=module.SSEN_PerformMul    },
   div           ={nargs=3, wrap=module.SSEN_PerformDiv    },
+  -- compare instruction:
   cmpr          ={nargs=2, wrap=module.SSEN_PerformCmpr   },
+  -- jump, call and return:
   jump          ={nargs=1, wrap=module.SSEN_PerformJump   },
   call          ={nargs=1, wrap=module.SSEN_PerformCall   },
   retn          ={nargs=0, wrap=module.SSEN_PerformRetn   },
+  -- conditional jumps and calls:
   je            ={nargs=1, wrap=module.SSEN_PerformJE     },
   jne           ={nargs=1, wrap=module.SSEN_PerformJNE    },
   jge           ={nargs=1, wrap=module.SSEN_PerformJGE    },
@@ -178,19 +183,22 @@ module.SSEN_IrInstructionTable={
   cne           ={nargs=1, wrap=module.SSEN_PerformCNE    },
   cge           ={nargs=1, wrap=module.SSEN_PerformCGE    },
   cle           ={nargs=1, wrap=module.SSEN_PerformCLE    },
+  -- system instructions:
   sysc          ={nargs=1, wrap=module.SSEN_PerformSysc   },
   halt          ={nargs=0, wrap=module.SSEN_PerformHalt   },
+  -- define some variables:
   define        ={nargs=2, wrap=module.SSEN_PerformDefine }
 }
 
 --[[ Tick Interpreter ]]
+local ignore_status={[module.SSEN_Status.DIED]=true,[module.SSEN_Status.FINISHED]=true,[module.SSEN_Status.WAITING]=true}
 function module.SSEN_TickIntepreter(ir)
   -- TODO: re-write this on the future for more coolness.
   if ir.status ~= module.SSEN_Status.RUNNING then
-    if ir.status == module.SSEN_Status.FINISHED or ir.status == module.SSEN_Status.DIED then
-      -- in case of finished or died, just return the value.
+    if      ignore_status[ir.status] ~= nil then
+      -- in case of died, finished or WAITING (in special, waiting), just return the current status.
       return ir.status
-    else
+    elseif  ir.status == module.SSEN_Status.SLEEPING then
       -- in case of sleeping, then (...)
       -- TODO: implement sleep on interpreter.
       if ir.sleeptime < os.time() then

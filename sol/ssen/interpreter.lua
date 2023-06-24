@@ -120,6 +120,9 @@ end
 function module.SSEN_PerformHalt(ir)
   ir.status=module.SSEN_Status.FINISHED
 end
+function module.SSEN_PerformStkt(ir, src) module.SSEN_IrSetData(ir, src, #ir.stack)               end
+function module.SSEN_PerformPush(ir, src) table.insert(ir.stack, module.SSEN_IrGetData(ir, src))  end
+function module.SSEN_PerformPop (ir, src) module.SSEN_IrSetData(ir, src, table.pop(ir.stack))     end
 
 -- math operations:
 local function __SSEN_PerformOperationsTemplate(ir, a, b, result, opcode, wrap)
@@ -163,6 +166,9 @@ function module.SSEN_PerformCLE (ir, src) if not  ir.registers.GT then module.SS
 module.SSEN_IrInstructionTable={
   -- move data around:
   move          ={nargs=2, wrap=module.SSEN_PerformMove   },
+  stkt          ={nargs=1, wrap=module.SSEN_PerformStkt   },
+  push          ={nargs=1, wrap=module.SSEN_PerformPush   },
+  pop           ={nargs=1, wrap=module.SSEN_PerformPop    },
   -- math operations:
   add           ={nargs=3, wrap=module.SSEN_PerformAdd    },
   sub           ={nargs=3, wrap=module.SSEN_PerformSub    },

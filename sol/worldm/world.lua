@@ -139,7 +139,7 @@ function module.Sol_DoScripts(engine, world_mode, world)
     local ir_code = 0
     for _ = 1, n_ticks do
       ir_code = ssen_interpreter.SSEN_TickIntepreter(instance)
-      if ir_code == ssen_interpreter.SSEN_Status.FINISHED or ir_code == ssen_interpreter.SSEN_Status.DIED then
+      if ir_code == ssen_interpreter.SSEN_Status.FINISHED or ir_code == ssen_interpreter.SSEN_Status.DIED or ir_code == ssen_interpreter.WAITING then
         break
       end
     end

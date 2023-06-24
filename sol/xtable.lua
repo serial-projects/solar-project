@@ -1,4 +1,8 @@
 -- xtable.lua: keep track of functions related with the table.
+function table.pop(t)
+  local   v=t[#t] ; t[#t]=nil
+  return  v
+end
 function table.sub(t, begin, ends)
   local subtable={}
   for index=begin, ends do

@@ -1,4 +1,23 @@
 ;; example of code, read the DOC for more info.
 ;; Quick prefixes: @ = variable, $ = register, % = globals
+init:
+    push            0
+    push            "The Game"
+    push            "less than 400!"
+    push            "You"
+    push            "Yoah!"
+    push            0
+    jump            main
+do_msgbox:
+    move            0, $A
+    sysc            "SolMessageBox"
+    retn
+watchdog_tick:
+    sysc            "SolGetAbsolutePlayerPosition"
+    cmpr            $A, 400
+    cle             do_msgbox
+    retn
 main:
-    move    false,  %PRECISE_WALK
+    call            watchdog_tick
+    jump            main
+    

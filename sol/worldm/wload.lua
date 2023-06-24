@@ -10,6 +10,7 @@ local consts = require("sol.consts")
 
 -- ssen module:
 local ssen_load=require("sol.ssen.load")
+local ssen_interpreter=require("sol.ssen.interpreter")
 
 -- world module:
 local tiles=require("sol.worldm.tiles")
@@ -85,6 +86,36 @@ local function Sol_LoadInterpreterSystemCalls(engine, world_mode, world, ir)
     ["SolSetRelativePosition"]=function(ir)
       assert(type(ir.registers.A)=="number", "SolSetRelativePlayerPosition requires $A to be number.") ; world_mode.player.rel_position.x = ir.registers.A
       assert(type(ir.registers.B)=="number", "SolSetRelativePlayerPosition requires $B to be number.") ; world_mode.player.rel_position.y = ir.registers.B
+    end,
+    --[[ MessageBox Generator ]]
+    ["SolMessageBox"]=function(ir)
+      -- read the stack to find everything about the message.
+      local id_messagebox=ir.registers.A
+      local msgbox_list  ={}
+      local index,length=1,#ir.stack
+      while index<=length do
+        local stkv=ir.stack[index]
+        if stkv==id_messagebox then
+          local subindex=index+1
+          while subindex<=length do
+            local who,text = ir.stack[subindex],ir.stack[subindex+1] or '???'
+            if    who == id_messagebox then break
+            else                            table.insert(msgbox_list, {who=who, text=text}) end
+            subindex=subindex+2
+          end
+          break
+        end
+        index=index+1
+      end
+      if #msgbox_list > 0 then
+        -- on the last message, add the callback.
+        world_mode.msg_service.message_stack=msgbox_list
+        world_mode.msg_service.message_stack[#world_mode.msg_service.message_stack]["callback"]=function()
+          ir.status=ssen_interpreter.RUNNING
+        end
+        world_mode.msg_service.trigger=true
+        ir.status=ssen_interpreter.SSEN_Status.WAITING
+      end
     end,
   }
 end

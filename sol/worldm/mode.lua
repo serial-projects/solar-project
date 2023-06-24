@@ -141,6 +141,7 @@ end
 
 function module.Sol_TickWorldMode(engine, world_mode)
   module.Sol_TickWorldModeUI(engine, world_mode)
+  msg.Sol_TickMsgService(engine, world_mode, world_mode.msg_service)
   ui_display.Sol_TickDisplay(world_mode.main_display)
   if world_mode.current_world and world_mode.do_world_tick then
     local current_world=world_mode.worlds[world_mode.current_world]
@@ -163,6 +164,7 @@ function module.Sol_KeypressEventWorld(engine, world_mode, key)
     end,
   }
   if _keytable[key] then _keytable[key]() end
+  msg.Sol_KeypressMsgService(engine, world_mode, world_mode.msg_service, key)
 end
 
 --[[ Draw Related Functions ]]
@@ -175,6 +177,7 @@ function module.Sol_DrawWorldMode(engine, world_mode)
       if current_world then world.Sol_DrawWorld(engine, world_mode, current_world) end
     end
     ui_display.Sol_DrawDisplay(world_mode.main_display)
+    msg.Sol_DrawMsgService(engine, world_mode, world_mode.msg_service)
   love.graphics.setCanvas(past_canva)
 end
 

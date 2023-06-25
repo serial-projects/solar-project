@@ -76,6 +76,16 @@ function module.Sol_InitWorldModeGUI(engine, world_mode)
       world_mode.display_debug_ui_frame_memoryusage_label.position=smath.Sol_NewVector(100, 0)
       world_mode.display_debug_ui_frame_memoryusage_label.force_absolute=false
     ui_frame.Sol_InsertElementInFrame(world_mode.display_debug_ui_frame, world_mode.display_debug_ui_frame_memoryusage_label)
+    world_mode.display_debug_ui_frame_playerpositionabs_label=_GenerateDebugUIGenericLabel()
+      world_mode.display_debug_ui_frame_playerpositionabs_label.non_formatted_text="X: %d, Y: %d"
+      world_mode.display_debug_ui_frame_playerpositionabs_label.position=smath.Sol_NewVector(0, 100)
+      world_mode.display_debug_ui_frame_playerpositionabs_label.force_absolute=false
+    ui_frame.Sol_InsertElementInFrame(world_mode.display_debug_ui_frame, world_mode.display_debug_ui_frame_playerpositionabs_label)
+    world_mode.display_debug_ui_frame_playerpositionrel_label=_GenerateDebugUIGenericLabel()
+      world_mode.display_debug_ui_frame_playerpositionrel_label.non_formatted_text="RX: %d, RY: %d"
+      world_mode.display_debug_ui_frame_playerpositionrel_label.position=smath.Sol_NewVector(50, 50)
+      world_mode.display_debug_ui_frame_playerpositionrel_label.force_absolute=false
+    ui_frame.Sol_InsertElementInFrame(world_mode.display_debug_ui_frame, world_mode.display_debug_ui_frame_playerpositionrel_label)
   ui_display.Sol_InsertElement(world_mode.main_display, world_mode.display_debug_ui_frame)
   --> display_exit_ui_frame:
   world_mode.display_exit_ui_frame=ui_frame.Sol_NewFrame({enable_bg=true, bg_canvas=_GenerateExitFrameBackground()})
@@ -137,6 +147,8 @@ function module.Sol_TickWorldModeUI(engine, world_mode)
   --> update: world_mode.display_debug_ui_frame_memoryusage_label
   local amount_used_memory=tostring(collectgarbage("count") / 1000):sub(1, 4)
   world_mode.display_debug_ui_frame_memoryusage_label.text=string.format(world_mode.display_debug_ui_frame_memoryusage_label.non_formatted_text, amount_used_memory)
+  world_mode.display_debug_ui_frame_playerpositionabs_label.text=string.format(world_mode.display_debug_ui_frame_playerpositionabs_label.non_formatted_text, world_mode.player.rectangle.position.x, world_mode.player.rectangle.position.y)
+  world_mode.display_debug_ui_frame_playerpositionrel_label.text=string.format(world_mode.display_debug_ui_frame_playerpositionrel_label.non_formatted_text, world_mode.player.rel_position.x, world_mode.player.rel_position.y)
 end
 
 function module.Sol_TickWorldMode(engine, world_mode)

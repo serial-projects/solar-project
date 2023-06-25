@@ -1,9 +1,10 @@
 ;; example of code, read the DOC for more info.
 ;; Quick prefixes: @ = variable, $ = register, % = globals
 init:
+    define          propose_filled, 0
     push            0
     push            "The Game"
-    push            "less than 400!"
+    push            "You just passed on the position 400!"
     push            "You"
     push            "Yoah!"
     push            0
@@ -11,6 +12,7 @@ init:
 do_msgbox:
     move            0, $A
     sysc            "SolMessageBox"
+    move            1, @propose_filled
     retn
 watchdog_tick:
     sysc            "SolGetAbsolutePlayerPosition"
@@ -19,5 +21,6 @@ watchdog_tick:
     retn
 main:
     call            watchdog_tick
-    jump            main
-    
+    cmpr            @propose_filled, 0
+    je              main
+    halt

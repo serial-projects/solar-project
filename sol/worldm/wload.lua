@@ -90,14 +90,14 @@ local function Sol_LoadInterpreterSystemCalls(engine, world_mode, world, ir)
     --[[ MessageBox Generator ]]
     ["SolMessageBox"]=function(ir)
       -- read the stack to find everything about the message.
+      -- TODO: make '%' reading from storage.KEYS :>
       local id_messagebox=ir.registers.A
       local msgbox_list  ={}
-      local index,length=1,#ir.stack
-      while index<=length do
+      for index=1, #ir.stack do
         local stkv=ir.stack[index]
         if stkv==id_messagebox then
           local subindex=index+1
-          while subindex<=length do
+          while subindex<=#ir.stack do
             local who,text = ir.stack[subindex],ir.stack[subindex+1] or '???'
             if    who == id_messagebox then break
             else                            table.insert(msgbox_list, {who=who, text=text}) end
@@ -105,14 +105,11 @@ local function Sol_LoadInterpreterSystemCalls(engine, world_mode, world, ir)
           end
           break
         end
-        index=index+1
       end
       if #msgbox_list > 0 then
         -- on the last message, add the callback.
         world_mode.msg_service.message_stack=msgbox_list
-        world_mode.msg_service.message_stack[#world_mode.msg_service.message_stack]["callback"]=function()
-          ir.status=ssen_interpreter.RUNNING
-        end
+        world_mode.msg_service.message_stack[#world_mode.msg_service.message_stack]["callback"]=function() ir.status=ssen_interpreter.RUNNING end
         world_mode.msg_service.trigger=true
         ir.status=ssen_interpreter.SSEN_Status.WAITING
       end

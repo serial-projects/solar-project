@@ -25,7 +25,7 @@ function module.Sol_NewEngine()
     menu_mode         = nil,
     world_mode        = wmode.Sol_NewWorldMode(),
     credits_mode      = nil,
-    wmode_keymap      = {walk_up="up", walk_down="down", walk_left="left", walk_right="right"},
+    wmode_keymap      = {walk_up="up", walk_down="down", walk_left="left", walk_right="right", interact="e"},
     main_ssen_thread  = nil,
   }
 end
@@ -106,7 +106,7 @@ function module.Sol_KeypressEventEngine(engine, key)
   if      engine.current_mode == consts.engine_modes.MENU   then
     mwarn("engine.current_mode is not yet implemented.")
   elseif  engine.current_mode == consts.engine_modes.WORLD  then
-    wmode.Sol_KeypressEventWorld(engine, engine.world_mode, key)
+    wmode.Sol_KeypressEventWorldMode(engine, engine.world_mode, key)
   else
     mwarn("engine.current_mode is not yet implemented.")
   end

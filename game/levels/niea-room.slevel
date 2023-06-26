@@ -41,7 +41,23 @@ section tiles
             end-section
             define  using_recipe, "main"
         end-section
-        
+    end-section
+    section X
+        define  name, "testingblock"
+        define  size, [64, 64]
+        define  position, [500, 500]
+        define  collide, yes
+        define  zindex, 0
+        section draw
+            section recipes
+                section main
+                    define  draw_method, 1
+                    define  color, [255, 255, 255]
+                end-section
+            end-section
+            define using_recipe, "main"
+        end-section
+        define  enable_interaction, yes
     end-section
     section F
         define  name, "largetile"
@@ -50,6 +66,7 @@ section tiles
         define  collide, no
         define  should_draw, yes
         define  zindex, 0
+        define  enable_interaction, yes
 
         # draw structure
         section draw
@@ -119,8 +136,8 @@ end-section
 
 ## section "level"
 section level
-    define  spawn_layers, ["background", "world_deco"]
-    define  spawn_tiles, []
+    define  spawn_layers,   ["background", "world_deco"]
+    define  spawn_tiles,    ["X"]
 end-section
 
 ## section "script"

@@ -25,6 +25,7 @@ module.SOL_UI_CURSOR_DEFAULT_SIZE     = smath.Sol_NewVector(16, 16)
 
 -- player default properties:
 module.SOL_PLAYER_SIZE = smath.Sol_NewVector(64, 64)
+module.SOL_PLAYER_INTERACTION_RANGE = 1
 
 -- chunk properties:
 module.SOL_WORLD_CHUNK_WIDTH = 5

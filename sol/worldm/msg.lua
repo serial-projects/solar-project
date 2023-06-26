@@ -25,16 +25,15 @@ function module.Sol_NewMsgService(message)
     message_stack_index = 1,
     message_str_index   = 1,
     timing              = 0,
-    current_speed       = 0.1,
+    current_speed       = 0.05,
     -- font configuration:
     who_font            = "normal",
     text_font           = "normal"
   }, message or {})
 end
 function module.Sol_InitMsgService(engine, world_mode, msg_service)
-  --
+  --[[ :: build the UI :: ]]--
   local who_font        = storage.Sol_LoadFontFromStorage(engine.storage, "normal", 16)
-  --
   local MSGBOX_HEIGHT   =200
   local using_canva     =graphics.Sol_QuickGenerateCanva(smath.Sol_NewVector(world_mode.viewport:getWidth(), MSGBOX_HEIGHT), smath.Sol_NewColor4(10, 10, 10))
   msg_service.base_frame=ui_frame.Sol_NewFrame({

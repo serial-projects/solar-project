@@ -1,4 +1,5 @@
 -- TODO: optimize the function arguments (specially rxpos, rypos)
+local unpack=unpack or table.unpack
 
 local defaults=require("sol.defaults")
 local consts=require("sol.consts")
@@ -11,6 +12,7 @@ function module.Sol_NewDrawRecipe(draw)
   -- _NewRecipe() build a recipe with the default values.
   local function _NewRecipe(recipe)
     return sgen.Sol_BuildStruct({
+      color                   = smath.Sol_NewColor4(255, 255, 255),
       draw_method             = 0,
       textures                = {},
       texture_index           = 1,
@@ -28,12 +30,26 @@ function module.Sol_NewDrawRecipe(draw)
     end
     return built_recipes
   end
-  return {
-    recipes=_InitializeRecipes(draw["recipes"]),
-    using_recipe=draw["using_recipe"] or 0,
-    counter = draw["counter"] or 0,
-    max_counter = draw["max_counter"] or 5,
+  -- _ConvertColorListToSolColor4(): for all colors, convert to Color4:
+  function _ConvertColorListToSolColor4(recipes)
+    for recipe_name, recipe in pairs(recipes) do
+      if recipe["color"] then
+        if not recipe["color"]["red"] then
+          dmsg("Sol_NewDrawRecipe()._ConvertColorListToSolColor4() is fixing draw for recipe: \"%s\"", recipe_name)
+          recipe["color"]=smath.Sol_NewColor4(unpack(recipe["color"]))
+        end
+      end
+    end
+  end
+  --
+  local proto_draw_recipe = {
+    recipes         =_InitializeRecipes(draw["recipes"]),
+    using_recipe    =draw["using_recipe"] or 0,
+    counter         =draw["counter"] or 0,
+    max_counter     =draw["max_counter"] or 5,
   }
+  _ConvertColorListToSolColor4(proto_draw_recipe.recipes)
+  return proto_draw_recipe
 end
 
 -- _DrawImage(): draw some image on the screen.

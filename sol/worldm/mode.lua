@@ -165,7 +165,7 @@ function module.Sol_ResizeEventWorldMode(engine, world_mode)
   ui_display.Sol_SetMousePositionOffsetDisplay(world_mode.main_display, engine.viewport_position.x, engine.viewport_position.y)
 end
 
-function module.Sol_KeypressEventWorld(engine, world_mode, key)
+function module.Sol_KeypressEventWorldMode(engine, world_mode, key)
   local _keytable={
     ["f3"]  =function()
       world_mode.display_debug_ui_frame.visible = not world_mode.display_debug_ui_frame.visible 
@@ -177,6 +177,11 @@ function module.Sol_KeypressEventWorld(engine, world_mode, key)
   }
   if _keytable[key] then _keytable[key]() end
   msg.Sol_KeypressMsgService(engine, world_mode, world_mode.msg_service, key)
+  --
+  if world_mode.current_world and world_mode.do_world_tick then
+    local current_world=world_mode.worlds[world_mode.current_world]
+    world.Sol_KeypressEventWorld(engine, world_mode, current_world, key)
+  end
 end
 
 --[[ Draw Related Functions ]]

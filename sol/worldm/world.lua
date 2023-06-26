@@ -166,6 +166,45 @@ function module.Sol_TickWorld(engine, world_mode, world)
   module.Sol_DoScripts(engine, world_mode, world)
 end
 
+function module.Sol_AttemptInteractionInWorld(engine, world_mode, world)
+  -- TODO: on the future, make a RAY that hit some tile to check possible interactions.
+  -- USING this method with env. PRECISE_WALK disabled MAY result in problems and less
+  -- precise interactions.
+
+  -- load all the tiles from the current chunk & load looking table:
+  local current_chunk_tiles=chunk.Sol_GetChunksOrdered(engine, world_mode, world)
+  local SOL_PLAYER_INTERACTION_RANGE=defaults.SOL_PLAYER_INTERACTION_RANGE
+  local test_position={
+    [consts.player_directions.UP]     =smath.Sol_NewVector(world_mode.player.rectangle.position.x, world_mode.player.rectangle.position.y-SOL_PLAYER_INTERACTION_RANGE),
+    [consts.player_directions.DOWN]   =smath.Sol_NewVector(world_mode.player.rectangle.position.x, world_mode.player.rectangle.position.y+SOL_PLAYER_INTERACTION_RANGE),
+    [consts.player_directions.LEFT]   =smath.Sol_NewVector(world_mode.player.rectangle.position.x-SOL_PLAYER_INTERACTION_RANGE, world_mode.player.rectangle.position.y),
+    [consts.player_directions.RIGHT]  =smath.Sol_NewVector(world_mode.player.rectangle.position.x+SOL_PLAYER_INTERACTION_RANGE, world_mode.player.rectangle.position.y),
+  }
+  -- build the rectangle:
+  local testing_rectangle=smath.Sol_NewRectangle(test_position[world_mode.player.looking_direction], world_mode.player.rectangle.size)
+
+  -- begin reading the tiles in-search of possible interactions
+  -- NOTE: the player can only interact with a single tile per time.
+  -- ALSO, ignore '1' the player.
+  for _, tile in ipairs(current_chunk_tiles) do
+    if tile.target ~= 1 then
+      local current_tile=world.tiles[tile.target]
+      if current_tile.enable_interaction then
+        local has_collision=smath.Sol_TestRectangleCollision(testing_rectangle, current_tile.rectangle)
+        if has_collision then
+          dmsg("doing interaction with: %s!", current_tile.name) ; break
+        end
+      end
+    end
+  end
+end
+
+function module.Sol_KeypressEventWorld(engine, world_mode, world, key)
+  if key == engine.wmode_keymap["interact"] then
+    module.Sol_AttemptInteractionInWorld(engine, world_mode, world)
+  end    
+end
+
 --[[ Draw Related Functions ]]
 function module.Sol_DrawWorld(engine, world_mode, world)
   --> determine the player current chunk + all the sorroundings tiles.

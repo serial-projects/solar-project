@@ -10,12 +10,12 @@ function module.Sol_NewLabel(label)
   local label = label or {}
   return sgen.Sol_BuildStruct({
     type                = "label",
-    non_formatted_text  = sgen.SNIL,
+    non_formatted_text  = 0,
     text                = "",
-    font                = sgen.SNIL,
+    font                = 0,
     color               = smath.Sol_NewColor4(0, 0, 0),
     rectangle           = smath.Sol_NewRectangle(),
-    relative_to         = sgen.SNIL,
+    relative_to         = 0,
     position            = smath.Sol_NewVector(0, 0),
     has_background      = false,
     background_color    = smath.Sol_NewColor4(0, 0, 0),

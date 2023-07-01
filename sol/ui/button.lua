@@ -13,7 +13,7 @@ function module.Sol_NewButton(button)
   local button = button or {}
   return sgen.Sol_BuildStruct({
     type                      = "button",
-    font                      = sgen.SNIL,
+    font                      = 0,
     text                      = "",
     non_formatted_text        = "",
     background_color          = smath.Sol_NewColor4(0, 0, 0),
@@ -26,9 +26,9 @@ function module.Sol_NewButton(button)
     border_color              = smath.Sol_NewColor4(0, 0, 0),
     visible                   = true,
     hovering                  = sgen.SFALSE,
-    when_left_click           = sgen.SNIL,
-    when_middle_click         = sgen.SNIL,
-    when_right_click          = sgen.SNIL
+    when_left_click           = 0,
+    when_middle_click         = 0,
+    when_right_click          = 0
   }, button)
 end
 function module.Sol_TickButton(display, button)

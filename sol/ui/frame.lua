@@ -14,7 +14,7 @@ function module.Sol_NewFrame(frame)
     elements      = {},
     visible       = true,
     enable_bg     = false,
-    bg_canvas     = sgen.SNIL,
+    bg_canvas     = 0,
     bg_position   = smath.Sol_NewVector(0, 0),
     bg_size       = smath.Sol_NewVector(0, 0)
   }, frame)

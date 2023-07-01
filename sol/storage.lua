@@ -97,8 +97,7 @@ function module.Sol_CleanCacheInStorage(storage)
   local marktoremove, timestamp={}, os.time()
   for key, cache_element in pairs(storage.cached_elements) do
     if not cache_element.keep then
-      local timealive=(timestamp - cache_element.lastuse)
-      if  timealive > storage.maxlifespan then
+      if (timestamp - cache_element.lastuse) > storage.maxlifespan then
         table.insert(marktoremove, key)
       end
     end

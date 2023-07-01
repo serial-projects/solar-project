@@ -21,11 +21,11 @@ function module.Sol_NewButton(button)
     foreground_color          = smath.Sol_NewColor4(255, 255, 255),
     rectangle                 = smath.Sol_NewRectangle(nil, button["size"]),
     position                  = smath.Sol_NewVector(0, 0),
-    force_absolute            = sgen.SFALSE,
-    has_borders               = sgen.SFALSE,
+    force_absolute            = false,
+    has_borders               = false,
     border_color              = smath.Sol_NewColor4(0, 0, 0),
     visible                   = true,
-    hovering                  = sgen.SFALSE,
+    hovering                  = false,
     when_left_click           = 0,
     when_middle_click         = 0,
     when_right_click          = 0
@@ -51,7 +51,7 @@ end
 function module.Sol_DrawButton(display, button)
   -- TODO: clean this code.
   if button.visible then
-    if button.font then
+    if button.font ~= 0 then
       --> the main rectangle
       love.graphics.setColor(smath.Sol_TranslateColor(button.hovering and button.background_hovering_color or button.background_color))
       love.graphics.rectangle("fill", smath.Sol_UnpackRectXYWH(button.rectangle))

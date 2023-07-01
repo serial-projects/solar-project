@@ -29,7 +29,7 @@ function module.Sol_TickLabel(display, label)
 end
 function module.Sol_DrawLabel(display, label)
   if label.visible then
-    if label.font then
+    if label.font ~= 0 then
       label.rectangle.size.x,label.rectangle.size.y = label.font:getWidth(label.text), label.font:getHeight()
       if    label.force_absolute then label.rectangle.position.x,label.rectangle.position.y = label.position.x, label.position.y
       else

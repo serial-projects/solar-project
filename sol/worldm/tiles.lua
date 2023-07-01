@@ -18,6 +18,7 @@ function module.Sol_NewTile(tile)
     --[[ draw ]]--
     draw = drawrec.Sol_NewDrawRecipe(tile["draw"]),
     --[[ actions ]]--
+    busy                        = false,
     when_touched                = tile["when_touched"] or 0,
     enable_interaction          = tile["enable_interaction"] or false,
     when_interacted             = tile["when_interacted"] or 0,

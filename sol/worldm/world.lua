@@ -66,6 +66,32 @@ function module.Sol_CheckPlayerPositionAt(engine, world_mode, world, xposition, 
   return true
 end
 
+local function __Sol_DoPreciseWalk(engine, world_mode, world, xdirection, ydirection)
+  --> for xdirection
+  if xdirection ~= 0 then
+    local x_amount=0
+    while (xdirection < 0 and x_amount >= xdirection or x_amount <= xdirection) do
+      if not module.Sol_CheckPlayerPositionAt(engine, world_mode, world, world_mode.player.rectangle.position.x+x_amount, world_mode.player.rectangle.position.y) then
+        break
+      else x_amount=x_amount+(xdirection < 0 and -1 or 1) end
+    end
+    -- we remove -1 amount of walking to ignore the last collision we made to check if the player is actually colliding with
+    -- something, if no remove the player will be stuck in some wall. We could have put this inside the loop.
+    world_mode.player.rectangle.position.x=world_mode.player.rectangle.position.x+(xdirection < 0 and x_amount + 1 or x_amount - 1)
+  end
+  --> for ydirection
+  if ydirection ~= 0 then
+    local y_amount=0
+    while (ydirection < 0 and y_amount >= ydirection or y_amount <= ydirection) do
+      if not module.Sol_CheckPlayerPositionAt(engine, world_mode, world, world_mode.player.rectangle.position.x, world_mode.player.rectangle.position.y+y_amount) then
+        break
+      else y_amount=y_amount+(ydirection < 0 and -1 or 1) end
+    end
+    world_mode.player.rectangle.position.y=world_mode.player.rectangle.position.y+(ydirection < 0 and y_amount + 1 or y_amount - 1)
+  end
+  --> (...)
+end
+
 function module.Sol_WalkInWorld(engine, world_mode, world, looking_direction, xdirection, ydirection)
   -- TODO: check when the player is running more efficiently by using a function argument or something else.
   world_mode.player.looking_direction=looking_direction
@@ -78,29 +104,7 @@ function module.Sol_WalkInWorld(engine, world_mode, world, looking_direction, xd
   else
     -- NOTE: PRECISE_WALK is KINDA a very expansive function, use it with very caution!
     if engine.vars["PRECISE_WALK"] then
-      --> for xdirection
-      if xdirection ~= 0 then
-        local x_amount=0
-        while (xdirection < 0 and x_amount >= xdirection or x_amount <= xdirection) do
-          if not module.Sol_CheckPlayerPositionAt(engine, world_mode, world, world_mode.player.rectangle.position.x+x_amount, world_mode.player.rectangle.position.y) then
-            break
-          else x_amount=x_amount+(xdirection < 0 and -1 or 1) end
-        end
-        -- we remove -1 amount of walking to ignore the last collision we made to check if the player is actually colliding with
-        -- something, if no remove the player will be stuck in some wall. We could have put this inside the loop.
-        world_mode.player.rectangle.position.x=world_mode.player.rectangle.position.x+(xdirection < 0 and x_amount + 1 or x_amount - 1)
-      end
-      --> for ydirection
-      if ydirection ~= 0 then
-        local y_amount=0
-        while (ydirection < 0 and y_amount >= ydirection or y_amount <= ydirection) do
-          if not module.Sol_CheckPlayerPositionAt(engine, world_mode, world, world_mode.player.rectangle.position.x, world_mode.player.rectangle.position.y+y_amount) then
-            break
-          else y_amount=y_amount+(ydirection < 0 and -1 or 1) end
-        end
-        world_mode.player.rectangle.position.y=world_mode.player.rectangle.position.y+(ydirection < 0 and y_amount + 1 or y_amount - 1)
-      end
-      --> (...)
+      __Sol_DoPreciseWalk(engine, world_mode, world, xdirection, ydirection)
     end
   end
 end
@@ -166,6 +170,14 @@ function module.Sol_TickWorld(engine, world_mode, world)
   module.Sol_DoScripts(engine, world_mode, world)
 end
 
+function module.Sol_DoInteractionInWorld(engine, world_mode, world, tile, interaction_recipe)
+  -- NOTE: to prevent the element from triggering multiple stances of threads (aka. bouncy), we
+  -- lock the tile from interacting again. When the HALT instruction is called or the script finish, then
+  -- we unlock it.
+
+  local target_file  = interaction_recipe["target_file"] ; assert(target_file, "Sol_DoInteractionInWorld() got no target_file in interaction_recipe...")
+end
+
 function module.Sol_AttemptInteractionInWorld(engine, world_mode, world)
   -- TODO: on the future, make a RAY that hit some tile to check possible interactions.
   -- USING this method with env. PRECISE_WALK disabled MAY result in problems and less
@@ -189,11 +201,9 @@ function module.Sol_AttemptInteractionInWorld(engine, world_mode, world)
   for _, tile in ipairs(current_chunk_tiles) do
     if tile.target ~= 1 then
       local current_tile=world.tiles[tile.target]
-      if current_tile.enable_interaction then
+      if current_tile.enable_interaction and not current_tile.busy then
         local has_collision=smath.Sol_TestRectangleCollision(testing_rectangle, current_tile.rectangle)
-        if has_collision then
-          dmsg("doing interaction with: %s!", current_tile.name) ; break
-        end
+        if has_collision then module.Sol_DoInteractionInWorld(engine, world_mode, world, current_tile, current_tile.when_interacted) break end
       end
     end
   end

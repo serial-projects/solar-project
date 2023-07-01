@@ -58,7 +58,7 @@ function module.Sol_WorldSpawnTile(engine, world_mode, world, tile_name)
 end
 
 -- Sol_LoadInterpreterSystemCalls(engine, world_mode, world, ir): load the interpreter functions.
-local function Sol_LoadInterpreterSystemCalls(engine, world_mode, world, ir)
+function module.Sol_LoadInterpreterSystemCalls(engine, world_mode, world, ir)
   local function __syscall_print(sysc_name, t_name, fmt, ...)
     dmsg("[syscall in thread: \"%s\" (%s)]: %s", t_name, sysc_name, fmt, ...)
   end
@@ -185,7 +185,7 @@ function module.Sol_LoadWorld(engine, world_mode, world, world_name)
         local source        = system.Sol_MergePath({engine.root, "scripts/", script.source..".ssen"})
         local proto_script  = {name=script.name, instance=ssen_load.SSEN_LoadFile(source), priority=(source["ticks_per_frame"] or 10)}
         proto_script.instance.globals=engine.vars
-        Sol_LoadInterpreterSystemCalls(engine, world_mode, world, proto_script.instance)
+        module.Sol_LoadInterpreterSystemCalls(engine, world_mode, world, proto_script.instance)
         table.insert(world.scripts, proto_script)
       end
     end

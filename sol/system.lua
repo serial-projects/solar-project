@@ -11,7 +11,7 @@ function module.Sol_MergePath(path_entries)
   local final_path,last_dir_had_endslash="",false
   for index, entry in ipairs(path_entries) do
     local current_dir_beginslash=entry:sub(1,1)=='/'
-    --[[ this situation: /root/ + /sub/ = /root/sub (leave only one slash) ]]
+    --[[ this situation: /root/ + /sub/ = /root/sub (leave only one slash, remove from entry!) ]]
     if current_dir_beginslash and last_dir_had_endslash then
       entry=entry:sub(2,#entry)
     --[[ this situation: /root + sub/ (put a slash) ]]

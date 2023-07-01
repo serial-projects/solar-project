@@ -18,37 +18,22 @@ end
 
 function module.Sol_NewColor4(red, green, blue, alpha)
   if type(red)=="table" then
-    alpha=  red[4] or red["alpha"] or 255
-    blue=   red[3] or red["blue"] or 0
-    green=  red[2] or red["green"] or 0
-    red=    red[1] or red["red"] or 0
+    alpha=  red[4] or red["alpha"]  or 255
+    blue=   red[3] or red["blue"]   or 0
+    green=  red[2] or red["green"]  or 0
+    red=    red[1] or red["red"]    or 0
   end
-  return {
-    red = red or 0,
-    green = green or 0,
-    blue = blue or 0,
-    alpha = alpha or 255
-  }
+  return { red = red or 0,   green = green or 0,   blue = blue or 0,   alpha = alpha or 255 }
 end
 
 --[[ Vector Functions ]]--
-function module.Sol_AddVector(avec, bvec)
-  return module.Sol_NewVector(bvec.x + avec.x, bvec.y + avec.y)
-end
-
-function module.Sol_SubVector(avec, bvec)
-  return module.Sol_NewVector(bvec.x - avec.x, bvec.y - avec.y)
-end
-
-function module.Sol_MultiplicateVector(avec, bvec)
-  return module.Sol_NewVector(bvec.x * avec.x, bvec.y * avec.y)
-end
+function module.Sol_AddVector(avec, bvec)           return module.Sol_NewVector(bvec.x + avec.x, bvec.y + avec.y) end
+function module.Sol_SubVector(avec, bvec)           return module.Sol_NewVector(bvec.x - avec.x, bvec.y - avec.y) end
+function module.Sol_MultiplicateVector(avec, bvec)  return module.Sol_NewVector(bvec.x * avec.x, bvec.y * avec.y) end
 
 --[[ Rectangle Functions ]]--
 function module.Sol_CloneRectangle(rectangle)
-  local _np=module.Sol_NewVector(rectangle.position)
-  local _ns=module.Sol_NewVector(rectangle.size)
-  return { position = _np, size = _ns }
+  return { position = module.Sol_NewVector(rectangle.position), size = module.Sol_NewVector(rectangle.size) }
 end
 
 function module.Sol_GetTileRelativePosition(rel_position, abs_position, tile_position)

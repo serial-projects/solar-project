@@ -26,9 +26,7 @@ if not _G["dmsg"] then
   end
 end
 if not _G["mwarn"] then
-  _G.mwarn=function(fmt, ...)
-    _G.genericPrint("@@ "..fmt, ...)
-  end
+  _G.mwarn=function(fmt, ...) _G.genericPrint("@@ "..fmt, ...) end
 end
 if not _G["qcrash"] then
   _G.qcrash=function(exit_code, fmt, ...)
@@ -38,9 +36,7 @@ if not _G["qcrash"] then
 end
 if not _G["makesure"] then
   _G.makesure=function(condition, code, when_error, ...)
-    if not condition then
-      _G.qcrash(code, when_error, ...)
-    end
+    if not condition then _G.qcrash(code, when_error, ...) end
   end
 end
 if not _G["stopexec"] then

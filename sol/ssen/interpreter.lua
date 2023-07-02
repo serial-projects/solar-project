@@ -12,6 +12,7 @@ function module.SSEN_NewInterpreter(in_properties)
     sleeptime = 0,
     status    = module.SSEN_Status.RUNNING,
     fail      = nil,
+    nticks    = 10,
     --
     label_addr= {},
     --
@@ -106,6 +107,12 @@ function module.SSEN_IrGoto(ir, location, save_pc)
   ir.registers.PC=label_addr
   ir.registers.PCI=false
 end
+function module.SSEN_IrSetPC(ir, label_name)
+  local label_addr=ir.label_addr[label_name]
+  assert(label_addr, "no label found with name: "..label_name)
+  ir.registers.PC=label_addr
+end
+
 --[[ Instructions ]]
 
 -- moving data & data manipulation:

@@ -2,6 +2,7 @@ local defaults=require("sol.defaults")
 local consts=require("sol.consts")
 local smath=require("sol.smath")
 local wload= require("sol.worldm.wload")
+local wscripting=require("sol.worldm.scripting")
 
 -- world module:
 local player=require("sol.worldm.player")
@@ -19,7 +20,7 @@ function module.Sol_NewWorld(world)
     --
     chunks      ={},
     routines    ={},
-    scripts     ={},
+    scripts     =wscripting.Sol_NewScriptService(),
     --
     recipe_tiles        ={},
     recipe_geometry     ={},
@@ -139,29 +140,7 @@ function module.Sol_DoWorldRoutines(engine, world_mode, world)
 end
 
 function module.Sol_DoScripts(engine, world_mode, world)
-  local function _run(instance, n_ticks)
-    local ir_code = 0
-    for _ = 1, n_ticks do
-      ir_code = ssen_interpreter.SSEN_TickIntepreter(instance)
-      if ir_code == ssen_interpreter.SSEN_Status.FINISHED or ir_code == ssen_interpreter.SSEN_Status.DIED or ir_code == ssen_interpreter.WAITING then
-        break
-      end
-    end
-    return ir_code
-  end
-  if #world.scripts > 0 then
-    for ir_index = 1, #world.scripts do
-      local script  = world.scripts[ir_index]
-      local ir_code = _run(script.instance, script.priority)
-      if ir_code == ssen_interpreter.SSEN_Status.FINISHED then
-        dmsg("script %s is finished!", script.name)
-        world.scripts[ir_index]=nil
-      elseif ir_code == ssen_interpreter.SSEN_Status.DIED then
-        stopexec(string.format("script %s DIED! (ir.fail: %s)", script.name, script.instance.fail))
-        world.scripts[ir_index]=nil
-      end
-    end
-  end
+  wscripting.Sol_TickScriptService(world.scripts)
 end
 
 function module.Sol_TickWorld(engine, world_mode, world)
@@ -171,11 +150,19 @@ function module.Sol_TickWorld(engine, world_mode, world)
 end
 
 function module.Sol_DoInteractionInWorld(engine, world_mode, world, tile, interaction_recipe)
-  -- NOTE: to prevent the element from triggering multiple stances of threads (aka. bouncy), we
-  -- lock the tile from interacting again. When the HALT instruction is called or the script finish, then
-  -- we unlock it.
-
-  local target_file  = interaction_recipe["target_file"] ; assert(target_file, "Sol_DoInteractionInWorld() got no target_file in interaction_recipe...")
+  -- NOTE: to prevent the element from triggering multiple stances of threads (aka. bouncy), we lock the file from
+  -- interacting again. When the HALT instruction is called or the script finish, then unlock it.
+  
+  -- TODO: allow some scripts to run in a mode called "sattelite mode", on this mode, the script instance is not
+  -- deleted from the script service when finished, it stays dormant until next interaction. This is very useful
+  -- for tiles that need multiple interactions, for now, THE only way to do multiple interaction stuff is by using
+  -- global variables (WHICH SHOULD ONLY BE USED FOR VERY IMPORTANT DATA AND NEED TO SAVE DATA!).
+  
+  tile.busy = true
+  interaction_recipe["when_finish"]=function(ir)
+    tile.busy = false
+  end
+  wscripting.Sol_LoadScript(engine, world_mode, world, interaction_recipe, world.scripts)
 end
 
 function module.Sol_AttemptInteractionInWorld(engine, world_mode, world)

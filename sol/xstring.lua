@@ -7,6 +7,26 @@ function string.getstr(size, fill_with)
   return str
 end
 
+-- string.genstr(length: number) -> random UNIQUE generated string.
+_G.__generatedStrings={}
+function string.genstr(length)
+  local length = length or 32
+  local ranges = {
+    {b=string.byte('a'), e=string.byte('z')},
+    {b=string.byte('A'), e=string.byte('Z')},
+    {b=string.byte('0'), e=string.byte('9')}
+  }
+  local acc = ""
+  while _G.__generatedStrings[acc] ~= nil do
+    acc = ""
+    for _=1, length do
+      local selected_range=ranges[math.random(1, #ranges)]
+      acc = acc .. string.char(math.random(selected_range.b, selected_range.e))
+    end
+  end ; _G.__generatedStrings[acc]=true
+  return acc
+end
+
 -- string.getchseq(s: "... your char sequence ...") -> {'.', 'y', ...}:
 -- converts a string to a table containing all the characters in a single entry.
 function string.getchseq(s)

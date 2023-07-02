@@ -9,8 +9,7 @@ local drawrec= require("sol.drawrec")
 local consts = require("sol.consts")
 
 -- ssen module:
-local ssen_load=require("sol.ssen.load")
-local ssen_interpreter=require("sol.ssen.interpreter")
+local wscripting=require("sol.worldm.scripting")
 
 -- world module:
 local tiles=require("sol.worldm.tiles")
@@ -55,66 +54,6 @@ function module.Sol_WorldSpawnTile(engine, world_mode, world, tile_name)
   else
     return false
   end
-end
-
--- Sol_LoadInterpreterSystemCalls(engine, world_mode, world, ir): load the interpreter functions.
-function module.Sol_LoadInterpreterSystemCalls(engine, world_mode, world, ir)
-  local function __syscall_print(sysc_name, t_name, fmt, ...)
-    dmsg("[syscall in thread: \"%s\" (%s)]: %s", t_name, sysc_name, fmt, ...)
-  end
-  ir.syscalls={
-    --[[ Sol Output ]]
-    ["SolOutput"]=function(ir) __syscall_print("SolOutput", ir.name, tostring(ir.registers.A)) end,
-    ["SolForceGameQuit"]=function(ir)
-      __syscall_print("SolForceGameQuit", ir.name, "forcing the game to QUIT.")
-      love.event.quit((type(ir.registers.A)=="number" and ir.registers.A or 0))
-    end,
-    --[[ Set/Get Absolute Position ]]
-    ["SolGetAbsolutePlayerPosition"]=function(ir)
-      ir.registers.A = world_mode.player.rectangle.position.x
-      ir.registers.B = world_mode.player.rectangle.position.y
-    end,
-    ["SolSetAbsolutePlayerPosition"]=function(ir)
-      assert(type(ir.registers.A)=="number", "SolSetAbsolutePlayerPosition requires $A to be number.") ; world_mode.player.rectangle.position.x = ir.registers.A
-      assert(type(ir.registers.B)=="number", "SolSetAbsolutePlayerPosition requires $B to be number.") ; world_mode.player.rectangle.position.y = ir.registers.B
-    end,
-    --[[ Set/Get Relative Position ]]
-    ["SolGetRelativePosition"]=function(ir)
-      ir.registers.A = world_mode.player.rel_position.x
-      ir.registers.B = world_mode.player.rel_position.y
-    end,
-    ["SolSetRelativePosition"]=function(ir)
-      assert(type(ir.registers.A)=="number", "SolSetRelativePlayerPosition requires $A to be number.") ; world_mode.player.rel_position.x = ir.registers.A
-      assert(type(ir.registers.B)=="number", "SolSetRelativePlayerPosition requires $B to be number.") ; world_mode.player.rel_position.y = ir.registers.B
-    end,
-    --[[ MessageBox Generator ]]
-    ["SolMessageBox"]=function(ir)
-      -- read the stack to find everything about the message.
-      -- TODO: make '%' reading from storage.KEYS :>
-      local id_messagebox=ir.registers.A
-      local msgbox_list  ={}
-      for index=1, #ir.stack do
-        local stkv=ir.stack[index]
-        if stkv==id_messagebox then
-          local subindex=index+1
-          while subindex<=#ir.stack do
-            local who,text = ir.stack[subindex],ir.stack[subindex+1] or '???'
-            if    who == id_messagebox then break
-            else                            table.insert(msgbox_list, {who=who, text=text}) end
-            subindex=subindex+2
-          end
-          break
-        end
-      end
-      if #msgbox_list > 0 then
-        -- on the last message, add the callback.
-        world_mode.msg_service.message_stack=msgbox_list
-        world_mode.msg_service.message_stack[#world_mode.msg_service.message_stack]["callback"]=function() ir.status=ssen_interpreter.RUNNING end
-        world_mode.msg_service.trigger=true
-        ir.status=ssen_interpreter.SSEN_Status.WAITING
-      end
-    end,
-  }
 end
 
 -- Sol_LoadWorld(engine, world_mode, world, world_name: string): automatically loads the world
@@ -182,11 +121,7 @@ function module.Sol_LoadWorld(engine, world_mode, world, world_name)
     for script_name, script in pairs(world.recipe_scripts) do
       -- TODO: due limitation in SCF, ignore all '__type' keywords.
       if script_name ~= "__type" then
-        local source        = system.Sol_MergePath({engine.root, "scripts/", script.source..".ssen"})
-        local proto_script  = {name=script.name, instance=ssen_load.SSEN_LoadFile(source), priority=(source["ticks_per_frame"] or 10)}
-        proto_script.instance.globals=engine.vars
-        module.Sol_LoadInterpreterSystemCalls(engine, world_mode, world, proto_script.instance)
-        table.insert(world.scripts, proto_script)
+        wscripting.Sol_LoadScript(engine, world_mode, world, script, world.scripts)
       end
     end
   end

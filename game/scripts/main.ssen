@@ -1,6 +1,10 @@
 ;; example of code, read the DOC for more info.
 ;; Quick prefixes: @ = variable, $ = register, % = globals
 init:
+    call            build_msgbox
+    jump            main
+build_msgbox:
+    ;; build the message box here ;;
     define          propose_filled, 0
     push            0
     push            "The Game"
@@ -8,8 +12,10 @@ init:
     push            "You"
     push            "Yoah!"
     push            0
-    jump            main
+    retn
 do_msgbox:
+    move            "Doing messagebox!", $A
+    sysc            "SolOutput"
     move            0, $A
     sysc            "SolMessageBox"
     move            1, @propose_filled
@@ -23,4 +29,10 @@ main:
     call            watchdog_tick
     cmpr            @propose_filled, 0
     je              main
+    halt
+player_interacted_with:
+    call            build_msgbox
+    move            "Bruh!", $A
+    sysc            "SolOutput"
+    call            do_msgbox
     halt

@@ -58,6 +58,12 @@ section tiles
             define using_recipe, "main"
         end-section
         define  enable_interaction, yes
+        section when_interacted
+            define  name, "niea-room#main"
+            define  source, "main"
+            define  ticks_per_frame, 10
+            define  begin_at, "player_interacted_with"
+        end-section
     end-section
     section F
         define  name, "largetile"

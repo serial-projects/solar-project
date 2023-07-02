@@ -3,6 +3,8 @@ local text=require("sol.ssen.text")
 local interpreter=require("sol.ssen.interpreter")
 --
 function module.SSEN_LoadFile(path)
+  dmsg("SSEN_LoadFile() is opening file: %s", path)
+  --
   local tokenized_buffer={}
   local fp=love.filesystem.newFile(path,"r")
   for line in fp:lines() do

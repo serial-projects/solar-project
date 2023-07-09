@@ -30,9 +30,9 @@ main:
     cmpr            @propose_filled, 0
     je              main
     halt
+build_player:
+    global          %main_player_has_died, 0
 player_interacted_with:
-    call            build_msgbox
-    move            "Bruh!", $A
-    sysc            "SolOutput"
-    call            do_msgbox
-    halt
+    defined         %main_player_has_died
+    cne             build_player
+    

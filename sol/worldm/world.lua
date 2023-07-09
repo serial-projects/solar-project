@@ -3,6 +3,7 @@ local consts=require("sol.consts")
 local smath=require("sol.smath")
 local wload= require("sol.worldm.wload")
 local wscripting=require("sol.worldm.scripting")
+local wroutines=require("sol.worldm.wroutines")
 
 -- world module:
 local player=require("sol.worldm.player")
@@ -19,7 +20,7 @@ function module.Sol_NewWorld(world)
     info={name="n/n", description="?"},
     --
     chunks      ={},
-    routines    ={},
+    routines    =wroutines.Sol_NewRoutineService(),
     scripts     =wscripting.Sol_NewScriptService(),
     --
     recipe_tiles        ={},
@@ -123,30 +124,10 @@ function module.Sol_CheckSingleDirectionWalking(engine, world_mode, world)
   end
 end
 
-function module.Sol_DoWorldRoutines(engine, world_mode, world)
-  if #world.routines > 0 then
-    for routine_index = 1, #world.routines do
-      local routine = world.routines[routine_index]
-      local wrap    = routine.wrap[routine.status]
-      if type(wrap) == "function" then
-        routine.status = wrap(engine, world_mode, world, routine)
-      end
-      if routine.status == consts.routine_status.FINISHED or routine.status == consts.routine_status.DIED then
-        dmsg("routine %s was deleted, last status: %d", routine.name, routine.status)
-        world.routines[routine_index]=nil
-      end
-    end
-  end
-end
-
-function module.Sol_DoScripts(engine, world_mode, world)
-  wscripting.Sol_TickScriptService(world.scripts)
-end
-
 function module.Sol_TickWorld(engine, world_mode, world)
   module.Sol_CheckSingleDirectionWalking(engine, world_mode, world)
-  module.Sol_DoWorldRoutines(engine, world_mode, world)
-  module.Sol_DoScripts(engine, world_mode, world)
+  wroutines.Sol_TickRoutineService(engine, world_mode, world, world.routines)
+  wscripting.Sol_TickScriptService(world.scripts)
 end
 
 function module.Sol_DoInteractionInWorld(engine, world_mode, world, tile, interaction_recipe)
@@ -157,11 +138,7 @@ function module.Sol_DoInteractionInWorld(engine, world_mode, world, tile, intera
   -- deleted from the script service when finished, it stays dormant until next interaction. This is very useful
   -- for tiles that need multiple interactions, for now, THE only way to do multiple interaction stuff is by using
   -- global variables (WHICH SHOULD ONLY BE USED FOR VERY IMPORTANT DATA AND NEED TO SAVE DATA!).
-  
-  tile.busy = true
-  interaction_recipe["when_finish"]=function(ir)
-    tile.busy = false
-  end
+  interaction_recipe["when_finish"], tile.busy=(function(ir) tile.busy = false end), true
   wscripting.Sol_LoadScript(engine, world_mode, world, interaction_recipe, world.scripts)
 end
 
@@ -205,6 +182,7 @@ end
 --[[ Draw Related Functions ]]
 function module.Sol_DrawWorld(engine, world_mode, world)
   --> determine the player current chunk + all the sorroundings tiles.
+  wroutines.Sol_DrawRoutineService(engine, world_mode, world, world.routines)
   local draw_tile_queue = chunk.Sol_GetChunksOrdered(engine, world_mode, world)
   for _, tile in ipairs(draw_tile_queue) do
     if tile["type"] then

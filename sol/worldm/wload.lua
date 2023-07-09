@@ -10,6 +10,7 @@ local consts = require("sol.consts")
 
 -- ssen module:
 local wscripting=require("sol.worldm.scripting")
+local wroutines =require("sol.worldm.wroutines")
 
 -- world module:
 local tiles=require("sol.worldm.tiles")
@@ -113,9 +114,13 @@ function module.Sol_LoadWorld(engine, world_mode, world, world_name)
       world_mode.player.rectangle.size = world.recipe_player["size"] and smath.Sol_NewVector(world.recipe_player["size"]) or world_mode.player.size
       player.Sol_LoadPlayerRelativePosition(world_mode, world_mode.player)
     end
-    return consts.routine_status.FINISHED
+    return wroutines.ROUTINE_STATUS_FINISHED
   end
-  table.insert(world.routines, {name="wload.AdjustPlayerOneshot", status=consts.routine_status.FIRSTRUN, wrap={[consts.routine_status.FIRSTRUN]=wload_AdjustPlayerOneshot_FirstRun}})
+  wroutines.Sol_PushRoutine(world.routines, wroutines.Sol_NewRoutine(
+    "wload.AdjustPlayerOneshot", wroutines.EXEC_ON_TICK, 
+    {[wroutines.ROUTINE_STATUS_FIRSTRUN]=wload_AdjustPlayerOneshot_FirstRun},
+    {}
+  ))
   --> "script" section
   if world.recipe_scripts then
     for script_name, script in pairs(world.recipe_scripts) do

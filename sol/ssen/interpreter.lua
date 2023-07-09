@@ -117,16 +117,26 @@ end
 
 -- moving data & data manipulation:
 function module.SSEN_PerformMove(ir, src, dest) module.SSEN_IrSetData(ir, dest, module.SSEN_IrGetData(ir, src)) end
-function module.SSEN_PerformDefine(ir, src, dest) ir.vars[src]=module.SSEN_IrGetData(ir, dest) end
+function module.SSEN_PerformDefine(ir, src, dest) ir.vars[src]=module.SSEN_IrGetData(ir, dest)    end
+function module.SSEN_PerformGlobal(ir, src, dest) ir.globals[src]=module.SSEN_IrGetData(ir, dest) end
+function module.SSEN_PerformDefined(ir, src)
+  local __prefix, checking=src:sub(1, 1),{
+    ["@"]=function(name) return ir.vars[name] ~= nil end,
+    ["%"]=function(name) return (ir.globals ~= nil and ir.globals[name] ~= nil or false) end
+  }
+  if checking[__prefix] then
+    ir.registers.EQ=checking[__prefix](src:sub(2,#src))
+  else
+    module.SSEN_ErrorInterpreter(ir, "expected global/local, got: "..src)
+  end
+end
 
 -- system operations:
 function module.SSEN_PerformSysc(ir, src)
   local src=module.SSEN_IrGetData(ir, src) ; assert(ir.syscalls[src] and type(ir.syscalls[src])=="function", "no system call with name: "..src)
   ir.syscalls[src](ir)
 end
-function module.SSEN_PerformHalt(ir)
-  ir.status=module.SSEN_Status.FINISHED
-end
+function module.SSEN_PerformHalt(ir) ir.status=module.SSEN_Status.FINISHED end
 function module.SSEN_PerformStkt(ir, src) module.SSEN_IrSetData(ir, src, #ir.stack)               end
 function module.SSEN_PerformPush(ir, src) table.insert(ir.stack, module.SSEN_IrGetData(ir, src))  end
 function module.SSEN_PerformPop (ir, src) module.SSEN_IrSetData(ir, src, table.pop(ir.stack))     end
@@ -200,7 +210,8 @@ module.SSEN_IrInstructionTable={
   sysc          ={nargs=1, wrap=module.SSEN_PerformSysc   },
   halt          ={nargs=0, wrap=module.SSEN_PerformHalt   },
   -- define some variables:
-  define        ={nargs=2, wrap=module.SSEN_PerformDefine }
+  define        ={nargs=2, wrap=module.SSEN_PerformDefine },
+  defined       ={nargs=1, wrap=module.SSEN_PerformDefined}
 }
 
 --[[ Tick Interpreter ]]

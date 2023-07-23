@@ -11,7 +11,6 @@ local module = {
   draw_using          = table.enum(1, {"COLOR", "TEXTURE", "SPRITES", "IMAGES"}),
   engine_modes        = table.enum(1, {"MENU", "WORLD", "CREDITS"}),
   player_directions   = table.enum(1, {"UP","DOWN","LEFT","RIGHT"}),
-  routine_status      = table.enum(1, {"FIRSTRUN", "RUNNING", "FINISHED", "DIED"})
 }
 --
 return module

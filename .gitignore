@@ -44,6 +44,7 @@ luac.out
 
 # Sol Building Tool & Love files (run ./build.sh package)
 build/
+past-impl/
 *.love
 
 # Joe Saving Files

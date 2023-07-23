@@ -1,15 +1,12 @@
 local unpack = unpack or table.unpack
 
 local smath=require("sol.smath")
-local defaults=require("sol.defaults")
 local system=require("sol.system")
 local scf=require("sol.scf")
 local player = require("sol.worldm.player")
 local drawrec= require("sol.drawrec")
-local consts = require("sol.consts")
 
 -- ssen module:
-local wscripting=require("sol.worldm.scripting")
 local wroutines =require("sol.worldm.wroutines")
 
 -- world module:
@@ -122,14 +119,6 @@ function module.Sol_LoadWorld(engine, world_mode, world, world_name)
     {}
   ))
   --> "script" section
-  if world.recipe_scripts then
-    for script_name, script in pairs(world.recipe_scripts) do
-      -- TODO: due limitation in SCF, ignore all '__type' keywords.
-      if script_name ~= "__type" then
-        wscripting.Sol_LoadScript(engine, world_mode, world, script, world.scripts)
-      end
-    end
-  end
   --> build all the chunks in the map.
   chunk.Sol_MapChunksInWorld(world)
 end

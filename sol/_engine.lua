@@ -91,6 +91,15 @@ function module.Sol_InitEngine(engine, path_resources)
   --
   wmode.Sol_InitWorldMode(engine, engine.world_mode)
   --
+  local scripting = require("sol.libspi.script")
+  local some_context = scripting.SPI_NewContext()
+  scripting.SPI_LoadContextUsingFile(some_context, "test.spi")
+  scripting.SPI_RunContext(some_context)
+  local has_failed, in_error = scripting.SPI_HasContextDied(some_context)
+  if has_failed then
+    error(in_error)
+  end
+  --
   dmsg("Sol_InitEngine() took %s seconds.", os.clock() - begun)
 end
 

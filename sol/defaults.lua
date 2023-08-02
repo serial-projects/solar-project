@@ -4,7 +4,7 @@ local module={}
 local smath=require("sol.smath")
 
 --[[ Version Distribution ]]
-module.SOL_VERSION = "1.0 - 20230625"
+module.SOL_VERSION = "1.0 - Zenith (1)"
 module.SOL_RELEASE = 10
 module.SOL_LOVE_MAJOR, module.SOL_LOVE_MINOR, module.SOL_LOVE_REVISION = love.getVersion()
 

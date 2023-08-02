@@ -82,24 +82,16 @@ end
 
 function module.Sol_InitEngine(engine, path_resources)
   local begun=os.clock()
+  --> assign the location of the resource path:
   engine.root, engine.storage.root = path_resources, path_resources ; dmsg("engine.root: "..engine.root)
+  --> init the window & viewport:
   module.Sol_LoadSettings(engine)
-  --
   module.Sol_SetWindowFromEngine(engine)
   module.Sol_AdjustViewportAtCenter(engine)
+  --> init the language:
   storage.Sol_LoadLanguage(engine.storage, "en_US")
-  --
+  --> finally, initialize the modes:
   wmode.Sol_InitWorldMode(engine, engine.world_mode)
-  --
-  local scripting = require("sol.libspi.script")
-  local some_context = scripting.SPI_NewContext()
-  scripting.SPI_LoadContextUsingFile(some_context, "test.spi")
-  scripting.SPI_RunContext(some_context)
-  local has_failed, in_error = scripting.SPI_HasContextDied(some_context)
-  if has_failed then
-    error(in_error)
-  end
-  --
   dmsg("Sol_InitEngine() took %s seconds.", os.clock() - begun)
 end
 

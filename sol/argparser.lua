@@ -8,11 +8,8 @@ function module.Sol_UserArgumentsDecode(arglist, argtable)
     local argument_decoded=argtable[argument]
     if argument_decoded then
       while true do
-        if type(argument_decoded)=="string" then
-          argument_decoded=argtable[argument_decoded]
-        else
-          break
-        end
+        if type(argument_decoded)=="string" then argument_decoded=argtable[argument_decoded]
+        else break end
       end
       local nargs=argument_decoded["nargs"]
       makesure(argument_decoded, 42, "Sol_UserArgumentsDecode(): pointer to high argument is invalid = %s", argument)

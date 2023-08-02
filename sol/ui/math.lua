@@ -1,6 +1,6 @@
 local module={}
 
---[[ Math stuff ]]
+-- Sol_UITranslateRelativePosition(ww, wh, ew, eh, posx, posy: number) -> abposx: number, abposy: number
 function module.Sol_UITranslateRelativePosition(ww, wh, ew, eh, posx, posy)
   -- calculate the window divided by 100 (for every axis.)
   local xpos, ypos      = (ww / 100), (wh / 100)

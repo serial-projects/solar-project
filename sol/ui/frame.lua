@@ -36,6 +36,8 @@ function module.Sol_TickFrame(display, frame)
     --
   end
 end
+
+-- Sol_DrawFrame(display: Sol_Display, frame: Sol_UIFrame)
 function module.Sol_DrawFrame(display, frame)
   if frame.visible then
     if frame.enable_bg then

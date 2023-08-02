@@ -1,0 +1,27 @@
+main:
+    halt
+set_unlimited_performance:
+    move    "unlimited", !r0
+    sysc    "adjust_performance"
+    retn
+set_normal_performance:
+    move    "max", !r0
+    sysc    "adjust_performance"
+    retn
+player_interacted_with:
+    call    set_unlimited_performance
+    define  xlimit, 0
+    define  ylimit, 0
+    sysc    "SolWorld_GetWorldSize"
+    pop     $ylimit
+    pop     $xlimit
+    sysc    "SolWorld_GetPlayerSize"
+    pop     !r1                             ; r1= player_height
+    pop     !r0                             ; r0= player_width
+    sub     $xlimit, !r0, $xlimit
+    sub     $ylimit, !r1, $ylimit
+    iran    0, $xlimit, !x
+    iran    0, $ylimit, !y
+    sysc    "SolWorld_SetPlayerPosition"
+    call    set_normal_performance
+    halt

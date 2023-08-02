@@ -50,12 +50,12 @@ function module.SPI_pop(instance, source)
     operations.SPI_SetDataToInstance(instance, source, pop_value)
   end
 end
-function __SPI_MathOperationTemplateOperation(instance, source, destination, result, template_function, operation_name)
+function __SPI_MathOperationTemplateOperation(instance, source, destination, result, template_function, operation_name, custom_type)
+  custom_type = custom_type or "number"
   local source_value = operations.SPI_GetDataFromInstance(instance, source)
-  if type(source_value) ~= "number" then return instance:set_error("%s requires first argument to be %s, got: %s", operation_name, custom_type, source) end
+  if type(source_value) ~= custom_type then return instance:set_error("%s requires first argument to be %s, got: %s", operation_name, custom_type, source) end
   local target_value = operations.SPI_GetDataFromInstance(instance, destination)
-  if type(target_value) ~= "number" then return instance:set_error("%s requires second argument to be %s, got: %s", operation_name, custom_type, destination) end
-  --
+  if type(target_value) ~= custom_type then return instance:set_error("%s requires second argument to be %s, got: %s", operation_name, custom_type, destination) end
   operations.SPI_SetDataToInstance(instance, result, template_function(source_value, target_value))
 end
 function module.SPI_add(instance, source, destination, result)
@@ -115,13 +115,14 @@ function module.SPI_cne(context,  instance, source) if not instance.registers.EQ
 function module.SPI_cle(context,  instance, source) if not instance.registers.GT  == 1 then operations.SPI_Goto(context, instance, source, true) end end
 function module.SPI_cge(context,  instance, source) if instance.registers.GT      == 1 then operations.SPI_Goto(context, instance, source, true) end end
 function module.SPI_and(instance, source, destination, result)
-  -- TODO: on the future, implement pre-execution MACRO to remove this redundancy.
-  if    _G["jit"] then __SPI_MathOperationTemplateOperation(instance, source, destination, result, function(a, b) return bit.band(a, b) end, "and")
-  else  __SPI_MathOperationTemplateOperation(instance, source, destination, result, function(a, b) return a & b end, "and") end
+  -- TODO: when luajit supports '<<' and '&', remove from the bit library.
+  __SPI_MathOperationTemplateOperation(instance, source, destination, result, (function(a, b) return bit.band(a, b) end), "and")
 end
 function module.SPI_or (instance, source, destination, result) 
-  if    _G["jit"] then __SPI_MathOperationTemplateOperation(instance, source, destination, result, function(a, b) return bit.bor(a, b) end, "or")
-  else  __SPI_MathOperationTemplateOperation(instance, source, destination, result, function(a, b) return a | b end, "or") end
+  __SPI_MathOperationTemplateOperation(instance, source, destination, result, (function(a, b) return bit.bor(a, b) end), "or")
+end
+function module.SPI_iran(instance, source, destination, result)
+  __SPI_MathOperationTemplateOperation(instance, source, destination, result, function(a, b) return math.random(a, b) end, "iran")
 end
 module.SPI_PerformTable = {
   define    = {args = 2, wrap = module.SPI_define },
@@ -159,6 +160,7 @@ module.SPI_PerformTable = {
   ["and"]   = {args = 3, wrap = module.SPI_and },
   ["or"]    = {args = 3, wrap = module.SPI_or  },
   -- ["not"]   = {args = 2, wrap = module.SPI_not }
+  iran      = {args = 3, wrap = module.SPI_iran},
 }
 --
 return module

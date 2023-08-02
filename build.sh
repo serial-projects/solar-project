@@ -17,6 +17,14 @@ COLOR_PURPLE="\e[35m"
 # PRE_REQ:
 [[ ! -e './build' ]] || mkdir ./build
 
+# disable_colors(): disable the colors.
+disable_colors() {
+    COLOR_RED=""
+    COLOR_BLUE=""
+    COLOR_PURPLE=""
+    NO_COLOR=""
+}
+
 # _die(): die :)
 _die(){
     echo "[build.sh die()]: $1" ; exit -1
@@ -67,6 +75,9 @@ if [[ "$#" == 0 ]]; then
 else
     for arg in "$@"; do
         case $arg in
+            --disable-colors)
+                disable_colors
+                ;;
             package)
                 create_love_package
                 ;;

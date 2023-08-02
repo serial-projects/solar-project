@@ -1,14 +1,17 @@
 local defaults=require("sol.defaults")
 local module = {}
 
--- General Chunk Stuff
-module.Sol_GetPlayerCurrentChunk=function(world_mode, world)
+-- Sol_GetPlayerCurrentChunk(world_mode: Sol_WorldMode, world: Sol_World) -> player_current_chunk_x: number, player_current_chunk_y: number
+-- Returns the player current chunk (in x and y) based on it's absolute position.
+function module.Sol_GetPlayerCurrentChunk(world_mode, world)
   local player_current_chunk_x=math.floor(world_mode.player.rectangle.position.x/(world.bg_tile_size.x*defaults.SOL_WORLD_CHUNK_WIDTH))
   local player_current_chunk_y=math.floor(world_mode.player.rectangle.position.y/(world.bg_tile_size.y*defaults.SOL_WORLD_CHUNK_HEIGHT))
   return player_current_chunk_x, player_current_chunk_y
 end
 
-module.Sol_MapChunksInWorld=function(world)
+-- Sol_MapChunksInWorld(world: Sol_World)
+-- This will map all the chunk elements locations.
+function module.Sol_MapChunksInWorld(world)
   -- TODO: on the future make this code threaded to prevent the game lagging when creating a lot of tiles.
   local begun_mapping_chunks_at=os.clock()
   world.chunks={}
@@ -30,25 +33,27 @@ module.Sol_MapChunksInWorld=function(world)
   dmsg("Sol_MapChunksInWorld() took %fs", os.clock()-begun_mapping_chunks_at)
 end
 
---[[ Functions used in Tick ]]
+-- Sol_GetChunksReferencedTiles(world: Sol_World, indexx: number, indexy: number, range: number)
+-- Returns a list of tiles being referenced on the near chunk (using the range).
 module.Sol_GetChunksReferencedTiles=function(world, indexx, indexy, range)
   local adquired_references = {}
   for yindex = indexy - range, indexy + range do
     for xindex = indexx - range, indexx + range do
-      local chunk_target=world.chunks[tostring(xindex)..'.'..tostring(yindex)]
+      local chunk_target=world.chunks[string.format("%d.%d", xindex, yindex)]
       if chunk_target then
         for _, chunk_reference_tile in ipairs(chunk_target) do
           table.insert(adquired_references, chunk_reference_tile)
         end
       end
-      --
     end
   end
   return adquired_references
 end
 
---[[ Functions used in Drawing ]]
-module.Sol_AdquireChunksConsideringZIndex=function(world, chunk_name, consider_player)
+
+-- Sol_AdquireChunksConsideringZIndex(world: Sol_World, chunk_name: string, consider_player: boolean)
+-- Returns the tiles considering it's zindex (also considering player).
+function module.Sol_AdquireChunksConsideringZIndex(world, chunk_name, consider_player)
   local draw_queue = consider_player and {{zindex=1,target=1,type="player"}} or {}
   if world.chunks[chunk_name] then
     --> basically puts on a buffer for follow the order.
@@ -59,7 +64,10 @@ module.Sol_AdquireChunksConsideringZIndex=function(world, chunk_name, consider_p
   end
 end
 
-module.Sol_GetChunksOrdered=function(engine, world_mode, world)
+-- Sol_GetChunksOrdered(engine: Sol_Engine, world_mode: Sol_WorldMode, world: Sol_World) -> draw_tile_queue: table
+-- Return the tiles already sorted and ready to be drawn on the screen. This function will return the index
+-- of the tiles in the world.tiles list.
+function module.Sol_GetChunksOrdered(engine, world_mode, world)
   --> determine the player current chunk + all the sorroundings tiles.
   local player_current_chunk_x, player_current_chunk_y=module.Sol_GetPlayerCurrentChunk(world_mode, world)
   local draw_tile_queue = {}

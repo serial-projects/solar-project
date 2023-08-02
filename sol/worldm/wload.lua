@@ -6,8 +6,9 @@ local scf=require("sol.scf")
 local player = require("sol.worldm.player")
 local drawrec= require("sol.drawrec")
 
--- ssen module:
+-- wroutines & wscripts:
 local wroutines =require("sol.worldm.wroutines")
+local wscripts  =require("sol.worldm.wscripts")
 
 -- world module:
 local tiles=require("sol.worldm.tiles")
@@ -119,6 +120,14 @@ function module.Sol_LoadWorld(engine, world_mode, world, world_name)
     {}
   ))
   --> "script" section
+  if world.recipe_scripts then
+    for script_name, script_recipe in pairs(world.recipe_scripts) do
+      if script_name ~= "__type" then
+        dmsg("loading script: %s ...", script_name)
+        wscripts.Sol_LoadScript(engine, world_mode, world, world.scripts, script_recipe)
+      end
+    end
+  end
   --> build all the chunks in the map.
   chunk.Sol_MapChunksInWorld(world)
 end

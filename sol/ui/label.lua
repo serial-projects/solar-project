@@ -25,8 +25,11 @@ function module.Sol_NewLabel(label)
     visible             = true,
   }, label)
 end
+
+-- Sol_TickLabel(display: Sol_Display, label: Sol_UILabel)
 function module.Sol_TickLabel(display, label)
 end
+
 function module.Sol_DrawLabel(display, label)
   if label.visible then
     if label.font ~= 0 then

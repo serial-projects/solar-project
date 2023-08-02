@@ -10,7 +10,9 @@ local module = {}
 module.basicsysc=require("sol.libspi.basicsysc")
 module.instance =require("sol.libspi.instance")
 module.text     =require("sol.libspi.text")
+module.consts   =require("sol.libspi.consts")
 
+-- SPI_NewContext(recipe: {name = string | nil:string.genstr() })
 function module.SPI_NewContext(recipe)
   recipe = recipe or {}
   return {
@@ -19,13 +21,11 @@ function module.SPI_NewContext(recipe)
     code            = {},
     label_addr      = {},
     spawned_threads = {},
-    instance        = nil
+    instance        = nil,
+    performance			= 20,
   }
 end
 -- SPI_LoadContextCodeUsingFile(context: SPI_Context, file_name: string, use_open_wrapper: function | io.open):
--- the context can have multiple threads BUT, they live on the same shared code, this is
--- done to prevent extreme memory usage. If each thread had it own code, that would result
--- in more memory usage.
 function module.SPI_LoadContextUsingFile(context, file_name, use_open_wrapper)
   --> open the file & tokenize it:
   use_open_wrapper = use_open_wrapper or io.open
@@ -63,27 +63,46 @@ function module.SPI_LoadContextUsingFile(context, file_name, use_open_wrapper)
     context.instance.registers.PC = context.label_addr["main"]
   end
 end
+-- SPI_HasContextDied(context: SPI_Context) -> has_died: boolean, error_msg: string | nil
 function module.SPI_HasContextDied(context)
   return context.instance.status == consts.SPI_InstanceStatus.DIED, context.instance.error_msg
 end
+-- SPI_ClearAllThreadsFromContext(context: SPI_Context) -> nil
+function module.SPI_ClearAllThreadsFromContext(context)
+  for tindex, _ in ipairs(context.spawned_threads) do
+    context.spawned_threads[tindex] = nil
+  end
+end
+-- SPI_ClearContext(context: SPI_Context) -> nil
+function module.SPI_ClearContext(context)
+  module.SPI_ClearAllThreadsFromContext(context)
+  context.instance = nil
+  collectgarbage("collect")
+end
+-- SPI_SetInstanceLocation(context: SPI_Context, instance_name: string, location_name: string) (crashable: yes) -> nil
+function module.SPI_SetInstanceLocation(context, instance_name, location_name)
+  local location_addr = context.label_addr[location_name]
+  assert(location_addr, "invalid location: " .. location_name)
+  if instance_name == "main" then
+    context.instance.registers.PC = location_addr
+  else 
+    for _, thread in ipairs(context.spawned_threads) do
+      thread.registers.PC = location_addr
+    end
+  end
+end
+-- SPI_TickContext(context: SPI_Context) -> main_thread_status: number
 function module.SPI_TickContext(context)
   --> tick the main thread first:
   local current_main_thread_statement = module.instance.SPI_TickInstance(context, context.instance)
   if current_main_thread_statement >= 2 and current_main_thread_statement <= 4 then
-    return false
+    module.SPI_ClearAllThreadsFromContext(context)
   end
-  --> tick all the other spawned threads:
-  -- NOTE: for better freedom, threads are not recycled HERE, use "kill_zombie_threads"
+  --> tick all the threads:
   for _, thread in ipairs(context.spawned_threads) do
     module.instance.SPI_TickInstance(context, thread)
   end
-  --> return true :)
-  return true
-end
-function module.SPI_RunContext(context)
-  while true do
-    local current_context_state = module.SPI_TickContext(context)
-    if not current_context_state then break end
-  end
+  --> return the current thread statement:
+  return current_main_thread_statement
 end
 return module

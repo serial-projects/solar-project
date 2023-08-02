@@ -72,7 +72,7 @@ section tiles
         define  collide, no
         define  should_draw, yes
         define  zindex, 0
-        define  enable_interaction, yes
+        define  enable_interaction, no
 
         # draw structure
         section draw

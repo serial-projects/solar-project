@@ -1,8 +1,10 @@
-local sol_engine=require("sol.engine")
-local sol_argparser=require("sol.argparser")
+-- 2020 - 2023 Solar Engine by Pipes Studios. This project is under the MIT license.
+
+local SolarEngine = require("Solar.Engine")
+local SolarArguments = require("Solar.System.Arguments")
 
 --[[ Globals ]]
-local SolEngineMainInstance=sol_engine.Sol_NewEngine()
+local SolEngineMainInstance=SolarEngine.Sol_NewEngine()
 local SolEnginePathResources="game/"
 
 --[[ love.help() ]]
@@ -22,7 +24,7 @@ end
 
 --[[ love.load(args) ]]
 function love.load(args)
-  sol_argparser.Sol_UserArgumentsDecode(args, {
+  SolarArguments.Sol_UserArgumentsDecode(args, {
     --
     ["--debug"]={nargs=0, wrap=function()
       _G.dmsg_en=true
@@ -46,27 +48,27 @@ function love.load(args)
     end,
   })
   --
-  sol_engine.Sol_InitEngine(SolEngineMainInstance, SolEnginePathResources)
+  SolarEngine.Sol_InitEngine(SolEngineMainInstance, SolEnginePathResources)
   --
   dmsg(">> running on lua: %s (jit? %s), love: %d.%d.%d [%s]", _VERSION, (_G["jit"] and "yes" or "no"), love.getVersion())
 end
 
 --[[ love.resize(new_width, new_height) ]]
 function love.resize(new_width, new_height)
-  sol_engine.Sol_NewResizeEventEngine(SolEngineMainInstance, new_width, new_height)
+  SolarEngine.Sol_NewResizeEventEngine(SolEngineMainInstance, new_width, new_height)
 end
 
 --[[ love.update(dt: decimal) ]]
 function love.update(deltatime)
-  sol_engine.Sol_TickEngine(SolEngineMainInstance)
+  SolarEngine.Sol_TickEngine(SolEngineMainInstance)
 end
 
 --[[ love.keypressed() ]]
 function love.keypressed(key)
-  sol_engine.Sol_KeypressEventEngine(SolEngineMainInstance, key)
+  SolarEngine.Sol_KeypressEventEngine(SolEngineMainInstance, key)
 end
 
 --[[ love.draw() ]]
 function love.draw()
-  sol_engine.Sol_DrawEngine(SolEngineMainInstance)
+  SolarEngine.Sol_DrawEngine(SolEngineMainInstance)
 end

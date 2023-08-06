@@ -7,7 +7,7 @@
 # this will touch some important files and other misc. stuff to run the game as it is
 # intended. More info, run "-h" option.
 _VERSION="1.0 (Zenith)"
-LOVE_ZIP_INCLUDE_FILES="./sol ./game ./main.lua ./README.md ./LICENSE ./build.sh"
+LOVE_ZIP_INCLUDE_FILES="./Solar ./game ./main.lua ./README.md ./LICENSE ./build.sh"
 BUILD_LOG="./build/log-report.txt"
 NO_COLOR="\e[0m"
 COLOR_RED="\e[31m"

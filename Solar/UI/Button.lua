@@ -1,6 +1,6 @@
 -- 2020 - 2023 Solar Engine by Pipes Studios. This project is under the MIT license.
 
-local SG_Structures =require("Solar.Codegen.Structures")
+local SC_Structures =require("Solar.Code.Structures")
 local SM_Vector     =require("Solar.Math.Vector")
 local SM_Rectangle  =require("Solar.Math.Rectangle")
 local SM_Color      =require("Solar.Math.Color")
@@ -16,7 +16,7 @@ local BUTTON_RIGHT  = 3
 -- Sol_NewButton(button: {type, font, text, non_formatted_text, background_color, background_hovering_color, foreground_color, rectangle, position, force_absolute, has_borders, border_color, visible, hovering, when_left_click, when_right_click })
 function module.Sol_NewButton(button)
   local button = button or {}
-  return SG_Structures.Sol_BuildStruct({
+  return SC_Structures.Sol_BuildStruct({
     type                      = "button",
     font                      = 0,
     text                      = "",

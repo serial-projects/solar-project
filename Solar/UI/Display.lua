@@ -1,6 +1,6 @@
 -- 2020 - 2023 Solar Engine by Pipes Studios. This project is under the MIT license.
 
-local SG_Structures =require("Solar.Codegen.Structures")
+local SC_Structures =require("Solar.Code.Structures")
 local SM_Vector     =require("Solar.Math.Vector")
 local SUI_Cursor    =require("Solar.UI.Cursor")
 local SUI_Wrap      =require("Solar.UI.Wrap")
@@ -9,7 +9,7 @@ local module={}
 
 --[[ Begin the "Display" object functions ]]
 function module.Sol_NewDisplay(display)
-  return SG_Structures.Sol_BuildStruct({
+  return SC_Structures.Sol_BuildStruct({
     elements  = {},
     cursor    = SUI_Cursor.Sol_NewCursor(),
     name      = "display",

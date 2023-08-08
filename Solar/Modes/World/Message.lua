@@ -4,7 +4,7 @@ local SS_Storage    =require("Solar.System.Storage")
 local SUI_Display   =require("Solar.UI.Display")
 local SUI_Frame     =require("Solar.UI.Frame")
 local SUI_Label     =require("Solar.UI.Label")
-local SG_Structures =require("Solar.Codegen.Structures")
+local SC_Structures =require("Solar.Code.Structures")
 local SD_Canva      =require("Solar.Draw.Canva")
 local SM_Vector     =require("Solar.Math.Vector")
 local SM_Rectangle  =require("Solar.Math.Rectangle")
@@ -17,7 +17,7 @@ function module.Sol_NewMsgUnit(who, text, theming)
   return {who=who, text=text, theming=theming}
 end
 function module.Sol_NewMsgService(message)
-  return SG_Structures.Sol_BuildStruct({
+  return SC_Structures.Sol_BuildStruct({
     base_frame          = SUI_Frame.Sol_NewFrame(),
     -- controls:
     trigger             = false,

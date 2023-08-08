@@ -3,8 +3,6 @@
 local unpack = unpack or table.unpack
 
 local SM_Vector   = require("Solar.Math.Vector")
-local SM_Rectangle= require("Solar.Math.Rectangle")
-local SM_Color    = require("Solar.Math.Color")
 local SS_Path     = require("Solar.System.Path")
 local SCF         = require("Solar.SCF")
 local SD_Recipe   = require("Solar.Draw.Recipe")

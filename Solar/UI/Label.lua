@@ -1,6 +1,6 @@
 -- 2020 - 2023 Solar Engine by Pipes Studios. This project is under the MIT license.
 
-local SG_Structures = require("Solar.Codegen.Structures")
+local SC_Structures = require("Solar.Code.Structures")
 local SM_Color      = require("Solar.Math.Color")
 local SM_Vector     = require("Solar.Math.Vector")
 local SM_Rectangle  = require("Solar.Math.Rectangle")
@@ -14,7 +14,7 @@ local module={}
 -- Sol_NewLabel(label: { type, non_formatted_text, text, font, color, rectangle, relative_to, position, has_background, background_color, force_absolute, when_left_click, when_right_click, visible })
 function module.Sol_NewLabel(label)
   local label = label or {}
-  return SG_Structures.Sol_BuildStruct({
+  return SC_Structures.Sol_BuildStruct({
     type                = "label",
     non_formatted_text  = 0,
     text                = "",

@@ -5,11 +5,11 @@ local module={}
 
 local   SS_Path = require("Solar.System.Path")
 local   SCF     = require("Solar.SCF")
-local   SG_Structures = require("Solar.Codegen.Structures")
+local   SC_Structures = require("Solar.Code.Structures")
 
 -- Storage/CacheOperations section:
 function module.Sol_NewCache(cache)
-  return SG_Structures.Sol_BuildStruct({keep=true, lastuse=0, content=0}, cache)
+  return SC_Structures.Sol_BuildStruct({keep=true, lastuse=0, content=0}, cache)
 end
 
 -- Storage/NewStorage section:

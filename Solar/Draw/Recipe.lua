@@ -8,14 +8,14 @@ local SM_Vector = require("Solar.Math.Vector")
 local SM_Rectangle = require("Solar.Math.Rectangle")
 local SM_Color = require("Solar.Math.Color")
 local SS_Storage = require("Solar.System.Storage")
-local SG_Structures = require("Solar.Codegen.Structures")
+local SC_Structures = require("Solar.Code.Structures")
 
 local module={}
 --
 function module.Sol_NewDrawRecipe(draw)
   -- _NewRecipe() build a recipe with the default values.
   local function _NewRecipe(recipe)
-    return SG_Structures.Sol_BuildStruct({
+    return SC_Structures.Sol_BuildStruct({
       color                   = SM_Color.Sol_NewColor4(255, 255, 255),
       draw_method             = 0,
       textures                = {},

@@ -29,6 +29,7 @@ function module.Sol_NewWorld(world)
     recipe_level        ={},
     recipe_player       ={},
     recipe_actions      ={},
+    recipe_messages     ={},
     --
     bg_size             =nil,
     bg_tile_size        =nil,

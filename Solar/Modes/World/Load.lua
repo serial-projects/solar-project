@@ -70,6 +70,7 @@ function module.Sol_LoadWorld(engine, world_mode, world, world_name)
   world.recipe_layers         =target_file["layers"]      or world.recipe_layers
   world.recipe_player         =target_file["player"]      or world.recipe_player
   world.recipe_scripts        =target_file["scripts"]     or world.recipe_scripts
+  world.recipe_messages       =target_file["messages"]    or world.recipe_messages
   --> "geometry" section stuff.
   world.bg_size             =SM_Vector.Sol_NewVector(world.recipe_geometry.bg_size)
   world.bg_tile_size        =SM_Vector.Sol_NewVector(world.recipe_geometry.bg_tile_size)

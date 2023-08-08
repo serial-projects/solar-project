@@ -31,7 +31,7 @@ function module.SPI_NewInstance(name)
     name        = name or string.genstr(),
     variables   = SPI_GenerateAPIVariables(),
     stack       = {}, call_stack = {},
-    registers   = { R0 = 0, R1 = 0, R2 = 0, X = 0, Y = 0, Z = 0, PC = 1, PCI = true, EQ = 0, GT = 0 },
+    registers   = { A = 0, B = 0, C = 0, X = 0, Y = 0, Z = 0, PC = 1, PCI = true, EQ = 0, GT = 0 },
     status      = consts.SPI_InstanceStatus.RUNNING,
     sleep_until = 0,
     error_msg   = nil
@@ -53,6 +53,8 @@ function module.SPI_TickInstance(context, instance)
     elseif instance.status == consts.SPI_InstanceStatus.SLEEPING then
       if instance.sleep_until <= SPI_AdquireTimeUsingFunction() then
         instance.status = consts.SPI_InstanceStatus.RUNNING
+      else
+        return instance.status
       end
     end
   end

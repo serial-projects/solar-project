@@ -58,7 +58,7 @@ function module.SPI_SetDataToInstance(instance, token, value)
       end
     end,
     ["!"]=function()
-      -- NOTE: all the registers are in UPPERCASE like SP, R0, etc...
+      -- NOTE: all the registers are in UPPERCASE like SP, A, etc...
       without_prefix = string.upper(without_prefix)
       if instance.registers[without_prefix] or SPECIAL_REGISTERS[without_prefix] then
         instance.registers[without_prefix] = value

@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # TODO: make a print function to prevent writting "[build.sh]" every ECHO.
 # TODO: remove COLORS for terminals that doesn't support color.

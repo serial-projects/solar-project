@@ -4,23 +4,29 @@ local spi_instance 	= require("Solar.libspi.instance")
 local spi_consts 		= require("Solar.libspi.consts")
 local module = {}
 
--- puts(message[r0]: string) 
-local function sysc_puts(_, instance) 	dmsg(tostring(instance.registers.R0)) end
+-- debug()
+local function sysc_debug(_, instance)
+	dmsg("TOP Registers: A = %d, B = %d, C = %d", instance.registers.A, instance.registers.B, instance.registers.C)
+	dmsg("POS Registers: X = %d, Y = %d, Z = %d", instance.registers.X, instance.registers.Y, instance.registers.Z)
+end
 
--- write(message[r0]: string)
+-- puts(message[A]: string) 
+local function sysc_puts(_, instance) 	dmsg(tostring(instance.registers.A)) end
+
+-- write(message[A]: string)
 local function sysc_write(_, instance)	
-	dmsg("thread: \"%s\", says: \"%s\"", instance.name, tostring(instance.registers.R0)) 
+	dmsg("thread: \"%s\", says: \"%s\"", instance.name, tostring(instance.registers.A))
 end
 
--- exit(exit_code[r0]: number)
+-- exit(exit_code[A]: number)
 local function sysc_exit(_, instance)
-	os.exit(type(instance.registers.R0) == "number" and instance.registers.R0 or 0)
+	os.exit(type(instance.registers.A) == "number" and instance.registers.A or 0)
 end
 
--- new_thread(begin_at[r0]: string | "main", thread_name[r1]: string | random name ...)
+-- new_thread(begin_at[A]: string | "main", thread_name[B]: string | random name ...)
 local function sysc_new_thread(context, instance)
-	local begin_at=type(instance.registers.R0)=="string" and instance.registers.R0 or "main"
-	local thread_name=type(instance.registers.R1)=="string" and instance.registers.R1 or (instance.name .. "$" .. string.genstr())
+	local begin_at=type(instance.registers.A)=="string" and instance.registers.A or "main"
+	local thread_name=type(instance.registers.B)=="string" and instance.registers.B or (instance.name .. "$" .. string.genstr())
 	if context.label_addr[begin_at] then
 		local proto_thread=spi_instance.SPI_NewInstance(thread_name)
 		proto_thread.registers.PC=context.label_addr[begin_at]
@@ -30,25 +36,25 @@ local function sysc_new_thread(context, instance)
 	end
 end
 
--- get_thread_status(thread_name[r0]: string) -> status[r0]: number
+-- get_thread_status(thread_name[A]: string) -> status[A]: number
 local function sysc_get_thread_status(context, instance)
-	local thread_name=instance.registers.R0
+	local thread_name=instance.registers.A
 	if type(thread_name) ~= "string" then
 		instance:set_error("invalid thread name (at get_thread_status system call): %s", tostring(thread_name))
 	else
 		for _, thread in ipairs(context.spawned_threads) do
 			if thread.name == thread_name then
-				instance.registers.R0 = thread.status
+				instance.registers.A = thread.status
 				return
 			end
 		end
-		instance.registers.R0 = -1
+		instance.registers.A = -1
 	end
 end
 
--- clear_threads(put_on_stack_cleaned_threads_names[r0]: number) -> amount_threads_cleaned[r0]: number
+-- clear_threads(put_on_stack_cleaned_threads_names[A]: number) -> amount_threads_cleaned[A]: number
 local function sysc_clear_threads(context, instance)
-	local put_on_stack_cleaned_threads_names = (instance.registers.R0 == 0)
+	local put_on_stack_cleaned_threads_names = (instance.registers.A == 0)
 	local cleaned_thread_name_list = {}
 	for thread_index, thread in ipairs(context.spawned_threads) do
 		if thread.status == spi_consts.SPI_InstanceStatus.DIED or spi_consts.SPI_InstanceStatus.FINISHED then
@@ -56,18 +62,18 @@ local function sysc_clear_threads(context, instance)
 			context.spawned_threads[thread_index]=nil
 		end
 	end
-	instance.registers.R0=#cleaned_thread_name_list
+	instance.registers.A=#cleaned_thread_name_list
 	table.unimerge(instance.stack, cleaned_thread_name_list)
 end
 
--- adjust_performance(desired_performance[r0]: number | string["unlimited", "max, "min"])
+-- adjust_performance(desired_performance[A]: number | string["unlimited", "max, "min"])
 local function sysc_adjust_performance(context, instance)
 	local PERFORMANCE_DEFAULT_VALUES = {
 		max 			= 25,
 		min 			= 10,
 		unlimited = -1,
 	}
-	local desired_performance=instance.registers.R0
+	local desired_performance=instance.registers.A
 	if type(desired_performance) ~= "number" then
 		if PERFORMANCE_DEFAULT_VALUES[desired_performance] then
 			context.performance=PERFORMANCE_DEFAULT_VALUES[desired_performance]
@@ -78,10 +84,21 @@ local function sysc_adjust_performance(context, instance)
 	end
 end
 
+-- sleep(amount_time_seconds[A]: number)
+local function sysc_sleep(_, instance)
+	local amount_time_seconds = instance.registers.A
+	if type(amount_time_seconds) == "number" then
+		dmsg("thread set to sleep for %d secs.", amount_time_seconds)
+		instance.sleep_until = SPI_AdquireTimeUsingFunction() + amount_time_seconds
+		instance.status = spi_consts.SPI_InstanceStatus.SLEEPING
+	end
+end
+
 -- module.SPI_GenerateBasicSystemCallsTable():
 function module.SPI_GenerateBasicSystemCallsTable()
 	return {
 		-- output functions:
+		["debug"] = sysc_debug,
 		puts 	= sysc_puts,
 		write	= sysc_write,
 		-- exit function:
@@ -91,7 +108,8 @@ function module.SPI_GenerateBasicSystemCallsTable()
 		get_thread_status = sysc_get_thread_status,
 		clear_threads			= sysc_clear_threads,
 		-- system operations:
-		adjust_performance= sysc_adjust_performance
+		adjust_performance= sysc_adjust_performance,
+		sleep 						= sysc_sleep
 	}
 end
 return module

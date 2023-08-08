@@ -1,5 +1,25 @@
+;; -- main script job -- ;;
 main:
+    call    do_creepy_ending
     halt
+do_creepy_ending:
+    sysc    "SolWorld_GetWorldSize"
+    pop     !Y
+    pop     !X
+do_creepy_ending@loop:
+    decr    !X
+    decr    !Y
+    sysc    "SolWorld_SetWorldSize"
+    move    1, !A
+    sysc    "sleep"
+    call    do_creepy_ending@show_xy
+    jump    do_creepy_ending@loop
+do_creepy_ending@show_xy:
+    move    !X, !A
+    move    !Y, !A
+    sysc    "debug"
+    retn
+;; -- for tile action -- ;;
 set_unlimited_performance:
     move    "unlimited", !r0
     sysc    "adjust_performance"

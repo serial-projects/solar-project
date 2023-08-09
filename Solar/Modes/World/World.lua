@@ -6,7 +6,7 @@ local SV_Consts     = require("Solar.Values.Consts")
 local SM_Vector    = require("Solar.Math.Vector")
 local SM_Rectangle = require("Solar.Math.Rectangle")
 
-local SWM_Scripts   = require("Solar.Modes.World.Scripts")
+local SSE_Script    = require("Solar.Services.Script")
 local SWM_Routines  = require("Solar.Modes.World.Routine")
 local SWM_Load      = require("Solar.Modes.World.Load")
 local SWM_Player    = require("Solar.Modes.World.Player")
@@ -21,7 +21,7 @@ function module.Sol_NewWorld(world)
     --
     chunks      ={},
     routines    =SWM_Routines.Sol_NewRoutineService(),
-    scripts     =SWM_Scripts.Sol_NewScriptService(),
+    scripts     =SSE_Script.Sol_NewScriptService(),
     --
     recipe_tiles        ={},
     recipe_geometry     ={},
@@ -62,7 +62,7 @@ end
 function module.Sol_TickWorld(engine, world_mode, world)
   SWM_Routines.Sol_TickRoutineService(engine, world_mode, world, world.routines)
   module.Sol_CheckSingleDirectionWalking(engine, world_mode, world)
-  SWM_Scripts.Sol_TickScriptService(world.scripts)
+  SSE_Script.Sol_TickScriptService(world.scripts)
 end
 
 --[[ Keypress Event Related Functions ]]--
@@ -76,7 +76,7 @@ function module.Sol_DoInteractionInWorld(engine, world_mode, world, tile, intera
   -- for tiles that need multiple interactions, for now, THE only way to do multiple interaction stuff is by using
   -- global variables (WHICH SHOULD ONLY BE USED FOR VERY IMPORTANT DATA AND NEED TO SAVE DATA!).
   interaction_recipe["when_finish"], tile.busy=(function(ir) tile.busy = false end), true
-  SWM_Scripts.Sol_LoadScript(engine, world_mode, world, world.scripts, interaction_recipe)
+  SSE_Script.Sol_LoadScriptInWorld(engine, world_mode, world, world.scripts, interaction_recipe)
 end
 
 function module.Sol_AttemptInteractionInWorld(engine, world_mode, world)

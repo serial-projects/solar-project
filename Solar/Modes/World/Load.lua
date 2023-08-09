@@ -6,9 +6,9 @@ local SM_Vector   = require("Solar.Math.Vector")
 local SS_Path     = require("Solar.System.Path")
 local SCF         = require("Solar.SCF")
 local SD_Recipe   = require("Solar.Draw.Recipe")
+local SSE_Script  = require("Solar.Services.Script")
 local SWM_Player  = require("Solar.Modes.World.Player")
 local SWM_Routines= require("Solar.Modes.World.Routine")
-local SWM_Scripts = require("Solar.Modes.World.Scripts")
 local SWM_Tiles   = require("Solar.Modes.World.Tiles")
 local SWM_Chunk   = require("Solar.Modes.World.Chunk")
 
@@ -123,7 +123,7 @@ function module.Sol_LoadWorld(engine, world_mode, world, world_name)
     for script_name, script_recipe in pairs(world.recipe_scripts) do
       if script_name ~= "__type" then
         dmsg("loading script: %s ...", script_name)
-        SWM_Scripts.Sol_LoadScript(engine, world_mode, world, world.scripts, script_recipe)
+        SSE_Script.Sol_LoadScriptInWorld(engine, world_mode, world, world.scripts, script_recipe)
       end
     end
   end

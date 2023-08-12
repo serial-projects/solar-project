@@ -1,0 +1,20 @@
+;; -- main script -- ;;
+main:
+    define  x, 0
+    define  y, 0
+    define  should_say_yes, 0
+    cmpr    $x, 10
+    add     !EQ, $should_say_yes, $should_say_yes
+    cmpr    $y, 10
+    add     !EQ, $should_say_yes, $should_say_yes
+    cmpr    $should_say_yes, 0
+    jne     say_yes
+    je      say_no
+say_yes:
+    move    "yes", !a
+    sysc    "write"
+    halt
+say_no:
+    move    "no", !a
+    sysc    "write"
+    halt

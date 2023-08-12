@@ -3,21 +3,6 @@ section info
     define  name, "Niea's Room"
 end-section
 
-## section "actions"
-section actions
-    # >> To define a script job:
-    # tick_per_frame:   how much ticks will the game dedicate to the script
-    #                   usually, you want to keep it like 10 ticks per frame
-    #                   to prevent lag and possible crashes.
-    # source:           the path to the script in relation to $GAME_ROOT/scripts/<your-script>.slss
-    # begin:            what label will the script begin.
-    section main
-        define  ticks_per_frame, 10
-        define  source, "nr-main"
-        define  begin, "main"
-    end-section
-end-section
-
 ## section "tiles" ##
 # >> Tiles are the fundamental building blocks on the Sol Engine.
 section tiles
@@ -151,6 +136,11 @@ section scripts
     section main
         define  name,               "main#niea-room"
         define  source,             "main"
+        define  ticks_per_frame,    10
+    end-section
+    section general_testing_script
+        define  name,               "general_testing_script#niea-room"
+        define  source,             "general-testing-script"
         define  ticks_per_frame,    10
     end-section
 end-section

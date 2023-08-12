@@ -1,7 +1,15 @@
 ;; -- main script job -- ;;
 main:
+    call    begin_thread_work
     call    do_creepy_ending
     halt
+begin_thread_work:
+    move    "thread_work", !a
+    move    "nika", !b
+    sysc    "new_thread"
+    move    "NIKA has been deployed.", !A
+    sysc    "write"
+    retn
 do_creepy_ending:
     sysc    "SolWorld_GetWorldSize"
     pop     !Y
@@ -19,6 +27,19 @@ do_creepy_ending@show_xy:
     move    !Y, !A
     sysc    "debug"
     retn
+
+;; -- thread work -- ;;
+thread_work:
+    move    "begun thread work!", !a
+    sysc    "write"
+    move    0, !a
+thread_work@loop:
+    incr    !a
+    sysc    "write"
+    move    0.5, !a
+    sysc    "sleep"
+    jump    thread_work@loop
+
 ;; -- for tile action -- ;;
 set_unlimited_performance:
     move    "unlimited", !r0

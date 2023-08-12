@@ -5,9 +5,27 @@ local spi_consts 		= require("Solar.libspi.consts")
 local module = {}
 
 -- debug()
-local function sysc_debug(_, instance)
-	dmsg("TOP Registers: A = %d, B = %d, C = %d", instance.registers.A, instance.registers.B, instance.registers.C)
-	dmsg("POS Registers: X = %d, Y = %d, Z = %d", instance.registers.X, instance.registers.Y, instance.registers.Z)
+local function sysc_debug(context, instance)
+	local function say_logging(msg, ...)
+		msg = string.format("(from SPI_Instance = \"%s\"): ", instance.name) .. msg
+		dmsg(msg, ...)
+	end
+	-- some instance information:
+	say_logging("TOP Registers: A = %s, B = %s, C = %s", tostring(instance.registers.A), tostring(instance.registers.B), tostring(instance.registers.C))
+	say_logging("POS Registers: X = %s, Y = %s, Z = %s", tostring(instance.registers.X), tostring(instance.registers.Y), tostring(instance.registers.Z))
+	say_logging("There are %d elements on Stack.", #instance.stack)
+	for stack_index, stack_value in ipairs(instance.stack) do
+		say_logging("\t[Slot: %d]: \"%s\"", stack_index, tostring(stack_value))
+	end
+	say_logging("GOTO depth: %d, PC: %d, EQ: %d, GT: %d", #instance.call_stack, instance.registers.PC, instance.registers.EQ, instance.registers.GT)
+	for call_stack_index, call_stack_value in ipairs(instance.call_stack) do
+		say_logging("\t[Slot (in Call Stack): %d]: %d", call_stack_index, call_stack_value)
+	end
+	-- some context information:
+	say_logging("There are %d threads in context, performance is: %d", #context.spawned_threads, context.performance)
+	for thread_index, thread in ipairs(context.spawned_threads) do
+		say_logging("\t[Thread: \"%s\", slot: %d, status: %d]: PC = %d", thread.name, thread_index, thread.status, thread.registers.PC)
+	end
 end
 
 -- puts(message[A]: string) 
@@ -88,7 +106,6 @@ end
 local function sysc_sleep(_, instance)
 	local amount_time_seconds = instance.registers.A
 	if type(amount_time_seconds) == "number" then
-		dmsg("thread set to sleep for %d secs.", amount_time_seconds)
 		instance.sleep_until = SPI_AdquireTimeUsingFunction() + amount_time_seconds
 		instance.status = spi_consts.SPI_InstanceStatus.SLEEPING
 	end

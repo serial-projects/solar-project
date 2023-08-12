@@ -27,8 +27,11 @@ function love.load(args)
   SolarArguments.Sol_UserArgumentsDecode(args, {
     --
     ["--debug"]={nargs=0, wrap=function()
-      _G.dmsg_en=true
+      setdebug(true)
     end}, ["-d"]="--debug",
+    ["--log"]={nargs=1, wrap=function(path)
+      logfileset(path)
+    end}, ["-l"]="--log",
     --
     ["--help"] ={nargs=0, wrap=function()
       love.help()
@@ -50,7 +53,7 @@ function love.load(args)
   --
   SolarEngine.Sol_InitEngine(SolEngineMainInstance, SolEnginePathResources)
   --
-  dmsg(">> running on lua: %s (jit? %s), love: %d.%d.%d [%s]", _VERSION, (_G["jit"] and "yes" or "no"), love.getVersion())
+  msg(">> running on lua: %s (jit? %s), love: %d.%d.%d [%s]", _VERSION, (_G["jit"] and "yes" or "no"), love.getVersion())
 end
 
 --[[ love.resize(new_width, new_height) ]]
@@ -65,6 +68,7 @@ end
 
 --[[ love.keypressed() ]]
 function love.keypressed(key)
+  if key == 'l' then qcrash(-1, "bruh") end
   SolarEngine.Sol_KeypressEventEngine(SolEngineMainInstance, key)
 end
 

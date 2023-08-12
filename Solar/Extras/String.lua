@@ -2,6 +2,7 @@
 
 -- xstring.lua: extra functions for string library.
 _G["StringImported"] = true
+local __TokenizerModuleOneshotRequire = require("Solar.Extras.Tokenizer")
 
 function string.getstr(size, fill_with)
   local str, fill_with, size = "", fill_with or " ", size or 0

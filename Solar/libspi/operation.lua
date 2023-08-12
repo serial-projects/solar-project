@@ -82,7 +82,6 @@ function module.SPI_Goto(context, instance, where, save_last_location)
     local AMOUNT_JUMP = 1 + 1
     if save_last_location then
       local save_address = instance.registers.PC + AMOUNT_JUMP
-      dmsg("saving address = %d, going to = %d", save_address, location_address)
       table.insert(instance.call_stack, save_address)
     end
     instance.registers.PC   = location_address

@@ -4,6 +4,7 @@
 _G["LogImported"] = true
 
 -- :: utility for logging :: --
+local LOG_SEPARATOR   = "|"
 local REPL_DEBUG_WITH = "\27[37mDEBUG\27[0m"
 local REPL_WARN_WITH  = "\27[33mWARN\27[0m"
 local REPL_MSG_WITH   = "\27[34mMSG\27[0m"
@@ -11,18 +12,21 @@ local REPL_CRASH_WITH = "\27[31mCRASH\27[0m"
 
 -- TODO: on the future, implement a better markup system.
 _G.dologmarkup = function(s)
+  local logheader = string.findch(s, LOG_SEPARATOR)
+  local without_header = s:sub(logheader+1, #s)
+        logheader = s:sub(1, logheader)
   local do_replacements = {
-    {target = "DEBUG", repl = REPL_DEBUG_WITH},
-    {target = "WARN", repl = REPL_WARN_WITH},
-    {target = "MSG", repl = REPL_MSG_WITH},
-    {target = "CRASH", repl = REPL_CRASH_WITH}
+    {target = "DEBUG",  repl = REPL_DEBUG_WITH},
+    {target = "WARN",   repl = REPL_WARN_WITH},
+    {target = "MSG",    repl = REPL_MSG_WITH},
+    {target = "CRASH",  repl = REPL_CRASH_WITH}
   }
   for _, replacement in ipairs(do_replacements) do
     local amount_changed = 0
-    s, amount_changed = string.gsub(s, replacement.target, replacement.repl, 1)
+    logheader, amount_changed = string.gsub(logheader, replacement.target, replacement.repl, 1)
     if amount_changed > 0 then break end
   end
-  return s
+  return logheader .. without_header
 end
 
 -- :: logging :: --
@@ -87,11 +91,10 @@ _G.setdebug = function(debug_status)
   _G.setlogger("print", "enabled", debug_status)
 end
 
-_G.dmsg =function(fmt, ...) _G.genericPrint("[DEBUG]: " .. fmt, ...) end
-_G.mwarn=function(fmt, ...) _G.genericPrint("[ WARN]: " .. fmt, ...) end
-_G.msg  =function(fmt, ...) _G.genericPrint("[  MSG]: " .. fmt, ...) end
-
-_G.qcrash=function(exit_code, fmt, ...)   _G.genericPrint("[CRASH]: "..fmt, ...) os.exit(exit_code) end
+_G.dmsg   =function(fmt, ...) _G.genericPrint(string.format("[DEBUG] %s %s", LOG_SEPARATOR, fmt), ...) end
+_G.mwarn  =function(fmt, ...) _G.genericPrint(string.format("[ WARN] %s %s", LOG_SEPARATOR, fmt), ...) end
+_G.msg    =function(fmt, ...) _G.genericPrint(string.format("[  MSG] %s %s", LOG_SEPARATOR, fmt), ...) end
+_G.qcrash =function(exit_code, fmt, ...) _G.genericPrint(string.format("[CRASH] %s %s", LOG_SEPARATOR, fmt)) os.exit(exit_code) end
 
 -- other logging features:
 _G.makesure=function(condition, code, when_error, ...)

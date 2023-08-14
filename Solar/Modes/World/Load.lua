@@ -4,11 +4,15 @@ local unpack = unpack or table.unpack
 
 local SM_Vector   = require("Solar.Math.Vector")
 local SS_Path     = require("Solar.System.Path")
+
 local SCF         = require("Solar.SCF")
+
 local SD_Recipe   = require("Solar.Draw.Recipe")
+
 local SSE_Script  = require("Solar.Services.Script")
+local SSE_Routines= require("Solar.Services.Routines")
+
 local SWM_Player  = require("Solar.Modes.World.Player")
-local SWM_Routines= require("Solar.Modes.World.Routine")
 local SWM_Tiles   = require("Solar.Modes.World.Tiles")
 local SWM_Chunk   = require("Solar.Modes.World.Chunk")
 
@@ -94,7 +98,7 @@ function module.Sol_LoadWorld(engine, world_mode, world, world_name)
   end
   --> "player" section 
   -- NOTE: the player section is actually loaded during the world firstrun routine.
-  local function wload_AdjustPlayerOneshot_FirstRun(engine, world_mode, world, routine)
+  local function wload_AdjustPlayerOneshot_FirstRun(routine, _, world_mode, world)
     dmsg("%s is adjust the player for the first time run on the world: \"%s\"!", routine.name, world.name)
     if world.recipe_player then
       local spawn_position = world.recipe_player["spawn"]
@@ -111,11 +115,11 @@ function module.Sol_LoadWorld(engine, world_mode, world, world_name)
       world_mode.player.rectangle.size = world.recipe_player["size"] and SM_Vector.Sol_NewVector(world.recipe_player["size"]) or world_mode.player.size
       SWM_Player.Sol_LoadPlayerRelativePosition(world_mode, world_mode.player)
     end
-    return SWM_Routines.ROUTINE_STATUS_FINISHED
+    return SSE_Routines.ROUTINE_STATUS_FINISHED
   end
-  SWM_Routines.Sol_PushRoutine(world.routines, SWM_Routines.Sol_NewRoutine(
-    "wload.AdjustPlayerOneshot", SWM_Routines.EXEC_ON_TICK,
-    {[SWM_Routines.ROUTINE_STATUS_FIRSTRUN]=wload_AdjustPlayerOneshot_FirstRun},
+  SSE_Routines.Sol_PushRoutine(world.routines, SSE_Routines.Sol_NewRoutine(
+    "wload.AdjustPlayerOneshot", SSE_Routines.EXEC_ON_TICK,
+    {[SSE_Routines.ROUTINE_STATUS_FIRSTRUN]=wload_AdjustPlayerOneshot_FirstRun},
     {}
   ))
   --> "script" section

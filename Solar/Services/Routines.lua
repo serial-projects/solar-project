@@ -41,7 +41,7 @@ function module.Sol_NewRoutineService()
   return { routines = {} }
 end
 
-function Sol_RoutineServiceDie(engine, world_mode, world, routine)
+function Sol_RoutineServiceDie(routine)
   local perform_table = {
     [module.DIE_SEVERITY_LOW]=function()
       mwarn("routine: \"%s\" has DIED, dump: %s", routine.name, routine.dump)
@@ -58,7 +58,7 @@ function Sol_RoutineServiceDie(engine, world_mode, world, routine)
   perform_table[(routine.die_severity > 3) and module.DIE_SEVERITY_HIGH or routine.die_severity]()
 end
 
-function Sol_RoutineServiceExecutionTemplate(engine, world_mode, world, routine_service, current_mode)
+function Sol_RoutineServiceExecutionTemplate(routine_service, current_mode, ...)
   local wrap_bank        ={"on_tick_wrap", "on_draw_wrap"}
   local wrap_bank_counter={"tick_counter", "draw_counter"}
   local current_wrap_bank=wrap_bank[current_mode]
@@ -70,7 +70,7 @@ function Sol_RoutineServiceExecutionTemplate(engine, world_mode, world, routine_
       assert(routine[current_wrap_bank], string.format("expected wrap for routine (on current mode: %s): \"%s\", got nothing!", current_mode, routine_name))
       local routine_wrap  = routine[current_wrap_bank][routine_status]
       if routine_wrap then
-        routine.status = routine[current_wrap_bank][routine_status](engine, world_mode, world, routine)
+        routine.status = routine[current_wrap_bank][routine_status](routine, ...)
       else
         routine.status = (routine.status == module.ROUTINE_STATUS_FIRSTRUN) and module.ROUTINE_STATUS_RUNNING or module.ROUTINE_STATUS_FINISHED
       end
@@ -85,7 +85,7 @@ function Sol_RoutineServiceExecutionTemplate(engine, world_mode, world, routine_
         mwarn("routine \"%s\" finished and was removed! (routine took %f seconds to finish, ticks: %d, drawings: %d).", routine_name, os.clock() - routine.created_at, routine.tick_counter, routine.draw_counter)
       --[[ DIED MODE ]]
       elseif routine.status == module.ROUTINE_STATUS_DIED then
-        Sol_RoutineServiceDie(engine, world_mode, world, routine)
+        Sol_RoutineServiceDie(routine)
         routine_service.routines[routine_index]=nil
       end
     end
@@ -94,11 +94,11 @@ end
 function module.Sol_PushRoutine(routine_service, routine)
   table.insert(routine_service.routines, routine)
 end
-function module.Sol_TickRoutineService(engine, world_mode, world, routine_service)
-  Sol_RoutineServiceExecutionTemplate(engine, world_mode, world, routine_service, module.EXEC_ON_TICK)
+function module.Sol_TickRoutineService(routine_service, ...)
+  Sol_RoutineServiceExecutionTemplate(routine_service, module.EXEC_ON_TICK, ...)
 end
-function module.Sol_DrawRoutineService(engine, world_mode, world, routine_service)
-  Sol_RoutineServiceExecutionTemplate(engine, world_mode, world, routine_service, module.EXEC_ON_DRAW)
+function module.Sol_DrawRoutineService(routine_service, ...)
+  Sol_RoutineServiceExecutionTemplate(routine_service, module.EXEC_ON_DRAW, ...)
 end
 
 --

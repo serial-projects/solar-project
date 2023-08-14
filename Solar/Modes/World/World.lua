@@ -7,7 +7,8 @@ local SM_Vector    = require("Solar.Math.Vector")
 local SM_Rectangle = require("Solar.Math.Rectangle")
 
 local SSE_Script    = require("Solar.Services.Script")
-local SWM_Routines  = require("Solar.Modes.World.Routine")
+local SSE_Routines  = require("Solar.Services.Routines")
+
 local SWM_Load      = require("Solar.Modes.World.Load")
 local SWM_Player    = require("Solar.Modes.World.Player")
 local SWM_Tiles     = require("Solar.Modes.World.Tiles")
@@ -20,7 +21,7 @@ function module.Sol_NewWorld(world)
     info={name="n/n", description="?"},
     --
     chunks      ={},
-    routines    =SWM_Routines.Sol_NewRoutineService(),
+    routines    =SSE_Routines.Sol_NewRoutineService(),
     scripts     =SSE_Script.Sol_NewScriptService(),
     --
     recipe_tiles        ={},
@@ -60,7 +61,7 @@ function module.Sol_CheckSingleDirectionWalking(engine, world_mode, world)
 end
 
 function module.Sol_TickWorld(engine, world_mode, world)
-  SWM_Routines.Sol_TickRoutineService(engine, world_mode, world, world.routines)
+  SSE_Routines.Sol_TickRoutineService(world.routines, engine, world_mode, world)
   module.Sol_CheckSingleDirectionWalking(engine, world_mode, world)
   SSE_Script.Sol_TickScriptService(world.scripts)
 end
@@ -120,7 +121,7 @@ end
 --[[ Draw Related Functions ]]
 function module.Sol_DrawWorld(engine, world_mode, world)
   --> determine the player current chunk + all the sorroundings tiles.
-  SWM_Routines.Sol_DrawRoutineService(engine, world_mode, world, world.routines)
+  SSE_Routines.Sol_DrawRoutineService(world.routines, engine, world_mode, world)
   local draw_tile_queue = SWM_Chunk.Sol_GetChunksOrdered(engine, world_mode, world)
   for _, tile in ipairs(draw_tile_queue) do
     if tile["type"] then

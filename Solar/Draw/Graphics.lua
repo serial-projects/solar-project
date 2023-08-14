@@ -2,6 +2,11 @@
 
 local module = {}
 
+-- Sol_GeneratePixelatedRandomizedPatternUsingAlpha(canva)
+function module.Sol_GeneratePixelatedRandomizedPatternUsingAlpha(canva)
+  
+end
+
 -- Sol_GeneratePixelatedPatternUsingAlpha(canva)
 function module.Sol_GeneratePixelatedPatternUsingAlpha(canva, properties)
   local properties = properties or {}

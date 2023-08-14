@@ -11,6 +11,7 @@ local function sysc_debug(context, instance)
 		dmsg(msg, ...)
 	end
 	-- some instance information:
+	say_logging("--x SYSC_DEBUG triggered on thread: \"%s\" x--", instance.name)
 	say_logging("TOP Registers: A = %s, B = %s, C = %s", tostring(instance.registers.A), tostring(instance.registers.B), tostring(instance.registers.C))
 	say_logging("POS Registers: X = %s, Y = %s, Z = %s", tostring(instance.registers.X), tostring(instance.registers.Y), tostring(instance.registers.Z))
 	say_logging("There are %d elements on Stack.", #instance.stack)
@@ -26,6 +27,9 @@ local function sysc_debug(context, instance)
 	for thread_index, thread in ipairs(context.spawned_threads) do
 		say_logging("\t[Thread: \"%s\", slot: %d, status: %d]: PC = %d", thread.name, thread_index, thread.status, thread.registers.PC)
 	end
+	local current_usage_of_memory = collectgarbage("count")
+	say_logging("Current memory usage: %d bytes.", current_usage_of_memory)
+	say_logging("--x SYSC_DEBUG end report x--")
 end
 
 -- puts(message[A]: string) 

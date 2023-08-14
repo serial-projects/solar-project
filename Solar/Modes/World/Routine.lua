@@ -30,8 +30,9 @@ function module.Sol_NewRoutine(name, exec_on, on_tick_wrap, on_draw_wrap)
     die_severity  = module.DIE_SEVERITY_LOW,
     dump          = nil,
     exec_on       = exec_on or module.EXEC_ON_TICKDRAW,
-    on_tick_wrap  = on_tick_wrap or {},
-    on_draw_wrap  = on_draw_wrap or {}
+    on_tick_wrap  = on_tick_wrap or {}, tick_counter = 0,
+    on_draw_wrap  = on_draw_wrap or {}, draw_counter = 0,
+    created_at    = os.clock(),
   }
 end
 
@@ -58,8 +59,10 @@ function Sol_RoutineServiceDie(engine, world_mode, world, routine)
 end
 
 function Sol_RoutineServiceExecutionTemplate(engine, world_mode, world, routine_service, current_mode)
-  local wrap_bank        ={"on_tick_wrap","on_draw_wrap"}
+  local wrap_bank        ={"on_tick_wrap", "on_draw_wrap"}
+  local wrap_bank_counter={"tick_counter", "draw_counter"}
   local current_wrap_bank=wrap_bank[current_mode]
+  local current_wrap_bank_counter=wrap_bank_counter[current_mode]
   for routine_index, routine in ipairs(routine_service.routines) do
     if routine.exec_on == current_mode or routine.exec_on <= 3 then
       local routine_name  = routine.name
@@ -71,6 +74,7 @@ function Sol_RoutineServiceExecutionTemplate(engine, world_mode, world, routine_
       else
         routine.status = (routine.status == module.ROUTINE_STATUS_FIRSTRUN) and module.ROUTINE_STATUS_RUNNING or module.ROUTINE_STATUS_FINISHED
       end
+      routine[current_wrap_bank_counter]=routine[current_wrap_bank_counter]+1
       --[[ FIRSTRUN MODE ]]
       if routine.status == module.ROUTINE_STATUS_FIRSTRUN then
         routine.status = module.ROUTINE_STATUS_RUNNING
@@ -78,7 +82,7 @@ function Sol_RoutineServiceExecutionTemplate(engine, world_mode, world, routine_
       --[[ FINISHED MODE ]]
       elseif routine.status == module.ROUTINE_STATUS_FINISHED then
         routine_service.routines[routine_index]=nil
-        mwarn("routine \"%s\" finished and was removed!")
+        mwarn("routine \"%s\" finished and was removed! (routine took %f seconds to finish, ticks: %d, drawings: %d).", routine_name, os.clock() - routine.created_at, routine.tick_counter, routine.draw_counter)
       --[[ DIED MODE ]]
       elseif routine.status == module.ROUTINE_STATUS_DIED then
         Sol_RoutineServiceDie(engine, world_mode, world, routine)

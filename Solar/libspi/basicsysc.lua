@@ -6,9 +6,9 @@ local module = {}
 
 -- debug()
 local function sysc_debug(context, instance)
-	local function say_logging(msg, ...)
-		msg = string.format("(from SPI_Instance = \"%s\"): ", instance.name) .. msg
-		dmsg(msg, ...)
+	local function say_logging(fmsg, ...)
+		fmsg = string.format("(from SPI_Instance = \"%s\"): ", instance.name) .. fmsg
+		msg(fmsg, ...)
 	end
 	-- some instance information:
 	say_logging("--x SYSC_DEBUG triggered on thread: \"%s\" x--", instance.name)
@@ -33,11 +33,13 @@ local function sysc_debug(context, instance)
 end
 
 -- puts(message[A]: string) 
-local function sysc_puts(_, instance) 	dmsg(tostring(instance.registers.A)) end
+local function sysc_puts(_, instance)
+	msg(tostring(instance.registers.A))
+end
 
 -- write(message[A]: string)
 local function sysc_write(_, instance)	
-	dmsg("thread: \"%s\", says: \"%s\"", instance.name, tostring(instance.registers.A))
+	msg("thread: \"%s\", says: \"%s\"", instance.name, tostring(instance.registers.A))
 end
 
 -- exit(exit_code[A]: number)

@@ -79,11 +79,7 @@ function module.SPI_TickInstance(context, instance)
     --> begin executing the wrapped function on the instruction wrapper:
     -- NOTE: xtable.lua is required with function table.sub()
     local arguments = table.sub(context.code, current_pc + 1, (current_pc + 1) + current_instruction_nargs)
-    if current_opcode_structure.pass_context then
-      current_opcode_structure.wrap(context, instance, unpack(arguments))
-    else
-      current_opcode_structure.wrap(instance, unpack(arguments))
-    end
+    current_opcode_structure.wrap(context, instance, unpack(arguments))
     --> should we increment the PCI this time?
     if instance.registers.PCI then
       instance.registers.PC = (instance.registers.PC + 1) + current_instruction_nargs

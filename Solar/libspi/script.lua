@@ -25,6 +25,7 @@ function module.SPI_NewContext(recipe)
     spawned_threads = {},
     instance        = nil,
     performance			= 20,
+    global_scope    = {},
   }
 end
 -- SPI_LoadContextCodeUsingFile(context: SPI_Context, file_name: string, use_open_wrapper: function | io.open):

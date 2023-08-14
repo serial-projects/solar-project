@@ -4,7 +4,7 @@ local module = {}
 local    STRING_TOKENS = {["\""]=true, ["'"]=true}
 local    VALID_BOOLEAN_TOKENS = {["true"]=true, ["yes"]=true, ["false"]=true, ["no"]=true}
 local    SPECIAL_REGISTERS = {["EQ"]=true, ["GT"]=true}
-function module.SPI_GetDataFromInstance(instance, token)
+function module.SPI_GetDataFromInstance(context, instance, token)
   -- prefixes:
   -- $    = local variables (usually defined by "define" keyword);
   -- @    = global variables;
@@ -22,7 +22,7 @@ function module.SPI_GetDataFromInstance(instance, token)
     return CheckReference(without_prefix, instance.variables, "no local declared: \"%s\"", without_prefix)
   elseif possible_prefix == '@' then
     if _G["SPI_Globals"] then
-      return CheckReference(without_prefix, _G.SPI_Globals, "no global declared: \"%s\"", without_prefix)
+      return CheckReference(without_prefix, context.global_scope, "no global declared: \"%s\"", without_prefix)
     else
       return instance:set_error("invalid access to global table, not defined yet!")
     end
@@ -39,7 +39,7 @@ function module.SPI_GetDataFromInstance(instance, token)
   end
   return 0
 end
-function module.SPI_SetDataToInstance(instance, token, value)
+function module.SPI_SetDataToInstance(context, instance, token, value)
   -- prefixes:
   -- $    = local variables (usually defined by "define" keyword);
   -- @    = global variables;
@@ -52,7 +52,7 @@ function module.SPI_SetDataToInstance(instance, token, value)
     end,
     ["@"]=function()
       if _G["SPI_Globals"] then
-        _G.SPI_Globals[without_prefix]=value
+        context.global_scope[without_prefix]=value
       else
         instance:set_error("invalid access to global table, not defined yet!")
       end

@@ -53,7 +53,7 @@ function love.load(args)
   --
   SolarEngine.Sol_InitEngine(SolEngineMainInstance, SolEnginePathResources)
   --
-  msg(">> running on lua: %s (jit? %s), love: %d.%d.%d [%s]", _VERSION, (_G["jit"] and "yes" or "no"), love.getVersion())
+  msg(">> running on lua: %s (jit? %s), love: \"%d.%d.%d\" [%s]", _VERSION, (_G["jit"] and "yes" or "no"), love.getVersion())
 end
 
 --[[ love.resize(new_width, new_height) ]]

@@ -1,8 +1,13 @@
 ;; -- main script job -- ;;
 main:
     call    begin_thread_work
+    call    begin_other_thread_work
     call    do_creepy_ending
     halt
+begin_other_thread_work:
+    move    "other_thread@main", !a
+    move    "interloper-process", !b
+    sysc    "new_thread"
 begin_thread_work:
     move    "thread_work", !a
     move    "nika", !b
@@ -27,6 +32,15 @@ do_creepy_ending@show_xy:
     move    !Y, !A
     sysc    "debug"
     retn
+
+;; -- other_thread work -- ;;
+other_thread@main:
+other_thread@main_loop:
+    move    0, @TICK_COUNTER
+    move    0, @DRAW_COUNTER
+    move    5, !A
+    sysc    "sleep"
+    jump    other_thread@main_loop
 
 ;; -- thread work -- ;;
 thread_work:

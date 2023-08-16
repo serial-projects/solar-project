@@ -1,10 +1,5 @@
 -- 2020 - 2023 Solar Engine by Pipes Studios. This project is under the MIT license.
 
--- local smath     = require("sol.smath")
--- local defaults  = require("sol.defaults")
--- local storage   = require("sol.storage")
--- local drawrec   = require("sol.drawrec")
-
 local SM_Rectangle  = require("Solar.Math.Rectangle")
 local SM_Vector     = require("Solar.Math.Vector")
 local SM_Tiles      = require("Solar.Math.Tile")

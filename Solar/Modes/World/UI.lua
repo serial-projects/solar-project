@@ -2,17 +2,6 @@
 
 local module = {}
 
--- local SS_Storage   = require("sol.SS_Storage")
--- local SV_Defaults  = require("sol.SV_Defaults")
--- local consts    = require("sol.consts")
--- local graphics  = require("sol.graphics")
--- local smath     = require("sol.smath")
-
--- local ui_label  = require("sol.ui.label")
--- local ui_button = require("sol.ui.button")
--- local SUI_Frame  = require("sol.ui.frame")
--- local SUI_Display= require("sol.ui.display")
-
 local SM_Vector   = require("Solar.Math.Vector")
 local SM_Color    = require("Solar.Math.Color")
 

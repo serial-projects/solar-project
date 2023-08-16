@@ -35,6 +35,8 @@ function module.Sol_LoadScript(engine, recipe)
   --> load the script context:
   SPI_Script.SPI_LoadContextUsingFile(proto_sol_script.context, path_file, love.filesystem.newFile)
   SPI_Script.SPI_SetInstanceLocation(proto_sol_script.context, "main", recipe["begin_at"] or "main")
+	--> set global scope to the environment in the engine.
+	proto_sol_script.context.global_scope = engine.vars
   return proto_sol_script
 end
 

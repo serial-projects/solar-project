@@ -70,6 +70,8 @@ function module.SPI_SetDataToInstance(context, instance, token, value)
   local do_perform = performing_table[possible_prefix]
   if do_perform then
     do_perform()
+  else
+    instance:set_error("unable to set \"%s\" to temporary value: \"%s\"", value, token)
   end
 end
 function module.SPI_Goto(context, instance, where, save_last_location)

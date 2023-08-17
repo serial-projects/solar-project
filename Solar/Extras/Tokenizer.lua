@@ -2,6 +2,9 @@
 -- and make them more evident for internal parsing and other stuff.
 _G["TokenizerImported"] = true
 
+local function ischar_num(ch)     ch = string.byte(ch) ; return (ch >= string.byte('0') and ch <= string.byte('9')) end
+local function ischar_letter(ch)  ch = string.byte(ch) ; return (ch >= string.byte('a') and ch <= string.byte('z')) or (ch >= string.byte('A') and ch <= string.byte('Z')) end
+
 local DEFAULT_STRING_DELIMITERS = {["\""]=true,["'"]=true}
 function string.tokenizer(s, specifications)
   local ignore_tokens = specifications["ignore_tokens"] or {}
@@ -20,6 +23,32 @@ function string.tokenizer(s, specifications)
       tokens[#tokens+1] = acc
     end
     acc = after_append or ""
+  end
+  local function emulate_literal()
+    -- the literalism is only present inside the strings using the '\' character.
+    -- by using numbers after the '\', this will translate into the string.char
+    -- selected by the 8 bit number (aka. from '\0' to '\255'). Using characters
+    -- will only add it on the string.
+    local nextch = s:sub(index + 1, index + 1)
+    if ischar_num(nextch) then
+      local subindex, subindex_limit, subacc = 1, 2, ""
+      while (subindex <= subindex_limit) and ((index + subindex) <= length) do
+        local ch = s:sub(index + subindex, index + subindex)
+        -- NOTE: protect for nil?
+        if ischar_num(ch) then 
+          subacc = subacc .. ch
+        else
+          break
+        end
+        subindex = subindex + 1
+      end
+      local subacc_n = tonumber(subacc) ; subacc_n = subacc_n > 0xFF and 0xFF or subacc_n
+      acc = acc .. string.char(subacc_n)
+      index = index + subindex
+    else
+      acc = acc .. nextch
+      index = index + 1
+    end
   end
   --
   while index <= length do
@@ -40,6 +69,8 @@ function string.tokenizer(s, specifications)
       append_token(nil, current_char) ; inside_string, string_begin_with_delimiter = true, current_char
     elseif current_char == string_begin_with_delimiter and inside_string then
       append_token(current_char, nil) ; inside_string = false
+    elseif current_char == '\\' and inside_string then
+      emulate_literal()
     else
       acc = acc .. current_char
     end

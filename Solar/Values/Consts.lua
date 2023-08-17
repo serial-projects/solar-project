@@ -13,6 +13,7 @@ local module = {
   draw_using          = table.enum(1, {"COLOR", "TEXTURE", "SPRITES", "IMAGES"}),
   engine_modes        = table.enum(1, {"MENU", "WORLD", "CREDITS"}),
   player_directions   = table.enum(1, {"UP","DOWN","LEFT","RIGHT"}),
+  ignore_chars_tiles  = {["0"]=true, [" "]=true}
 }
 --
 return module

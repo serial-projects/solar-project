@@ -4,6 +4,7 @@ local unpack = unpack or table.unpack
 
 local SM_Vector   = require("Solar.Math.Vector")
 local SS_Path     = require("Solar.System.Path")
+local SV_Consts   = require("Solar.Values.Consts")
 
 local SCF         = require("Solar.SCF")
 
@@ -30,7 +31,7 @@ function module.Sol_GenerateLayer(world, layer)
       local line=layer_matrix[yindex]
       for xindex = 1, layer_width do
         local matrix_block=line:sub(xindex,xindex)
-        if matrix_block ~= "0" then
+        if not SV_Consts.ignore_chars_tiles[matrix_block] then
           if world.recipe_tiles[matrix_block] == nil then
             mwarn("unable to find \"%s\" block for layer \"%s\"", matrix_block, layer)
           else

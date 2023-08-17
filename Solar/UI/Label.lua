@@ -45,9 +45,11 @@ function module.Sol_DrawLabel(display, label)
         if type(label.relative_to) ~= "table" then
           label.rectangle.position.x, label.rectangle.position.y = SUI_Math.Sol_UITranslateRelativePosition(display.size.x, display.size.y, label.rectangle.size.x, label.rectangle.size.y, label.position.x, label.position.y)
         else
+          -- TODO: fix this probably fault calculation on the screen coords.
           label.rectangle.position.x, label.rectangle.position.y = SUI_Math.Sol_UITranslateRelativePosition(label.relative_to.bg_size.x, label.relative_to.bg_size.y, label.rectangle.size.x, label.rectangle.size.y, label.position.x, label.position.y)
-          label.rectangle.position.x=label.rectangle.position.x+label.relative_to.bg_position.x
-          label.rectangle.position.y=label.rectangle.position.y+label.relative_to.bg_position.y
+          print(label.rectangle.position.y)
+          label.rectangle.position.x=math.abs(label.relative_to.bg_position.x+label.rectangle.position.x)
+          label.rectangle.position.y=math.abs(label.relative_to.bg_position.y+label.rectangle.position.y)
         end
       end
       if label.has_background then

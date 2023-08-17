@@ -5,8 +5,9 @@ local SV_Defaults   = require("Solar.Values.Defaults")
 local SM_Color      = require("Solar.Math.Color")
 local SWM_Player    = require("Solar.Modes.World.Player")
 local SWM_World     = require("Solar.Modes.World.World")
-local SWM_Message   = require("Solar.Modes.World.Message")
 local SWM_UI        = require("Solar.Modes.World.UI")
+
+local SSE_Message   = require("Solar.Services.Message")
 
 -- local wload = require("sol.worldm.wload")
 
@@ -27,7 +28,7 @@ function module.Sol_NewWorldMode()
     draw_counter    = 0,
     do_world_draw   = true,
     -- services:
-    msg_service     = SWM_Message.Sol_NewMsgService()
+    message_service = SSE_Message.Sol_NewMessageService()
   }
 end
 
@@ -39,14 +40,19 @@ end
 --[[ Init Stuff ]]--
 function module.Sol_InitWorldMode(engine, world_mode)
   --> init the viewport:
-  world_mode.viewport=love.graphics.newCanvas(engine.viewport_size.x, engine.viewport_size.y)
-  world_mode.viewport_size=engine.viewport_size
+  world_mode.viewport     = love.graphics.newCanvas(engine.viewport_size.x, engine.viewport_size.y)
+  world_mode.viewport_size= engine.viewport_size
+  world_mode.main_display = SUI_Display.Sol_NewDisplay({size=engine.viewport_size})
   
+  --> init the MsgService:
+  SSE_Message.Sol_InitMessageService(engine, world_mode.message_service, world_mode.main_display)
+  world_mode.message_service.stack = {
+    SSE_Message.Sol_NewDialogForm({ text = "Hello World!", who = "Solar Engine" }),
+    SSE_Message.Sol_NewDialogForm({ text = "Your game is currently updated!", who = "Solar Engine" })
+  }
+
   --> init the UI:
   SWM_UI.Sol_InitWorldModeGUI(engine, world_mode)
-
-  --> init the MsgService:
-  SWM_Message.Sol_InitMsgService(engine, world_mode, world_mode.msg_service)
 
   --> init the player:
   SWM_Player.Sol_LoadPlayerRelativePosition(world_mode, world_mode.player)
@@ -68,7 +74,7 @@ end
 
 function module.Sol_TickWorldMode(engine, world_mode)
   module.Sol_TickWorldModeUI(engine, world_mode)
-  SWM_Message.Sol_TickMsgService(engine, world_mode, world_mode.msg_service)
+  SSE_Message.Sol_TickMessageService(world_mode.message_service)
   SUI_Display.Sol_TickDisplay(world_mode.main_display)
   if world_mode.current_world and world_mode.do_world_tick then
     local current_world=world_mode.worlds[world_mode.current_world]
@@ -84,15 +90,20 @@ end
 function module.Sol_KeypressEventWorldMode(engine, world_mode, key)
   local _keytable={
     ["f3"]      =function()
-      world_mode.display_debug_ui_frame.visible = not world_mode.display_debug_ui_frame.visible 
+      world_mode.display_debug_ui_frame.visible = not world_mode.display_debug_ui_frame.visible
     end,
     ["escape"]  =function()
       world_mode.display_exit_ui_frame.visible = not world_mode.display_exit_ui_frame.visible
       world_mode.do_world_tick = not world_mode.do_world_tick
     end,
+    ["f5"]      =function()
+      if not world_mode.message_service.running then
+        world_mode.message_service.should_initialize = true
+      end
+    end
   }
   if _keytable[key] then _keytable[key]() end
-  SWM_Message.Sol_KeypressMsgService(engine, world_mode, world_mode.msg_service, key)
+  SSE_Message.Sol_KeypressMessageService(world_mode.message_service, key)
   --
   if world_mode.current_world and world_mode.do_world_tick then
     local current_world=world_mode.worlds[world_mode.current_world]
@@ -110,7 +121,7 @@ function module.Sol_DrawWorldMode(engine, world_mode)
       if current_world then SWM_World.Sol_DrawWorld(engine, world_mode, current_world) end
     end
     SUI_Display.Sol_DrawDisplay(world_mode.main_display)
-    SWM_Message.Sol_DrawMsgService(engine, world_mode, world_mode.msg_service)
+    SSE_Message.Sol_DrawMessageService(engine, world_mode.message_service)
   love.graphics.setCanvas(past_canva)
   world_mode.draw_counter = world_mode.draw_counter + 1
 end

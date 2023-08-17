@@ -5,10 +5,11 @@ _G["LogImported"] = true
 
 -- :: utility for logging :: --
 local LOG_SEPARATOR   = "|"
-local REPL_DEBUG_WITH = "\27[37mDEBUG\27[0m"
-local REPL_WARN_WITH  = "\27[33mWARN\27[0m"
-local REPL_MSG_WITH   = "\27[34mMSG\27[0m"
-local REPL_CRASH_WITH = "\27[31mCRASH\27[0m"
+local REPL_DEBUG_WITH = "\27[1;36mDEBUG\27[0m"
+local REPL_WARN_WITH  = "\27[1;33mWARN\27[0m"
+local REPL_MSG_WITH   = "\27[1;32mMSG\27[0m"
+local REPL_CRASH_WITH = "\27[1;31mCRASH\27[0m"
+local REPL_ERROR_WITH = "\27[5m\27[4m\27[1;31mERROR\27[0m"
 
 -- TODO: on the future, implement a better markup system.
 _G.dologmarkup = function(s)
@@ -19,7 +20,8 @@ _G.dologmarkup = function(s)
     {target = "DEBUG",  repl = REPL_DEBUG_WITH},
     {target = "WARN",   repl = REPL_WARN_WITH},
     {target = "MSG",    repl = REPL_MSG_WITH},
-    {target = "CRASH",  repl = REPL_CRASH_WITH}
+    {target = "CRASH",  repl = REPL_CRASH_WITH},
+    {target = "ERROR",  repl = REPL_ERROR_WITH}
   }
   for _, replacement in ipairs(do_replacements) do
     local amount_changed = 0
@@ -91,9 +93,10 @@ _G.setdebug = function(debug_status)
   _G.setlogger("print", "enabled", debug_status)
 end
 
-_G.dmsg   =function(fmt, ...) _G.genericPrint(string.format("[DEBUG] %s %s", LOG_SEPARATOR, fmt), ...) end
-_G.mwarn  =function(fmt, ...) _G.genericPrint(string.format("[ WARN] %s %s", LOG_SEPARATOR, fmt), ...) end
-_G.msg    =function(fmt, ...) _G.genericPrint(string.format("[  MSG] %s %s", LOG_SEPARATOR, fmt), ...) end
+_G.emsg   =function(fmt, ...) _G.genericPrint(string.format(" ERROR %s %s", LOG_SEPARATOR, fmt), ...) end
+_G.dmsg   =function(fmt, ...) _G.genericPrint(string.format(" DEBUG %s %s", LOG_SEPARATOR, fmt), ...) end
+_G.mwarn  =function(fmt, ...) _G.genericPrint(string.format("  WARN %s %s", LOG_SEPARATOR, fmt), ...) end
+_G.msg    =function(fmt, ...) _G.genericPrint(string.format("   MSG %s %s", LOG_SEPARATOR, fmt), ...) end
 _G.qcrash =function(exit_code, fmt, ...) _G.genericPrint(string.format("[CRASH] %s %s", LOG_SEPARATOR, fmt)) os.exit(exit_code) end
 
 -- other logging features:

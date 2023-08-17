@@ -15,12 +15,11 @@ local SUI_Frame   = require("Solar.UI.Frame")
 local SUI_Button  = require("Solar.UI.Button")
 local SUI_Label   = require("Solar.UI.Label")
 
-
 -- Sol_InitWorldModeGUI(engine: Sol_Engine, world_mode: Sol_WorldMode):
 -- Generate the GUI for the World Mode.
 function module.Sol_InitWorldModeGUI(engine, world_mode)
   local begun_initializing_gui= os.clock() ; dmsg("Sol_InitWorldModeGUI() was called!")
-  local terminal_font         = SS_Storage.Sol_LoadFontFromStorage(engine.storage, "terminal", 14)
+  local terminal_font         = SS_Storage.Sol_LoadFontFromStorage(engine.storage, "terminal", 12)
   local normal_font           = SS_Storage.Sol_LoadFontFromStorage(engine.storage, "normal", 12)
   local normal_title_font     = SS_Storage.Sol_LoadFontFromStorage(engine.storage, "normal", 24)
   world_mode.main_display     = SUI_Display.Sol_NewDisplay({size=engine.viewport_size})

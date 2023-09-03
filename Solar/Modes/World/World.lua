@@ -122,9 +122,9 @@ end
 function module.Sol_DrawWorld(engine, world_mode, world)
   --> determine the player current chunk + all the sorroundings tiles.
   SSE_Routines.Sol_DrawRoutineService(world.routines, engine, world_mode, world)
-  local draw_tile_queue = SWM_Chunk.Sol_GetChunksOrdered(engine, world_mode, world)
+  local draw_tile_queue = SWM_Chunk.Sol_GetChunksOrdered(engine, world_mode, world, true)
   for _, tile in ipairs(draw_tile_queue) do
-    if tile["type"] then
+    if tile["type"] and tile["type"] == "player" then
       SWM_Player.Sol_DrawPlayer(engine, world_mode, world_mode.player)
     else
       SWM_Tiles.Sol_DrawTile(engine, world_mode, world, world.tiles[tile.target])

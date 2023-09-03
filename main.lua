@@ -13,7 +13,8 @@ function love.help()
   os.exit((function(lines) for _, line in ipairs(lines) do print(line) end return 0 end)(
       {
         ">> This is a list of commands you can use on the Sol Engine",
-        "--root/-r:               defines the path for the game folder.",
+        "--root/-r <path>:        defines the path for the game folder.",
+        "--log/-l <file>:         set the output for additional information.",
         "--debug/-d:              shows additional information runtime.",
         "--help/-h:               shows this text and quit.",
         "--version/-v:            shows the version of the engine."

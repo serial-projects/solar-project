@@ -35,8 +35,8 @@ function module.Sol_MapChunksInWorld(world)
   dmsg("Sol_MapChunksInWorld() took %fs", os.clock()-begun_mapping_chunks_at)
 end
 
--- Sol_GetChunksReferencedTiles(world: Sol_World, indexx: number, indexy: number, range: number)
--- Returns a list of tiles being referenced on the near chunk (using the range).
+-- Sol_GetChunksReferencedTiles(world: Sol_World, indexx: number, indexy: number, range: number):
+---@return table {[n]: {target: string, zindex: number}}
 module.Sol_GetChunksReferencedTiles=function(world, indexx, indexy, range)
   local adquired_references = {}
   for yindex = indexy - range, indexy + range do
@@ -44,7 +44,7 @@ module.Sol_GetChunksReferencedTiles=function(world, indexx, indexy, range)
       local chunk_target=world.chunks[string.format("%d.%d", xindex, yindex)]
       if chunk_target then
         for _, chunk_reference_tile in ipairs(chunk_target) do
-          table.insert(adquired_references, chunk_reference_tile)
+          table.insert(adquired_references, {target=chunk_reference_tile, zindex=world.tiles[chunk_reference_tile].zindex})
         end
       end
     end
@@ -52,38 +52,19 @@ module.Sol_GetChunksReferencedTiles=function(world, indexx, indexy, range)
   return adquired_references
 end
 
-
--- Sol_AdquireChunksConsideringZIndex(world: Sol_World, chunk_name: string, consider_player: boolean)
--- Returns the tiles considering it's zindex (also considering player).
-function module.Sol_AdquireChunksConsideringZIndex(world, chunk_name, consider_player)
-  local draw_queue = consider_player and {{zindex=1,target=1,type="player"}} or {}
-  if world.chunks[chunk_name] then
-    --> basically puts on a buffer for follow the order.
-    for _, chunk_target in ipairs(world.chunks[chunk_name]) do
-      table.insert(draw_queue, {target=chunk_target, zindex=world.tiles[chunk_target].zindex})
-    end
-    return draw_queue
-  end
-end
-
 -- Sol_GetChunksOrdered(engine: Sol_Engine, world_mode: Sol_WorldMode, world: Sol_World) -> draw_tile_queue: table
 -- Return the tiles already sorted and ready to be drawn on the screen. This function will return the index
 -- of the tiles in the world.tiles list.
-function module.Sol_GetChunksOrdered(engine, world_mode, world)
+function module.Sol_GetChunksOrdered(engine, world_mode, world, should_consider_player)
   --> determine the player current chunk + all the sorroundings tiles.
   local player_current_chunk_x, player_current_chunk_y=module.Sol_GetPlayerCurrentChunk(world_mode, world)
-  local draw_tile_queue = {}
-  for yindex = player_current_chunk_y - engine.vars["RENDER_CHUNK_AMOUNT"], player_current_chunk_y + engine.vars["RENDER_CHUNK_AMOUNT"] do
-    for xindex = player_current_chunk_x - engine.vars["RENDER_CHUNK_AMOUNT"], player_current_chunk_x + engine.vars["RENDER_CHUNK_AMOUNT"] do
-      local chunk_target=tostring(xindex)..'.'..tostring(yindex)
-      if xindex == player_current_chunk_x and yindex == player_current_chunk_y then
-        table.unimerge(draw_tile_queue, module.Sol_AdquireChunksConsideringZIndex(world, chunk_target, true))
-      else
-        table.unimerge(draw_tile_queue, module.Sol_AdquireChunksConsideringZIndex(world, chunk_target, true))
-      end
-    end
+  --> calculate the positions:
+  local RENDER_CHUNK_AMOUNT = engine.vars["RENDER_CHUNK_AMOUNT"]
+  --> iterate in the chunks:
+  local draw_tile_queue = module.Sol_GetChunksReferencedTiles(world, player_current_chunk_x, player_current_chunk_y, RENDER_CHUNK_AMOUNT)
+  if should_consider_player then
+    table.insert(draw_tile_queue, {zindex=1, target=1, type="player"})
   end
-  --> begin organizing the stuff...
   table.sort(draw_tile_queue, function (a, b) return a.zindex < b.zindex end)
   return draw_tile_queue
 end

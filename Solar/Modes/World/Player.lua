@@ -57,7 +57,7 @@ function module.Sol_CheckPlayerPositionAt(engine, world_mode, world, xposition, 
   local cpx, cpy      = SWM_Chunk.Sol_GetPlayerCurrentChunk(world_mode, world)
   local tiles_to_test = SWM_Chunk.Sol_GetChunksReferencedTiles(world, cpx, cpy, 1)
   for _, tiles_referenced in ipairs(tiles_to_test) do
-    local tile_selected = world.tiles[tiles_referenced]
+    local tile_selected = world.tiles[tiles_referenced.target]
     if tile_selected.collide then
       if SM_Rectangle.Sol_TestRectangleCollision(player_rectangle, tile_selected.rectangle) then return false end
     end

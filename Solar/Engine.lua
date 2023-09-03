@@ -3,6 +3,6 @@
 -- assuming this file is loaded first (...)
 -- then load the extras to the global and then return
 -- the _Engine.lua file.
-local _       = require("Solar.Extras.LoadToGlobal")
+local _       = require("Solar.OneshotModules.Load")
 local _Engine = require("Solar._Engine")
 return _Engine

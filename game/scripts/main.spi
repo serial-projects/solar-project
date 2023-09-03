@@ -36,8 +36,11 @@ do_creepy_ending@show_xy:
 ;; -- other_thread work -- ;;
 other_thread@main:
 other_thread@main_loop:
+    move    1, @RENDER_CHUNK_AMOUNT
     move    0, @TICK_COUNTER
     move    0, @DRAW_COUNTER
+    move    "Hello World", !a
+    sysc    "write"
     move    5, !A
     sysc    "sleep"
     jump    other_thread@main_loop

@@ -64,10 +64,10 @@ function table.find(t, value)
   return false, nil
 end
 function table.structure(defaults, replacements)
-  local proto_structure = {}
+  local proto_structure = {} ; replacements = replacements or {}
   for key, default_value in pairs(defaults) do
     local possible_replacement = replacements[key]
-    if possible_replacement then
+    if possible_replacement ~= nil then
       proto_structure[key] = possible_replacement
     else
       proto_structure[key] = default_value

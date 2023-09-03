@@ -1,8 +1,6 @@
 -- 2020 - 2023 Solar Engine by Pipes Studios. This project is under the MIT license.
 
 -- xtable.lua: keep track of functions related with the table.
-_G["TableImported"] = true
-
 function table.pop(t)
   local   v=t[#t] ; t[#t]=nil
   return  v

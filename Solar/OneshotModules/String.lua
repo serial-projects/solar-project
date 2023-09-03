@@ -1,9 +1,6 @@
 -- 2020 - 2023 Solar Engine by Pipes Studios. This project is under the MIT license.
 
 -- xstring.lua: extra functions for string library.
-_G["StringImported"] = true
-local __TokenizerModuleOneshotRequire = require("Solar.Extras.Tokenizer")
-
 function string.getstr(size, fill_with)
   local str, fill_with, size = "", fill_with or " ", size or 0
   for _ = 1, size do

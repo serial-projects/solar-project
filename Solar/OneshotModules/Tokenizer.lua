@@ -1,7 +1,5 @@
 -- string.tokenizer(s: string, specifications: table) -> table: a tokenizer will split the tokens
 -- and make them more evident for internal parsing and other stuff.
-_G["TokenizerImported"] = true
-
 local function ischar_num(ch)     ch = string.byte(ch) ; return (ch >= string.byte('0') and ch <= string.byte('9')) end
 local function ischar_letter(ch)  ch = string.byte(ch) ; return (ch >= string.byte('a') and ch <= string.byte('z')) or (ch >= string.byte('A') and ch <= string.byte('Z')) end
 

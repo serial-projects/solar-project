@@ -1,7 +1,6 @@
 -- 2020 - 2023 Solar Engine by Pipes Studios. This project is under the MIT license.
 
 -- xlog.lua: load the logging functions :^)
-_G["LogImported"] = true
 
 -- :: utility for logging :: --
 local LOG_SEPARATOR   = "|"

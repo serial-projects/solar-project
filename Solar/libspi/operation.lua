@@ -21,11 +21,7 @@ function module.SPI_GetDataFromInstance(context, instance, token)
   if possible_prefix == '$' then
     return CheckReference(without_prefix, instance.variables, "no local declared: \"%s\"", without_prefix)
   elseif possible_prefix == '@' then
-    if _G["SPI_Globals"] then
-      return CheckReference(without_prefix, context.global_scope, "no global declared: \"%s\"", without_prefix)
-    else
-      return instance:set_error("invalid access to global table, not defined yet!")
-    end
+    return CheckReference(without_prefix, context.global_scope, "no global declared: \"%s\"", without_prefix)
   elseif possible_prefix == '!' then
     return CheckReference(string.upper(without_prefix), instance.registers, "no register found: \"%s\"", without_prefix)
   elseif STRING_TOKENS[possible_prefix] and possible_prefix == token:sub(#token, #token) then
@@ -51,11 +47,7 @@ function module.SPI_SetDataToInstance(context, instance, token, value)
       instance.variables[without_prefix]=value
     end,
     ["@"]=function()
-      if _G["SPI_Globals"] then
-        context.global_scope[without_prefix]=value
-      else
-        instance:set_error("invalid access to global table, not defined yet!")
-      end
+      context.global_scope[without_prefix]=value
     end,
     ["!"]=function()
       -- NOTE: all the registers are in UPPERCASE like SP, A, etc...

@@ -1,6 +1,4 @@
 -- 2020 - 2023 Solar Engine by Pipes Studios. This project is under the MIT license.
-
-local SC_Structures =require("Solar.Code.Structures")
 local SM_Vector     =require("Solar.Math.Vector")
 local SUI_Wrap      =require("Solar.UI.Wrap")
 local SD_Canvas     =require("Solar.Draw.Canva")
@@ -12,7 +10,7 @@ local module={}
 -- Sol_NewFrame(frame: {type, elements, visible, enable_bg, bg_canvas, bg_position})
 function module.Sol_NewFrame(frame)
   local frame = frame or {}
-  return SC_Structures.Sol_BuildStruct({
+  return table.structure({
     type          = "frame",
     elements      = {},
     visible       = true,

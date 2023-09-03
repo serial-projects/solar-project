@@ -1,6 +1,5 @@
 local module = {}
 local SS_Storage  = require("Solar.System.Storage")
-local SC_Structures = require("Solar.Code.Structures")
 local SC_Functional = require("Solar.Code.Functional")
 local SV_Consts   = require("Solar.Values.Consts")
 
@@ -21,7 +20,7 @@ module.MSG_TYPE = table.enum(1, {"DIALOG", "FULLSCR_MSG", "YESNOASK", "ASK"})
 
 -- Sol_NewDialogForm(): new dialog form.
 function module.Sol_NewDialogForm(recipe)
-  return SC_Structures.Sol_BuildStruct({
+  return table.structure({
     form_type     = module.MSG_TYPE.DIALOG,
     who           = "???",
     text          = "...",
@@ -96,7 +95,7 @@ end
 
 -- Sol_NewFullScrMsgForm(recipe): new full screen message.
 function module.Sol_NewFullScrMsgForm(recipe)
-  return SC_Structures.Sol_BuildStruct({
+  return table.structure({
     form_type     = msg.MSG_TYPE.FULLSCR_MSG,
     text          = "...",
     font          = "normal",
@@ -110,7 +109,7 @@ end
 
 -- Sol_YesNoForm(recipe): new yes or no message.
 function module.Sol_YesNoForm(recipe)
-  return SC_Structures.Sol_BuildStruct({
+  return table.structure({
     form_type     = module.MSG_TYPE.YESNOASK,
     who           = "???",
     text          = "...",

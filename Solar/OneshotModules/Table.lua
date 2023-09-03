@@ -63,3 +63,15 @@ function table.find(t, value)
   end
   return false, nil
 end
+function table.structure(defaults, replacements)
+  local proto_structure = {}
+  for key, default_value in pairs(defaults) do
+    local possible_replacement = replacements[key]
+    if possible_replacement then
+      proto_structure[key] = possible_replacement
+    else
+      proto_structure[key] = default_value
+    end 
+  end
+  return proto_structure
+end

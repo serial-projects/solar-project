@@ -1,6 +1,4 @@
 -- 2020 - 2023 Solar Engine by Pipes Studios. This project is under the MIT license.
-
-local SC_Structures =require("Solar.Code.Structures")
 local SM_Vector     =require("Solar.Math.Vector")
 local SM_Rectangle  =require("Solar.Math.Rectangle")
 local SM_Color      =require("Solar.Math.Color")
@@ -11,7 +9,7 @@ local module={}
 local SOL_CURSOR_STATES = table.enum(1, {"NORMAL", "LOADING", "FAILED"}) ; module.SOL_CURSOR_STATES=SOL_CURSOR_STATES
 
 function module.Sol_NewCursor(cursor)
-  return SC_Structures.Sol_BuildStruct({
+  return table.structure({
     draw_method     = SV_Consts.draw_using.COLOR,
     textures        = {},
     current_mode    = SOL_CURSOR_STATES.NORMAL,

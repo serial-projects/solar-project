@@ -1,15 +1,11 @@
 -- 2020 - 2023 Solar Engine by Pipes Studios. This project is under the MIT license.
-
--- storage.lua: keep track of the cached elements like fonts and images.
 local module={}
-
 local   SS_Path = require("Solar.System.Path")
 local   SCF     = require("Solar.SCF")
-local   SC_Structures = require("Solar.Code.Structures")
 
 -- Storage/CacheOperations section:
 function module.Sol_NewCache(cache)
-  return SC_Structures.Sol_BuildStruct({keep=true, lastuse=0, content=0}, cache)
+  return table.structure({keep=true, lastuse=0, content=0}, cache)
 end
 
 -- Storage/NewStorage section:

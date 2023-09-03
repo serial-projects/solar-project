@@ -24,9 +24,9 @@ module.SOL_VIEWPORT_BACKGROUND        = SM_Color.Sol_NewColor4(84, 72, 122)
 module.SOL_UI_CURSOR_DEFAULT_COLOR    = SM_Color.Sol_NewColor4(255, 255, 255)
 module.SOL_UI_CURSOR_DEFAULT_SIZE     = SM_Vector.Sol_NewVector(16, 16)
 
--- player default properties:
+-- player default properties & proportions:
 module.SOL_PLAYER_SIZE                = SM_Vector.Sol_NewVector(64, 64)
-module.SOL_PLAYER_INTERACTION_RANGE   = 1
+module.SOL_PLAYER_INTERACTION_RANGE   = 2
 
 -- chunk properties:
 module.SOL_WORLD_CHUNK_WIDTH = 5

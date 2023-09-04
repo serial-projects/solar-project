@@ -133,13 +133,13 @@ function module.Sol_NewMessageService()
     stack         = {},
     stack_index   = 1,
     -- message:
-    message_index = 1,
-    message_index_timing = 0,
-    waiting_player_click_space = false,
-    should_initialize = false,
-    running = false,
-    space_pressed = false,
-    past_mode = 0,
+    message_index               = 1,
+    message_index_timing        = 0,
+    waiting_player_click_space  = false,
+    should_initialize           = false,
+    running                     = false,
+    space_pressed               = false,
+    past_mode                   = 0,
     -- frames: contains all the UI the frame.
     dialog_frame = 0,
     dialog_frame_size = SM_Vector.Sol_NewVector(0, 0),
@@ -177,7 +177,6 @@ local assign_wrapper_tick_draw_operations = {
   [module.MSG_TYPE.DIALOG] = { tick = Sol_TickDialogForm, draw = Sol_DrawDialogForm }
 }
 local function Sol_HideAllUI(message_service)
-  dmsg("bruh")
   message_service.dialog_frame.visible = false
 end
 local function Sol_TickMessageService(message_service)

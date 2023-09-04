@@ -10,7 +10,6 @@ local module={}
 
 -- Sol_NewLabel(label: { type, non_formatted_text, text, font, color, rectangle, relative_to, position, has_background, background_color, force_absolute, when_left_click, when_right_click, visible })
 function module.Sol_NewLabel(label)
-  local label = label or {}
   return table.structure({
     type                = "label",
     non_formatted_text  = 0,
@@ -26,7 +25,7 @@ function module.Sol_NewLabel(label)
     when_left_click     = 0,
     when_right_click    = 0,
     visible             = true,
-  }, label)
+  }, label or {})
 end
 
 -- Sol_TickLabel(display: Sol_Display, label: Sol_UILabel)

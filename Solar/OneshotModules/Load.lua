@@ -2,7 +2,7 @@
 if _G["OneshotModulesImported"] then goto skip_everything end
 local module_targets, module_prefix, begun = {"Log","String","Table","Tokenizer"}, "Solar.OneshotModules.%s", os.clock()
 for _, module in ipairs(module_targets) do
-  local __result=require(string.format(module_prefix,module))
+  require(string.format(module_prefix,module))
 end ; dmsg("Oneshot Modules took %f seconds to load.", os.clock() - begun)
 _G["OneshotModulesImported"] = true
 ::skip_everything::

@@ -40,6 +40,16 @@ function module.Sol_ImplementInWorldSystemCalls(engine, world_mode, world, conte
     table.insert(instance.stack, world.world_size.x)
     table.insert(instance.stack, world.world_size.y)
   end
+  context.system_calls["SolWorld_SetTileProperty"]=function(_, instance)
+    local tile_name = instance.registers.X
+    local tile_property_key = instance.registers.Y
+    local tile_property_new_value = instance.registers.Z
+    for _, tile in ipairs(world.tiles) do
+      if tile.name == tile_name then
+        tile[tile_property_key] = tile_property_new_value
+      end
+    end
+  end
 end
 
 return module

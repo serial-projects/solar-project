@@ -66,6 +66,9 @@ set_normal_performance:
     move    "max", !A
     sysc    "adjust_performance"
     retn
+change_block:
+    
+    retn
 player_interacted_with:
     call    set_unlimited_performance
     define  xlimit, 0
@@ -81,5 +84,6 @@ player_interacted_with:
     iran    0, $xlimit, !x
     iran    0, $ylimit, !y
     sysc    "SolWorld_SetPlayerPosition"
+    call    change_block
     call    set_normal_performance
     halt

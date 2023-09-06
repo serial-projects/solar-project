@@ -58,30 +58,14 @@ function module.Sol_WorldSpawnTile(engine, world_mode, world, tile_name)
   end
 end
 
--- Sol_LoadWorld(engine, world_mode, world, world_name: string): automatically loads the world
--- recipe file and build the world from the recipe provided.
-function module.Sol_LoadWorld(engine, world_mode, world, world_name)
-  local target_file=SS_Path.Sol_MergePath({engine.root,string.format("levels/%s.slevel",world_name)})
-  dmsg("Sol_LoadWorld() will attempt to load file: %s for world: %s", target_file, world_name)
-  --> clean the old tiles and load everything again.
-  world.tiles={{zindex=1,type="player"}}
-  collectgarbage("collect")
-  --> load the "recipes" and the world information from the target file.
-  target_file                 =SCF.SCF_LoadFile(target_file)
-  world.info                  =target_file["info"]        or world.info
-  world.recipe_tiles          =target_file["tiles"]       or world.recipe_tiles
-  world.recipe_geometry       =target_file["geometry"]    or world.recipe_geometry
-  world.recipe_level          =target_file["level"]       or world.recipe_level
-  world.recipe_layers         =target_file["layers"]      or world.recipe_layers
-  world.recipe_player         =target_file["player"]      or world.recipe_player
-  world.recipe_scripts        =target_file["scripts"]     or world.recipe_scripts
-  world.recipe_messages       =target_file["messages"]    or world.recipe_messages
-  --> "geometry" section stuff.
+--> LoadWorld<Section>: this functions are going to load a specific world section.
+local function Sol_LoadWorldGeometry(world)
   world.bg_size             =SM_Vector.Sol_NewVector(world.recipe_geometry.bg_size)
   world.bg_tile_size        =SM_Vector.Sol_NewVector(world.recipe_geometry.bg_tile_size)
   world.world_size          =SM_Vector.Sol_NewVector((world.bg_size.x-1)*world.bg_tile_size.x,(world.bg_size.y-1)*world.bg_tile_size.y)
   world.enable_world_borders=(world.recipe_geometry["enable_world_borders"] == true)
-  --> "level" section stuff.
+end
+local function Sol_LoadWorldLevel(engine, world_mode, world)
   if world.recipe_level then
     local spawn_tiles=world.recipe_level["spawn_tiles"]
     if spawn_tiles and type(spawn_tiles) == "table" then
@@ -97,8 +81,8 @@ function module.Sol_LoadWorld(engine, world_mode, world, world_name)
       end
     end
   end
-  --> "player" section 
-  -- NOTE: the player section is actually loaded during the world firstrun routine.
+end
+local function Sol_LoadWorldPlayer(engine, world_mode, world)
   local function wload_AdjustPlayerOneshot_FirstRun(routine, _, world_mode, world)
     dmsg("%s is adjust the player for the first time run on the world: \"%s\"!", routine.name, world.name)
     if world.recipe_player then
@@ -123,7 +107,8 @@ function module.Sol_LoadWorld(engine, world_mode, world, world_name)
     {[SSE_Routines.ROUTINE_STATUS_FIRSTRUN]=wload_AdjustPlayerOneshot_FirstRun},
     {}
   ))
-  --> "script" section
+end
+local function Sol_LoadWorldScript(engine, world_mode, world)
   if world.recipe_scripts then
     for script_name, script_recipe in pairs(world.recipe_scripts) do
       if script_name ~= "__type" then
@@ -132,7 +117,37 @@ function module.Sol_LoadWorld(engine, world_mode, world, world_name)
       end
     end
   end
-  --> build all the chunks in the map.
+end
+
+-- Sol_LoadWorld(engine, world_mode, world, world_name: string): automatically loads the world
+-- recipe file and build the world from the recipe provided.
+function module.Sol_LoadWorld(engine, world_mode, world, world_name)
+  local function attempt_load_world_file(world_component, inside_specific_section)
+    inside_specific_section = inside_specific_section or world_component
+    local component_target_file = SS_Path.Sol_MergePath({engine.root,string.format("levels/%s/%s.sl", world_name, world_component)})
+    local success, result = pcall(function()
+      dmsg("component file is being loaded: \"%s\"", component_target_file)
+      return SCF.SCF_LoadFile(component_target_file)
+    end)
+    if not success then
+      emsg("attempt_load_world_file() failed to load world component: \"%s\"", world_component)
+      return nil
+    else
+      return result[inside_specific_section]
+    end
+  end
+  world.tiles={{zindex=1,type="player"}} ; collectgarbage("collect")
+  local components_load={
+    {target="info"},     {target="tiles"},    {target="geometry"},  {target="level"},
+    {target="layers"},   {target="player"},   {target="scripts"},   {target="messages"}
+  }
+  for _, component in ipairs(components_load) do
+    world["recipe_" .. component.target]=attempt_load_world_file(component.target, component["specific_section"]) or world["recipe_" .. component.target]
+  end
+  Sol_LoadWorldGeometry(world)
+  Sol_LoadWorldLevel(engine, world_mode, world)
+  Sol_LoadWorldPlayer(engine, world_mode, world)
+  Sol_LoadWorldScript(engine, world_mode, world)
   SWM_Chunk.Sol_MapChunksInWorld(world)
 end
 

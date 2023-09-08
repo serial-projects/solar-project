@@ -5,14 +5,10 @@ local unpack = unpack or table.unpack
 local SM_Vector   = require("Solar.Math.Vector")
 local SS_Path     = require("Solar.System.Path")
 local SV_Consts   = require("Solar.Values.Consts")
-
 local SCF         = require("Solar.SCF")
-
 local SD_Recipe   = require("Solar.Draw.Recipe")
-
 local SSE_Script  = require("Solar.Services.Script")
 local SSE_Routines= require("Solar.Services.Routines")
-
 local SWM_Player  = require("Solar.Modes.World.Player")
 local SWM_Tiles   = require("Solar.Modes.World.Tiles")
 local SWM_Chunk   = require("Solar.Modes.World.Chunk")
@@ -122,27 +118,31 @@ end
 -- Sol_LoadWorld(engine, world_mode, world, world_name: string): automatically loads the world
 -- recipe file and build the world from the recipe provided.
 function module.Sol_LoadWorld(engine, world_mode, world, world_name)
+  dmsg("Sol_LoadWorld() is loading \"%s\" world.", world_name)
   local function attempt_load_world_file(world_component, inside_specific_section)
     inside_specific_section = inside_specific_section or world_component
     local component_target_file = SS_Path.Sol_MergePath({engine.root,string.format("levels/%s/%s.sl", world_name, world_component)})
     local success, result = pcall(function()
-      dmsg("component file is being loaded: \"%s\"", component_target_file)
       return SCF.SCF_LoadFile(component_target_file)
     end)
     if not success then
       emsg("attempt_load_world_file() failed to load world component: \"%s\"", world_component)
       return nil
     else
+      dmsg("component \"%s\" file is was loaded: \"%s\"", inside_specific_section, component_target_file)
       return result[inside_specific_section]
     end
   end
   world.tiles={{zindex=1,type="player"}} ; collectgarbage("collect")
   local components_load={
-    {target="info"},     {target="tiles"},    {target="geometry"},  {target="level"},
+    {target="info"}, {target="tiles"},
+    {target="info", specific_section="geometry",},
+    {target="info", specific_section="level"},
     {target="layers"},   {target="player"},   {target="scripts"},   {target="messages"}
   }
   for _, component in ipairs(components_load) do
-    world["recipe_" .. component.target]=attempt_load_world_file(component.target, component["specific_section"]) or world["recipe_" .. component.target]
+    local target, specific_section = component.target, component.specific_section
+    world["recipe_" .. (specific_section ~= nil and specific_section or target)]=attempt_load_world_file(target, specific_section) or world["recipe_" .. target]
   end
   Sol_LoadWorldGeometry(world)
   Sol_LoadWorldLevel(engine, world_mode, world)

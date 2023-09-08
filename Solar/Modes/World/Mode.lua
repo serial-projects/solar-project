@@ -15,12 +15,10 @@ local module={}
 --
 function module.Sol_NewWorldMode()
   return {
-    viewport        = nil,
-    viewport_size   = nil,
-    worlds          = {},
-    current_world   = nil,
-    main_display    = nil,
+    viewport        = nil,  viewport_size   = nil,
+    worlds          = {},   current_world   = nil,  load_world_request = nil,
     player          = SWM_Player.Sol_NewPlayer(),
+    main_display    = nil,
     -- tick stage:
     tick_counter    = 0,
     do_world_tick   = true,
@@ -72,10 +70,25 @@ function module.Sol_TickWorldModeUI(engine, world_mode)
   world_mode.display_debug_ui_frame_playerpositionrel_label.text=string.format(world_mode.display_debug_ui_frame_playerpositionrel_label.non_formatted_text, world_mode.player.rel_position.x, world_mode.player.rel_position.y)
 end
 
+local function Sol_TickCheckIfWorldChangeHasBeenRequested(engine, world_mode)
+  if world_mode.load_world_request then
+    local lwr_name        = world_mode.load_world_request["name"]
+    local lwr_do_change   = world_mode.load_world_request["change"]
+    dmsg("Sol_TickCheckIfWorldChangeHasBeenRequested() has detected a world request (from \"%s\" -> \"%s\")", world_mode.current_world, lwr_name)
+    local proto_world = SWM_World.Sol_NewWorld()
+    SWM_World.Sol_InitWorld(engine, world_mode, proto_world, lwr_name)
+    world_mode.worlds[lwr_name]=proto_world
+    if lwr_do_change then world_mode.current_world = lwr_name end
+    world_mode.load_world_request = nil
+  end
+end
+
 function module.Sol_TickWorldMode(engine, world_mode)
+  Sol_TickCheckIfWorldChangeHasBeenRequested(engine, world_mode)
   module.Sol_TickWorldModeUI(engine, world_mode)
   SSE_Message.Sol_TickMessageService(world_mode.message_service)
   SUI_Display.Sol_TickDisplay(world_mode.main_display)
+  -- NOTE: 
   if world_mode.current_world and world_mode.do_world_tick then
     local current_world=world_mode.worlds[world_mode.current_world]
     SWM_World.Sol_TickWorld(engine, world_mode, current_world)

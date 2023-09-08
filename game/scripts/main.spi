@@ -1,62 +1,3 @@
-;; -- main script job -- ;;
-main:
-    call    begin_thread_work
-    call    begin_other_thread_work
-    call    do_creepy_ending
-    halt
-begin_other_thread_work:
-    move    "other_thread@main", !a
-    move    "interloper-process", !b
-    sysc    "new_thread"
-begin_thread_work:
-    move    "thread_work", !a
-    move    "nika", !b
-    sysc    "new_thread"
-    move    "NIKA has been deployed.", !A
-    sysc    "write"
-    retn
-do_creepy_ending:
-    sysc    "SolWorld_GetWorldSize"
-    pop     !Y
-    pop     !X
-do_creepy_ending@loop:
-    decr    !X
-    decr    !Y
-    sysc    "SolWorld_SetWorldSize"
-    move    1, !A
-    sysc    "sleep"
-    call    do_creepy_ending@show_xy
-    jump    do_creepy_ending@loop
-do_creepy_ending@show_xy:
-    move    !X, !A
-    move    !Y, !A
-    sysc    "debug"
-    retn
-
-;; -- other_thread work -- ;;
-other_thread@main:
-other_thread@main_loop:
-    move    1, @RENDER_CHUNK_AMOUNT
-    move    0, @TICK_COUNTER
-    move    0, @DRAW_COUNTER
-    move    "Hello World", !a
-    sysc    "write"
-    move    5, !A
-    sysc    "sleep"
-    jump    other_thread@main_loop
-
-;; -- thread work -- ;;
-thread_work:
-    move    "begun thread work!", !a
-    sysc    "write"
-    move    0, !a
-thread_work@loop:
-    incr    !a
-    sysc    "write"
-    move    0.5, !a
-    sysc    "sleep"
-    jump    thread_work@loop
-
 ;; -- for tile action -- ;;
 set_unlimited_performance:
     move    "unlimited", !A
@@ -67,23 +8,30 @@ set_normal_performance:
     sysc    "adjust_performance"
     retn
 change_block:
-    
     retn
+;player_interacted_with:
+;    call    set_unlimited_performance
+;    define  xlimit, 0
+;    define  ylimit, 0
+;    sysc    "SolWorld_GetWorldSize"
+;    pop     $ylimit
+;    pop     $xlimit
+;    sysc    "SolWorld_GetPlayerSize"
+;    pop     !B                             ; B= player_height
+;    pop     !A                             ; A= player_width
+;    sub     $xlimit, !A, $xlimit
+;    sub     $ylimit, !B, $ylimit
+;    iran    0, $xlimit, !x
+;    iran    0, $ylimit, !y
+;    sysc    "SolWorld_SetPlayerPosition"
+;    call    change_block
+;    call    set_normal_performance
+;    halt
+player_interacted_with_in_desert:
+    move    "niea-room", !X
+    sysc    "SolWorld_SetWorld"
+    halt
 player_interacted_with:
-    call    set_unlimited_performance
-    define  xlimit, 0
-    define  ylimit, 0
-    sysc    "SolWorld_GetWorldSize"
-    pop     $ylimit
-    pop     $xlimit
-    sysc    "SolWorld_GetPlayerSize"
-    pop     !B                             ; B= player_height
-    pop     !A                             ; A= player_width
-    sub     $xlimit, !A, $xlimit
-    sub     $ylimit, !B, $ylimit
-    iran    0, $xlimit, !x
-    iran    0, $ylimit, !y
-    sysc    "SolWorld_SetPlayerPosition"
-    call    change_block
-    call    set_normal_performance
+    move    "desert", !X
+    sysc    "SolWorld_SetWorld"
     halt

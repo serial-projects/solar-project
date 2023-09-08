@@ -56,6 +56,7 @@ end
 
 --> LoadWorld<Section>: this functions are going to load a specific world section.
 local function Sol_LoadWorldGeometry(world)
+  world.info                =world.recipe_info
   world.bg_size             =SM_Vector.Sol_NewVector(world.recipe_geometry.bg_size)
   world.bg_tile_size        =SM_Vector.Sol_NewVector(world.recipe_geometry.bg_tile_size)
   world.world_size          =SM_Vector.Sol_NewVector((world.bg_size.x-1)*world.bg_tile_size.x,(world.bg_size.y-1)*world.bg_tile_size.y)
@@ -114,6 +115,16 @@ local function Sol_LoadWorldScript(engine, world_mode, world)
     end
   end
 end
+local function Sol_LoadWorldSkybox(world)
+  -- NOTE: provide a fallback skybox.
+  if world.recipe_skybox then
+    if not world.recipe_skybox["main"] then
+      mwarn("for world: \"%s\" there was no main skybox fallback, creating one!", world.info.name)
+      world.recipe_skybox["main"] = {method="color", color={0, 0, 0}}
+    end
+    world.current_skybox = world.recipe_skybox["default"] or "main"
+  end
+end
 
 -- Sol_LoadWorld(engine, world_mode, world, world_name: string): automatically loads the world
 -- recipe file and build the world from the recipe provided.
@@ -135,10 +146,15 @@ function module.Sol_LoadWorld(engine, world_mode, world, world_name)
   end
   world.tiles={{zindex=1,type="player"}} ; collectgarbage("collect")
   local components_load={
-    {target="info"}, {target="tiles"},
-    {target="info", specific_section="geometry",},
-    {target="info", specific_section="level"},
-    {target="layers"},   {target="player"},   {target="scripts"},   {target="messages"}
+    {target="info"},
+    {target="tiles"},
+    {target="info",     specific_section="geometry"},
+    {target="info",     specific_section="level"},
+    {target="info",     specific_section="skybox"},
+    {target="layers"},
+    {target="player"},
+    {target="scripts"},
+    {target="messages"}
   }
   for _, component in ipairs(components_load) do
     local target, specific_section = component.target, component.specific_section
@@ -148,6 +164,7 @@ function module.Sol_LoadWorld(engine, world_mode, world, world_name)
   Sol_LoadWorldLevel(engine, world_mode, world)
   Sol_LoadWorldPlayer(engine, world_mode, world)
   Sol_LoadWorldScript(engine, world_mode, world)
+  Sol_LoadWorldSkybox(world)
   SWM_Chunk.Sol_MapChunksInWorld(world)
 end
 

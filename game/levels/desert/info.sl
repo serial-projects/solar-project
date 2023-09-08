@@ -1,5 +1,5 @@
 # >> INFO:
-section "info"
+section info
     define  name, "Desert"
 end-section
 
@@ -14,4 +14,14 @@ end-section
 section level
     define  spawn_layers,   ["background"]
     define  spawn_tiles,    ["X"]
+end-section
+
+# >> SKYBOX:
+section skybox
+    section main
+        define  method, "color"
+        define  color, [0, 0, 0]
+        define  textures, []
+    end-section
+    define  default, "main"
 end-section

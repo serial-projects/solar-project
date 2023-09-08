@@ -1,4 +1,4 @@
-section "info"
+section info
     define  name, "Niea's Room"
 end-section
 
@@ -11,4 +11,13 @@ end-section
 section level
     define  spawn_layers,   ["background", "world_deco"]
     define  spawn_tiles,    ["X"]
+end-section
+
+section skybox
+    section main
+        define  method, "color"
+        define  color, [0, 0, 0]
+        define  textures, []
+    end-section
+    define  default, "main"
 end-section

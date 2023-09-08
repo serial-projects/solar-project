@@ -1,10 +1,8 @@
 -- 2020 - 2023 Solar Engine by Pipes Studios. This project is under the MIT license.
-
-local SV_Defaults   = require("Solar.Values.Defaults")
 local SV_Consts     = require("Solar.Values.Consts")
 
-local SM_Vector    = require("Solar.Math.Vector")
-local SM_Rectangle = require("Solar.Math.Rectangle")
+local SM_Vector     = require("Solar.Math.Vector")
+local SM_Color      = require("Solar.Math.Color")
 
 local SSE_Script    = require("Solar.Services.Script")
 local SSE_Routines  = require("Solar.Services.Routines")
@@ -32,12 +30,14 @@ function module.Sol_NewWorld(world)
     recipe_player       ={},
     recipe_actions      ={},
     recipe_messages     ={},
+    recipe_skybox       ={},
     --
     bg_size             =nil,
     bg_tile_size        =nil,
     world_size          =SM_Vector.Sol_NewVector(0, 0),
     enable_world_borders=true,
     tiles               ={{zindex=1, type="player"}},
+    current_skybox      =nil,
   }
 end
 
@@ -77,8 +77,27 @@ function module.Sol_KeypressEventWorld(engine, world_mode, world, key)
 end
 
 --[[ Draw Related Functions ]]
+local function Sol_DrawWorldSkyboxSimpleColor(_, recipe)
+  local __color_object=SM_Color.Sol_NewColor4(recipe.color)
+  love.graphics.clear(SM_Color.Sol_TranslateColor(__color_object))
+end
+local function Sol_DrawWorldSkyboxTexture(engine, recipe)
+
+end
+local function Sol_DrawWorldSkyboxRecipe(engine, recipe)
+  local method_invokation_table={color=Sol_DrawWorldSkyboxSimpleColor, texture=Sol_DrawWorldSkyboxTexture}
+  local invoke_method = method_invokation_table[recipe.method]
+  if invoke_method then invoke_method(engine, recipe)
+  else qcrash("unknown method for skybox drawing: \"%s\"", recipe.method) end
+end
+local function Sol_DrawWorldSkybox(engine, world)
+  if world.current_skybox then
+    local current_skybox_recipe = world.recipe_skybox[world.current_skybox]
+    Sol_DrawWorldSkyboxRecipe(engine, current_skybox_recipe)
+  end
+end
 function module.Sol_DrawWorld(engine, world_mode, world)
-  --> determine the player current chunk + all the sorroundings tiles.
+  Sol_DrawWorldSkybox(engine, world)
   SSE_Routines.Sol_DrawRoutineService(world.routines, engine, world_mode, world)
   local draw_tile_queue = SWM_Chunk.Sol_GetChunksOrdered(engine, world_mode, world, true)
   for _, tile in ipairs(draw_tile_queue) do

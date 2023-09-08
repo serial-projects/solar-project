@@ -24,11 +24,11 @@ function module.Sol_MapChunksInWorld(world)
       local chunk_reference=tostring(tile_belongs_chunk_inx)..'.'..tostring(tile_belongs_chunk_iny)
       if world.chunks[chunk_reference] then
         table.insert(world.chunks[chunk_reference], tile_index)
-        table.insert(tile.current_chunk, chunk_reference)
+        tile.current_chunk[#tile.current_chunk+1] = chunk_reference
       else
         world.chunks[chunk_reference]={}
         table.insert(world.chunks[chunk_reference], tile_index)
-        table.insert(tile.current_chunk, chunk_reference)
+        tile.current_chunk[#tile.current_chunk+1] = chunk_reference
       end
     end
   end
@@ -44,7 +44,8 @@ module.Sol_GetChunksReferencedTiles=function(world, indexx, indexy, range)
       local chunk_target=world.chunks[string.format("%d.%d", xindex, yindex)]
       if chunk_target then
         for _, chunk_reference_tile in ipairs(chunk_target) do
-          table.insert(adquired_references, {target=chunk_reference_tile, zindex=world.tiles[chunk_reference_tile].zindex})
+          -- table.insert(adquired_references, {target=chunk_reference_tile, zindex=world.tiles[chunk_reference_tile].zindex})
+          adquired_references[#adquired_references+1] = {target=chunk_reference_tile, zindex=world.tiles[chunk_reference_tile].zindex}
         end
       end
     end
@@ -59,7 +60,8 @@ function module.Sol_GetChunksOrdered(engine, world_mode, world, should_consider_
   local RENDER_CHUNK_AMOUNT = engine.vars["RENDER_CHUNK_AMOUNT"]
   local draw_tile_queue = module.Sol_GetChunksReferencedTiles(world, player_current_chunk_x, player_current_chunk_y, RENDER_CHUNK_AMOUNT)
   if should_consider_player then
-    table.insert(draw_tile_queue, {zindex=1, target=1, type="player"})
+    draw_tile_queue[#draw_tile_queue+1] = {zindex=1, target=1, type="player"}
+    -- table.insert(draw_tile_queue, {zindex=1, target=1, type="player"})
   end
   table.sort(draw_tile_queue, function (a, b) return a.zindex < b.zindex end)
   return draw_tile_queue

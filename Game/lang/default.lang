@@ -5,4 +5,4 @@ section texts
     define  WMODE_DISPLAY_EXIT_UI_ASK_LABEL_TEXT, "Do you want to leave?"
     define  WMODE_DISPLAY_YES_TEXT, "Yes"
     define  WMODE_DISPLAY_NO_TEXT, "No"
-end-section
+end

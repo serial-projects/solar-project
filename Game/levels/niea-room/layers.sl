@@ -25,7 +25,7 @@ section layers
             "AAAAAAAAAAAAAAAAAAAA",
             "AAAAAAAAAAAAAAAAAAAA",
         ]
-    end-section
+    end
     section world_deco
         define  width, 20
         define  height, 20
@@ -51,5 +51,5 @@ section layers
             "000000000F0000000000",
             "00000000000000000000",
         ]
-    end-section
-end-section
+    end
+end

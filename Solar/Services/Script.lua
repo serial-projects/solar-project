@@ -1,7 +1,7 @@
 -- 2020 - 2023 Solar Engine by Pipes Studios. This project is under the MIT license.
 
-local SPI_Script  = require("Solar.libspi.script")
-local SS_Path     = require("Solar.System.Path")
+local SPI_Script  		= require("Library.SPI.Script")
+local SS_Path     		= require("Solar.System.Path")
 local SC_InWorldLevel	= require("Solar.Services.SCInWorldLevel")
 local SC_EngineLevel 	= require("Solar.Services.SCEngineLevel")
 

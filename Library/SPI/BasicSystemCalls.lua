@@ -1,7 +1,11 @@
 -- 2020 - 2023 Solar Engine by Pipes Studios. This project is under the MIT license.
 
-local spi_instance 	= require("Solar.libspi.instance")
-local spi_consts 		= require("Solar.libspi.consts")
+local spi_instance 			= require("Library.SPI.Instance")
+local spi_consts 			= require("Library.SPI.Consts")
+
+local ETable 				= require("Library.Extra.Table")
+local EString 				= require("Library.Extra.String")
+
 local module = {}
 
 -- debug()
@@ -50,7 +54,7 @@ end
 -- new_thread(begin_at[A]: string | "main", thread_name[B]: string | random name ...)
 local function sysc_new_thread(context, instance)
 	local begin_at=type(instance.registers.A)=="string" and instance.registers.A or "main"
-	local thread_name=type(instance.registers.B)=="string" and instance.registers.B or (instance.name .. "$" .. string.genstr())
+	local thread_name=type(instance.registers.B)=="string" and instance.registers.B or (instance.name .. "$" .. EString.genustr())
 	if context.label_addr[begin_at] then
 		local proto_thread=spi_instance.SPI_NewInstance(thread_name)
 		proto_thread.registers.PC=context.label_addr[begin_at]
@@ -87,7 +91,7 @@ local function sysc_clear_threads(context, instance)
 		end
 	end
 	instance.registers.A=#cleaned_thread_name_list
-	table.unimerge(instance.stack, cleaned_thread_name_list)
+	ETable.merge(instance.stack, cleaned_thread_name_list)
 end
 
 -- adjust_performance(desired_performance[A]: number | string["unlimited", "max, "min"])

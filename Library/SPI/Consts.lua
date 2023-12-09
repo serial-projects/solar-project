@@ -1,6 +1,7 @@
 -- 2020 - 2023 Solar Engine by Pipes Studios. This project is under the MIT license.
 
 local module = {}
+local ETable = require("Library.Extra.Table")
 
 -- SPI_InstanceStatus: keep track of the instance:
 -- RUNNING:               the machine is currently executing code.
@@ -8,6 +9,6 @@ local module = {}
 -- DIED:                  when the instance encountered a error (or DIE was called).
 -- WAITING:               set when the instance is waiting for something.
 -- SLEEPING:              the instance is sleeping until a certain time.
-module.SPI_InstanceStatus = table.enum(1, {"RUNNING", "FINISHED", "DIED", "WAITING", "SLEEPING"})
+module.SPI_InstanceStatus = ETable.enum(1, {"RUNNING", "FINISHED", "DIED", "WAITING", "SLEEPING"})
 
 return module

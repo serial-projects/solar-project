@@ -25,7 +25,7 @@ end
 
 --[[ love.load(args) ]]
 function love.load(args)
-    LibraryArgparser.Argparser(args, {
+    LibraryArgparser.Argparse(args, {
         --
         ["--debug"]={nargs=0, wrap=function()
         
@@ -74,5 +74,5 @@ end
 
 --[[ love.draw() ]]
 function love.draw()
-  SolarEngine.Sol_DrawEngine(SolEngineMainInstance)
+    SolarEngine.Sol_DrawEngine(SolEngineMainInstance)
 end

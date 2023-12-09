@@ -2,18 +2,19 @@
 
 local module = {}
 
-
 function module.SPI_IsCharacterNumber(ch)
 	ch = string.byte(ch)
 	return (ch >= string.byte('0') and ch <= string.byte('9'))
 end
+
 local VALID_STRING_CHARS  = {["\""]=true,["'"]=true}
 local IGNORE_CHARS        = {[","]=true}
+
 function module.SPI_Tokenize(str)
 	local acc, tokens = "", {}
 	local index, length = 1, #str
 	local instr, strb = false, nil
-  --> Local functions :)
+  	--> Local functions :)
 	local function __AppendToken(begin_with, lastch)
 		if lastch then
 			acc = acc .. lastch
@@ -36,13 +37,13 @@ function module.SPI_Tokenize(str)
 				end
 			end
 			index  = index + #subacc
-      local converted_string = tonumber(subacc) ; converted_string = converted_string > 255 and 255 or converted_string
+    		local converted_string = tonumber(subacc) ; converted_string = converted_string > 255 and 255 or converted_string
 			acc		 = acc .. string.char(converted_string)
 		else
 			acc = acc .. nextch
 			index = index + 1
 		end
-	end	
+	end
 	--> the parsing loop:
 	while index <= length do
 		local current_char = str:sub(index, index)
@@ -65,4 +66,5 @@ function module.SPI_Tokenize(str)
 	__AppendToken()
 	return tokens
 end
+
 return module

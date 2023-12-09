@@ -138,12 +138,13 @@ function module.Sol_LoadWorld(engine, world_mode, world, world_name)
     local function attempt_load_world_file(world_component, inside_specific_section)
         inside_specific_section = inside_specific_section or world_component
         local component_target_file = SS_Path.Sol_MergePath({engine.root,string.format("levels/%s/%s.sl", world_name, world_component)})
+        dmsg("opening world component = %s", component_target_file)
         local success, result = pcall(function()
             local _, content = LucieDecode.decode_file(component_target_file)
             return content
         end)
         if not success then
-            emsg("attempt_load_world_file() failed to load world component: \"%s\"", world_component)
+            error(string.format("attempt_load_world_file() failed to load world component: \"%s\", due: %s", world_component, result))
             return nil
         else
             dmsg("component \"%s\" file is was loaded: \"%s\"", inside_specific_section, component_target_file)
@@ -152,14 +153,14 @@ function module.Sol_LoadWorld(engine, world_mode, world, world_name)
     end
     world.tiles={{zindex=1,type="player"}} ; collectgarbage("collect")
     local components_load={
-        {target="info"},
-        {target="tiles"},
+        {target="info"}     ,
+        {target="tiles"}    ,
         {target="info",     specific_section="geometry"},
-        {target="info",     specific_section="level"},
-        {target="info",     specific_section="skybox"},
-        {target="layers"},
-        {target="player"},
-        {target="scripts"},
+        {target="info",     specific_section="level"}   ,
+        {target="info",     specific_section="skybox"}  ,
+        {target="layers"}   ,
+        {target="player"}   ,
+        {target="scripts"}  ,
         {target="messages"}
     }
     for _, component in ipairs(components_load) do
@@ -171,6 +172,8 @@ function module.Sol_LoadWorld(engine, world_mode, world, world_name)
     Sol_LoadWorldPlayer(engine, world_mode, world)
     Sol_LoadWorldScript(engine, world_mode, world)
     Sol_LoadWorldSkybox(world)
+    --
+    dmsg("Loaded map: %dx%d with %d tiles.", world.recipe_geometry.bg_size[1], world.recipe_geometry.bg_size[2], #world.tiles)
     SWM_Chunk.Sol_MapChunksInWorld(world)
 end
 

@@ -13,7 +13,7 @@ local LUCIE_INLINE_COMMENT 				= "#"
 function module.new_tokenizer()
 	local proto_tokenizer = {
 		tokens = {}, 	acc = "",
-		instr = false,  strb = 0,
+		instr = false,  strb = 0, inliteral = false, litbuffer = "",
 		incom = false,	comtype = 0, waitnl = false
 	}
 	--[[ push/ enter & quit state functions ]]--
@@ -35,9 +35,36 @@ function module.new_tokenizer()
 		self.incom = true
 	end
 	--[[ inside/outside string text processing ]]--
+	function proto_tokenizer:enter_literal()
+		self.inliteral = true
+	end
 	function proto_tokenizer:instr_eat(char)
-		if self.strb == char then self:quit_string()
-		else self.acc = self.acc .. char end
+		if self.inliteral then
+			local literal_counter = #self.litbuffer
+			if tonumber(char) and literal_counter == 0 then
+				-- BEGIN:
+			elseif tonumber(char) then
+				-- KEEP:
+				self.acc = self.acc .. char
+			else
+				-- everything on chars:
+				-- 1° situation: when running on the literal 0, the literal will just add the next character.
+				-- 2° situation: tonumber failed (non number), then convert.
+				if literal_counter == 0 then
+					self.acc 		= self.acc .. char
+					self.inliteral 	= false
+				else
+					local converted_number = tonumber(self.litbuffer)
+					---@diagnostic disable-next-line
+					self.acc = self.acc .. string.char(converted_number)
+					self.inliteral = false
+				end
+			end
+		else
+			if self.strb == char then 	self:quit_string()
+			elseif char == '\\' then 	self:enter_literal()
+			else self.acc = self.acc .. char end
+		end
 	end
 	-- NOTE: try to decide what type of commentary it is, a single line will wait for the '\n' character
 	-- but multiline commentary, we just enter different states of comments, here how the logic works:
@@ -52,13 +79,13 @@ function module.new_tokenizer()
 		else 				self.comtype = 2 end
 	end
 	function proto_tokenizer:inlinecom_eat(char)
-		if char == '\n' then 
+		if char == '\n' then
 			self.incom, self.comtype = false, 0
 			self.tokens[#self.tokens+1] = '\n'
 		end
 	end
 	function proto_tokenizer:inmultilinecom_eat(char)
-		if char == '*' then 
+		if char == '*' then
 			-- NOTE: because '*' is a very used character, we need to check more deeply 
 			-- if '#' is the next character, if yes, then break from the commentary state.
 			self.comtype = 3
@@ -67,7 +94,7 @@ function module.new_tokenizer()
 		end
 	end
 	function proto_tokenizer:inmultilinecom_try_quit(char)
-		if char == '#' then 
+		if char == '#' then
 			self.incom, self.comtype = false, 0
 		else
 			-- anything else, return to the past state & do not leave the current state.
@@ -113,9 +140,10 @@ end
 local function validate_name(token)
 	local function ischar(char, allow_numbers) allow_numbers = (allow_numbers == nil) and false or allow_numbers
 		char = sbyte(char)
-		return 	( char >= sbyte('a') and char <= sbyte('z' )) or
-				( char >= sbyte('A') and char <= sbyte('Z') ) or
-				( allow_numbers and (char >= sbyte('0') and char <= sbyte('9')) )
+		return 	( char >= sbyte('a') and char <= sbyte('z' )) 						or
+				( char >= sbyte('A') and char <= sbyte('Z') ) 						or
+				( allow_numbers and (char >= sbyte('0') and char <= sbyte('9')) ) 	or
+				( char == sbyte('_') )
 	end
 	for index = 1, #token do
 		local ch = token:sub(index, index)
@@ -130,6 +158,7 @@ local LUCIE_DEFINE_DATA_KEYWORDS = {["set"]=true,["define"]=true}
 local LUCIE_BOOLEANS = {["yes"]=true,["true"]=true,["no"]=true,["false"]=true}
 
 function module.sectionize(tokens)
+
 	local index, length = 1, #tokens
 	local line_counter = 0
 

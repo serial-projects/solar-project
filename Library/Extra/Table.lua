@@ -17,10 +17,17 @@ function module.sub(t, begins, ends)
 end
 
 --
+function module.getnkeys(ta)
+    local index = 0
+    for _, _ in pairs(ta) do index = index + 1 end
+    return index
+end
+
+--
 function module.enum(start, keys)
     local new_enum = {}
     for _, key in ipairs(keys) do
-        new_enum[key] = start + #new_enum
+        new_enum[key] = start + module.getnkeys(new_enum)
     end
     return new_enum
 end

@@ -23,10 +23,17 @@ function module.decode_buffer(buffer)
 	return sectionized_buffer, collapsed_sections
 end
 
--- NOTE: this is a LOVE version, use love.filesystem.newFile()
+-- NOTE: this is a LOVE version, prefer: love.filesystem.newFile()
 function module.decode_file(file, open_function) open_function = open_function or love.filesystem.newFile
 	local fp = open_function(file, "r") ; assert(fp, "failed to open file: " .. file)
-	local sectionized_buffer, collapsed_sections = module.decode_buffer(fp:read("*a"))
+	-- NOTE: handle errors to put the file name.
+	local sectionized_buffer, collapsed_sections
+	local sucess, error_reason = pcall(function()
+	 	sectionized_buffer, collapsed_sections = module.decode_buffer(fp:read())
+	end)
+	if not sucess then
+		error(string.format("on file: \"%s\", error: %s", file, error_reason))
+	end
 	fp:close() ; return sectionized_buffer, collapsed_sections
 end 
 

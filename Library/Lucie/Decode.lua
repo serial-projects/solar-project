@@ -24,6 +24,7 @@ function module.decode_buffer(buffer)
 end
 
 -- NOTE: this is a LOVE version, prefer: love.filesystem.newFile()
+local ETable = require("Library.Extra.Table")
 function module.decode_file(file, open_function) open_function = open_function or love.filesystem.newFile
 	local fp = open_function(file, "r") ; assert(fp, "failed to open file: " .. file)
 	-- NOTE: handle errors to put the file name.
@@ -34,6 +35,8 @@ function module.decode_file(file, open_function) open_function = open_function o
 	if not sucess then
 		error(string.format("on file: \"%s\", error: %s", file, error_reason))
 	end
+	print("File: " .. file)
+	print(ETable.show(collapsed_sections))
 	fp:close() ; return sectionized_buffer, collapsed_sections
 end 
 

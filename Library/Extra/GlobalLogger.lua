@@ -75,10 +75,7 @@ function module.newLogger()
         for _, unit in pairs(self.units) do
             if unit.level >= level then
                 unit:write(
-                    header ..
-                    (
-                        self.use_color and ()
-                    fmt,
+                    header .. fmt,
                 ...)
             end
         end

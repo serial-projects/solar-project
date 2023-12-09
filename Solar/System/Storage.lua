@@ -1,11 +1,14 @@
 -- 2020 - 2023 Solar Engine by Pipes Studios. This project is under the MIT license.
 local module={}
-local   SS_Path = require("Solar.System.Path")
-local   SCF     = require("Solar.SCF")
+local   SS_Path         = require("Solar.System.Path")
+local   SCF             = require("Solar.SCF")
+
+local   ETable          =require("Library.Extra.Table")
+local   EString         =require("Library.Extra.String")
 
 -- Storage/CacheOperations section:
 function module.Sol_NewCache(cache)
-    return table.structure({keep=true, lastuse=0, content=0}, cache)
+    return ETable.struct({keep=true, lastuse=0, content=0}, cache)
 end
 
 -- Storage/NewStorage section:
@@ -48,7 +51,7 @@ end
     Sol_LoadSpriteFromStorage() -> original_image, love_quad
 ]]
 local function __Sol_AdquireSpriteNameAndFrameFromSpriteTag(sprite_tag)
-    local sep_position=string.findch(sprite_tag, ':') ; assert(sep_position ~= nil, "invalid sprite_tag: "..sprite_tag)
+    local sep_position=EString.findch(sprite_tag, ':') ; assert(sep_position ~= nil, "invalid sprite_tag: "..sprite_tag)
     return sprite_tag:sub(1,sep_position-1), sprite_tag:sub(sep_position+1, #sprite_tag)
 end
 local function __Sol_MakeSpriteFrameToLoveQuad(sprite_frame, original_image)

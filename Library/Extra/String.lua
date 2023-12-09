@@ -93,4 +93,16 @@ function module.setvars(str, variables)
     return new_string
 end
 
+---@param s string
+---@param char string
+function module.findch(s, char, begin_indexing) begin_indexing = begin_indexing or 1
+    for index = begin_indexing, #s do
+        local ch = s:sub(index, index)
+        if ch == char then
+            return index
+        end
+    end
+    return nil
+end
+
 return module

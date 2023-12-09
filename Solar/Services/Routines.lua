@@ -24,83 +24,78 @@ module.ROUTINE_STATUS_DIED      = 4
 
 -- Sol_NewRoutine(name: string, status: number, exec_on: number, on_tick_wrap: table, on_draw_wrap: table)
 function module.Sol_NewRoutine(name, exec_on, on_tick_wrap, on_draw_wrap)
-  return { 
-    name          = name,
-    status        = module.ROUTINE_STATUS_FIRSTRUN,
-    die_severity  = module.DIE_SEVERITY_LOW,
-    dump          = nil,
-    exec_on       = exec_on or module.EXEC_ON_TICKDRAW,
-    on_tick_wrap  = on_tick_wrap or {}, tick_counter = 0,
-    on_draw_wrap  = on_draw_wrap or {}, draw_counter = 0,
-    created_at    = os.clock(),
-  }
+    return { 
+        name          = name,
+        status        = module.ROUTINE_STATUS_FIRSTRUN,
+        die_severity  = module.DIE_SEVERITY_LOW,
+        dump          = nil,
+        exec_on       = exec_on or module.EXEC_ON_TICKDRAW,
+        on_tick_wrap  = on_tick_wrap or {}, tick_counter = 0,
+        on_draw_wrap  = on_draw_wrap or {}, draw_counter = 0,
+        created_at    = os.clock(),
+    }
 end
 
 -- Sol_NewRoutineService()
 function module.Sol_NewRoutineService()
-  return { routines = {} }
+    return { routines = {} }
 end
 
 function Sol_RoutineServiceDie(routine)
-  local perform_table = {
-    [module.DIE_SEVERITY_LOW]=function()
-      mwarn("routine: \"%s\" has DIED, dump: %s", routine.name, routine.dump)
-    end,
-    [module.DIE_SEVERITY_MEDIUM]=function()
-      -- TODO: trigger world mode's warning message box.
-      mwarn("routine: \"%s\" has DIED a medium death, dump: %s", routine.name, routine.dump)
-    end,
-    [module.DIE_SEVERITY_HIGH]=function()
-      -- TODO: change from world mode to crash mode.
-      -- qcrash(1, "routine: \"%s\" has DIED and took the entire game out, dump: %s", routine.name, routine.dump)
-      os.exit(-1)
-    end
-  }
-  perform_table[(routine.die_severity > 3) and module.DIE_SEVERITY_HIGH or routine.die_severity]()
+    local perform_table = {
+        [module.DIE_SEVERITY_LOW]=function()
+            mwarn("routine: \"%s\" has DIED, dump: %s", routine.name, routine.dump)
+        end,
+        [module.DIE_SEVERITY_MEDIUM]=function()
+            -- TODO: trigger world mode's warning message box.
+            mwarn("routine: \"%s\" has DIED a medium death, dump: %s", routine.name, routine.dump)
+        end,
+        [module.DIE_SEVERITY_HIGH]=function()
+            -- TODO: change from world mode to crash mode.
+            -- qcrash(1, "routine: \"%s\" has DIED and took the entire game out, dump: %s", routine.name, routine.dump)
+            os.exit(-1)
+        end
+    }
+    perform_table[(routine.die_severity > 3) and module.DIE_SEVERITY_HIGH or routine.die_severity]()
 end
 
 function Sol_RoutineServiceExecutionTemplate(routine_service, current_mode, ...)
-  local wrap_bank        ={"on_tick_wrap", "on_draw_wrap"}
-  local wrap_bank_counter={"tick_counter", "draw_counter"}
-  local current_wrap_bank=wrap_bank[current_mode]
-  local current_wrap_bank_counter=wrap_bank_counter[current_mode]
-  for routine_index, routine in ipairs(routine_service.routines) do
-    if routine.exec_on == current_mode or routine.exec_on <= 3 then
-      local routine_name  = routine.name
-      local routine_status= routine.status
-      assert(routine[current_wrap_bank], string.format("expected wrap for routine (on current mode: %s): \"%s\", got nothing!", current_mode, routine_name))
-      local routine_wrap  = routine[current_wrap_bank][routine_status]
-      if routine_wrap then
-        routine.status = routine[current_wrap_bank][routine_status](routine, ...)
-      else
-        routine.status = (routine.status == module.ROUTINE_STATUS_FIRSTRUN) and module.ROUTINE_STATUS_RUNNING or module.ROUTINE_STATUS_FINISHED
-      end
-      routine[current_wrap_bank_counter]=routine[current_wrap_bank_counter]+1
-      --[[ FIRSTRUN MODE ]]
-      if routine.status == module.ROUTINE_STATUS_FIRSTRUN then
-        routine.status = module.ROUTINE_STATUS_RUNNING
-        mwarn("routine \"%s\" was updated from FIRSTRUN to RUNNING by the RoutineService!", routine_name)
-      --[[ FINISHED MODE ]]
-      elseif routine.status == module.ROUTINE_STATUS_FINISHED then
-        routine_service.routines[routine_index]=nil
-        mwarn("routine \"%s\" finished and was removed! (routine took %f seconds to finish, ticks: %d, drawings: %d).", routine_name, os.clock() - routine.created_at, routine.tick_counter, routine.draw_counter)
-      --[[ DIED MODE ]]
-      elseif routine.status == module.ROUTINE_STATUS_DIED then
-        Sol_RoutineServiceDie(routine)
-        routine_service.routines[routine_index]=nil
-      end
+    local wrap_bank        ={"on_tick_wrap", "on_draw_wrap"}
+    local wrap_bank_counter={"tick_counter", "draw_counter"}
+    local current_wrap_bank=wrap_bank[current_mode]
+    local current_wrap_bank_counter=wrap_bank_counter[current_mode]
+    for routine_index, routine in ipairs(routine_service.routines) do
+        if routine.exec_on == current_mode or routine.exec_on <= 3 then
+            local routine_name  = routine.name
+            local routine_status= routine.status
+            assert(routine[current_wrap_bank], string.format("expected wrap for routine (on current mode: %s): \"%s\", got nothing!", current_mode, routine_name))
+            local routine_wrap  = routine[current_wrap_bank][routine_status]
+            if routine_wrap then
+                routine.status = routine[current_wrap_bank][routine_status](routine, ...)
+            else
+                routine.status = (routine.status == module.ROUTINE_STATUS_FIRSTRUN) and module.ROUTINE_STATUS_RUNNING or module.ROUTINE_STATUS_FINISHED
+            end
+            routine[current_wrap_bank_counter]=routine[current_wrap_bank_counter]+1
+            --[[ FIRSTRUN MODE ]]
+            if routine.status == module.ROUTINE_STATUS_FIRSTRUN then
+                routine.status = module.ROUTINE_STATUS_RUNNING
+                mwarn("routine \"%s\" was updated from FIRSTRUN to RUNNING by the RoutineService!", routine_name)
+            --[[ FINISHED MODE ]]
+            elseif routine.status == module.ROUTINE_STATUS_FINISHED then
+                routine_service.routines[routine_index]=nil
+                mwarn("routine \"%s\" finished and was removed! (routine took %f seconds to finish, ticks: %d, drawings: %d).", routine_name, os.clock() - routine.created_at, routine.tick_counter, routine.draw_counter)
+            --[[ DIED MODE ]]
+            elseif routine.status == module.ROUTINE_STATUS_DIED then
+                Sol_RoutineServiceDie(routine)
+                routine_service.routines[routine_index]=nil
+            end
+        end
     end
-  end
 end
-function module.Sol_PushRoutine(routine_service, routine)
-  table.insert(routine_service.routines, routine)
-end
-function module.Sol_TickRoutineService(routine_service, ...)
-  Sol_RoutineServiceExecutionTemplate(routine_service, module.EXEC_ON_TICK, ...)
-end
-function module.Sol_DrawRoutineService(routine_service, ...)
-  Sol_RoutineServiceExecutionTemplate(routine_service, module.EXEC_ON_DRAW, ...)
-end
+
+function module.Sol_PushRoutine(routine_service, routine)       table.insert(routine_service.routines, routine)                                 end
+function module.Sol_TickRoutineService(routine_service, ...)    Sol_RoutineServiceExecutionTemplate(routine_service, module.EXEC_ON_TICK, ...)  end
+function module.Sol_DrawRoutineService(routine_service, ...)    Sol_RoutineServiceExecutionTemplate(routine_service, module.EXEC_ON_DRAW, ...)  end
 
 --
 return module

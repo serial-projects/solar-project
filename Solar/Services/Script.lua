@@ -8,10 +8,10 @@ local SC_EngineLevel 	= require("Solar.Services.SCEngineLevel")
 local module = {}
 --
 function module.Sol_NewScriptService()
-  return {
-    contexts = {},
-    enabled = true
-  }
+	return {
+		contexts = {},
+		enabled = true
+	}
 end
 
 -- __Sol_GenericWhenDiedWrapper(script: Sol_Script): just a generic function to print out that the script has died.
@@ -22,37 +22,37 @@ end
 -- Sol_LoadScript(engine, recipe: {name = string, when_finish = function | nil, when_died = function | nil, performance = number, begin_at = string | "main"}) -> Sol_Script:
 -- Only loads the script and do not consider execution level and do not insert in script service.
 function module.Sol_LoadScript(engine, recipe)
-  -- SOL_Script = { context = SPI_Context, when_finish = function | nil, when_die = function | nil }
-  local proto_sol_script = {
-    context       = SPI_Script.SPI_NewContext(recipe["name"]),
-    when_finish   = recipe["when_finish"],
-    when_died     = recipe["when_died"] or __Sol_GenericWhenDiedWrapper,
-    performance   = recipe["ticks_per_frame"] or 10
-  }
-  local place_execution = recipe["place_execution"] or "inworld"
-  local path_file = SS_Path.Sol_MergePath({engine.root, "scripts/" .. recipe["source"] .. ".spi"})
-  dmsg("Sol_LoadScript() is loading script %s in path %s!", recipe["name"], path_file)
-  --> load the script context:
-  SPI_Script.SPI_LoadContextUsingFile(proto_sol_script.context, path_file, love.filesystem.newFile)
-  SPI_Script.SPI_SetInstanceLocation(proto_sol_script.context, "main", recipe["begin_at"] or "main")
+	-- SOL_Script = { context = SPI_Context, when_finish = function | nil, when_die = function | nil }
+	local proto_sol_script = {
+		context       = SPI_Script.SPI_NewContext(recipe["name"]),
+		when_finish   = recipe["when_finish"],
+		when_died     = recipe["when_died"] or __Sol_GenericWhenDiedWrapper,
+		performance   = recipe["ticks_per_frame"] or 10
+	}
+	local place_execution = recipe["place_execution"] or "inworld"
+	local path_file = SS_Path.Sol_MergePath({engine.root, "scripts/" .. recipe["source"] .. ".spi"})
+	dmsg("Sol_LoadScript() is loading script %s in path %s!", recipe["name"], path_file)
+	--> load the script context:
+	SPI_Script.SPI_LoadContextUsingFile(proto_sol_script.context, path_file, love.filesystem.newFile)
+	SPI_Script.SPI_SetInstanceLocation(proto_sol_script.context, "main", recipe["begin_at"] or "main")
 	--> set global scope to the environment in the engine.
 	proto_sol_script.context.global_scope = engine.vars
-  return proto_sol_script
+	return proto_sol_script
 end
 
 -- Sol_LoadScriptInWorld(engine, world_mode, world, script_service: Sol_ScriptService, recipe: {name = string, when_finish = function | nil, when_died = function | nil, ticks_per_frame = number, begin_at = string}):
 -- This function will load the script as it was in world mode.
 function module.Sol_LoadScriptInWorld(engine, world_mode, world, script_service, recipe)
-  local proto_sol_script = module.Sol_LoadScript(engine, recipe)
-  SC_InWorldLevel.Sol_ImplementInWorldSystemCalls(engine, world_mode, world, proto_sol_script.context)
-  table.insert(script_service.contexts, proto_sol_script)
+	local proto_sol_script = module.Sol_LoadScript(engine, recipe)
+	SC_InWorldLevel.Sol_ImplementInWorldSystemCalls(engine, world_mode, world, proto_sol_script.context)
+	table.insert(script_service.contexts, proto_sol_script)
 end
 
 -- Sol_LoadScriptInEngine(engine, script_service: Sol_ScriptService, recipe: Sol_ScriptCommonRecipe)
 function module.Sol_LoadScriptInEngine(engine, script_service, recipe)
-  local proto_sol_script = module.Sol_LoadScript(engine, recipe)
-  SC_EngineLevel.Sol_ImplementEngineSystemCalls(engine, proto_sol_script.context)
-  table.insert(script_service.contexts, proto_sol_script)
+	local proto_sol_script = module.Sol_LoadScript(engine, recipe)
+	SC_EngineLevel.Sol_ImplementEngineSystemCalls(engine, proto_sol_script.context)
+	table.insert(script_service.contexts, proto_sol_script)
 end
 
 -- MAX_AMOUNT_TIME_PERFORMANCE: max amount of time (in seconds) that a script can execute in a single tick.
@@ -106,9 +106,9 @@ end
 -- Sol_TickScriptService(script_service: Sol_ScriptService):
 -- Tick all the contexts inside the script service.
 function module.Sol_TickScriptService(script_service)
-  for sol_script_index, sol_script in ipairs(script_service.contexts) do
-  	__Sol_TickScript(script_service, sol_script_index, sol_script)
-  end
+	for sol_script_index, sol_script in ipairs(script_service.contexts) do
+		__Sol_TickScript(script_service, sol_script_index, sol_script)
+	end
 end
 
 --

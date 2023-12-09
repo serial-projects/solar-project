@@ -28,11 +28,8 @@ function love.load(args)
     LibraryArgparser.Argparse(args, {
         --
         ["--debug"]={nargs=0, wrap=function()
-        
+            _G.GlobalLogger.en_debug = true
         end}, ["-d"]="--debug",
-        ["--log"]={nargs=1, wrap=function(path)
-        
-        end}, ["-l"]="--log",
         --
         ["--help"] ={nargs=0, wrap=function()
             love.help()

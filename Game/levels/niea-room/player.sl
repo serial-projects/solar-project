@@ -6,7 +6,7 @@ section player
         define  ypos, 10
     end
     section draw
-        section  recipes
+        section recipes
             section 1
                 define  draw_method, 3
                 define  texture_autoupdate, no

@@ -1,10 +1,11 @@
 -- 2020 - 2023 Solar Engine by Pipes Studios. This project is under the MIT license.
 local module={}
 local   SS_Path         = require("Solar.System.Path")
-local   SCF             = require("Solar.SCF")
 
 local   ETable          =require("Library.Extra.Table")
 local   EString         =require("Library.Extra.String")
+
+local   LucieDecode     =require("Library.Lucie.Decode")
 
 -- Storage/CacheOperations section:
 function module.Sol_NewCache(cache)
@@ -18,8 +19,8 @@ end
 
 -- Storage/Image:
 function module.Sol_LoadImageFromStorage(storage, name, base_directory, keep_around)
-    local base_directory = base_directory or "images/"
-    local keep_around = keep_around == nil and true or keep_around
+    local base_directory    = base_directory or "images/"
+    local keep_around       = keep_around == nil and true or keep_around
     local cache_entry,path_resource=(base_directory..name), SS_Path.Sol_MergePath({storage.root,base_directory,(name..".png")})
     if storage.cached_elements[cache_entry] then
         storage.cached_elements[cache_entry].lastuse=os.time()
@@ -54,14 +55,16 @@ local function __Sol_AdquireSpriteNameAndFrameFromSpriteTag(sprite_tag)
     local sep_position=EString.findch(sprite_tag, ':') ; assert(sep_position ~= nil, "invalid sprite_tag: "..sprite_tag)
     return sprite_tag:sub(1,sep_position-1), sprite_tag:sub(sep_position+1, #sprite_tag)
 end
+
 local function __Sol_MakeSpriteFrameToLoveQuad(sprite_frame, original_image)
     return love.graphics.newQuad(sprite_frame["cut_x"], sprite_frame["cut_y"], sprite_frame["cut_width"], sprite_frame["cut_height"], original_image:getDimensions())
 end
+
 function module.Sol_LoadSpriteFromStorage(storage, sprite_tag, keep_around)
     -- cache.content={instructions={}}
-    local keep_around = keep_around == nil and true or keep_around
+    local keep_around               = keep_around == nil and true or keep_around
     local sprite_name, sprite_frame = __Sol_AdquireSpriteNameAndFrameFromSpriteTag(sprite_tag)
-    local cache_entry="sprited:"..sprite_name
+    local cache_entry               = "sprited:"..sprite_name
     local original_image=module.Sol_LoadImageFromStorage(storage, sprite_name, "sprites/", keep_around)
     if storage.cached_elements[cache_entry] then
         local cached_content=storage.cached_elements[cache_entry].content
@@ -70,18 +73,18 @@ function module.Sol_LoadSpriteFromStorage(storage, sprite_tag, keep_around)
     else
         local sprite_instruction=SS_Path.Sol_MergePath({storage.root,"sprites/",(sprite_name..".slsp")})
         dmsg("Sol_LoadSpriteFromStorage() is loading sprite instruction file: "..sprite_instruction)
-        sprite_instruction=SCF.SCF_LoadFile(sprite_instruction)
+        _, sprite_instruction=LucieDecode.decode_file(sprite_instruction)
         --
-        local proto_cache=module.Sol_NewCache({keep=keep_around, lastuse=os.time(), content={instructions=sprite_instruction}})
-        storage.cached_elements[cache_entry]=proto_cache
+        local proto_cache                   = module.Sol_NewCache({keep=keep_around, lastuse=os.time(), content={instructions=sprite_instruction}})
+        storage.cached_elements[cache_entry]= proto_cache
         return original_image, __Sol_MakeSpriteFrameToLoveQuad(sprite_instruction[sprite_frame], original_image)
     end
 end
 
 -- Storage/Font:
 function module.Sol_LoadFontFromStorage(storage, name, size, keep_around)
-    local keep_around = keep_around == nil and true or keep_around
-    local cache_entry,path_resource=string.format("font:%s:%d",name,size),SS_Path.Sol_MergePath({storage.root,"fonts/",(name..".ttf")})
+    local keep_around               = keep_around == nil and true or keep_around
+    local cache_entry,path_resource = string.format("font:%s:%d",name,size),SS_Path.Sol_MergePath({storage.root,"fonts/",(name..".ttf")})
     if storage.cached_elements[cache_entry] then
         storage.cached_elements[cache_entry].lastuse=os.time()
         return storage.cached_elements[cache_entry].content
@@ -122,12 +125,15 @@ function module.Sol_ReplaceTexts(storage, texts)
     end
 end
 
+local ETable = require("Library.Extra.Table")
+
+
 function module.Sol_LoadLanguage(storage, language)
     local lang_file=SS_Path.Sol_MergePath({storage.root,"lang/",(language..".lang")})
     dmsg("Sol_LoadLanguage() is loading the file: "..lang_file)
     --
-    lang_file=SCF.SCF_LoadFile(lang_file)
-    assert(lang_file["text"], "no text section found on language: " .. language)
+    _, lang_file=LucieDecode.decode_file(lang_file)
+    assert(lang_file["texts"], "no text section found on language: " .. language)
     module.Sol_ReplaceTexts(storage, lang_file["texts"])
     storage.current_language=language
 end

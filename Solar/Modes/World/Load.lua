@@ -2,16 +2,17 @@
 
 local unpack = unpack or table.unpack
 
-local SM_Vector   = require("Solar.Math.Vector")
-local SS_Path     = require("Solar.System.Path")
-local SV_Consts   = require("Solar.Values.Consts")
-local SCF         = require("Solar.SCF")
-local SD_Recipe   = require("Solar.Draw.Recipe")
-local SSE_Script  = require("Solar.Services.Script")
-local SSE_Routines= require("Solar.Services.Routines")
-local SWM_Player  = require("Solar.Modes.World.Player")
-local SWM_Tiles   = require("Solar.Modes.World.Tiles")
-local SWM_Chunk   = require("Solar.Modes.World.Chunk")
+local SM_Vector     = require("Solar.Math.Vector")
+local SS_Path       = require("Solar.System.Path")
+local SV_Consts     = require("Solar.Values.Consts")
+local SD_Recipe     = require("Solar.Draw.Recipe")
+local SSE_Script    = require("Solar.Services.Script")
+local SSE_Routines  = require("Solar.Services.Routines")
+local SWM_Player    = require("Solar.Modes.World.Player")
+local SWM_Tiles     = require("Solar.Modes.World.Tiles")
+local SWM_Chunk     = require("Solar.Modes.World.Chunk")
+
+local LucieDecode   = require("Library.Lucie.Decode")
 
 local module={}
 
@@ -138,7 +139,8 @@ function module.Sol_LoadWorld(engine, world_mode, world, world_name)
         inside_specific_section = inside_specific_section or world_component
         local component_target_file = SS_Path.Sol_MergePath({engine.root,string.format("levels/%s/%s.sl", world_name, world_component)})
         local success, result = pcall(function()
-            return SCF.SCF_LoadFile(component_target_file)
+            local _, content = LucieDecode.decode_file(component_target_file)
+            return content
         end)
         if not success then
             emsg("attempt_load_world_file() failed to load world component: \"%s\"", world_component)

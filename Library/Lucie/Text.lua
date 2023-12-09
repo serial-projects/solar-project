@@ -147,7 +147,7 @@ local function validate_name(token)
 	end
 	for index = 1, #token do
 		local ch = token:sub(index, index)
-		if not ischar(ch, index > 1) then
+		if not ischar(ch, true) then
 			return false, index
 		end
 	end

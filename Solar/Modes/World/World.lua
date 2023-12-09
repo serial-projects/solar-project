@@ -88,7 +88,7 @@ local function Sol_DrawWorldSkyboxRecipe(engine, recipe)
   local method_invokation_table={color=Sol_DrawWorldSkyboxSimpleColor, texture=Sol_DrawWorldSkyboxTexture}
   local invoke_method = method_invokation_table[recipe.method]
   if invoke_method then invoke_method(engine, recipe)
-  else qcrash("unknown method for skybox drawing: \"%s\"", recipe.method) end
+  else -- [[ qcrash("unknown method for skybox drawing: \"%s\"", recipe.method) ]]-- end
 end
 local function Sol_DrawWorldSkybox(engine, world)
   if world.current_skybox then

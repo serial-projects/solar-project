@@ -1,11 +1,11 @@
 -- 2020 - 2023 Solar Engine by Pipes Studios. This project is under the MIT license.
 
 local SolarEngine = require("Solar.Engine")
-local SolarArguments = require("Solar.System.Arguments")
+local LibraryArgparser = require("Library.Argparser.Argparser")
 
 --[[ Globals ]]
 local SolEngineMainInstance=SolarEngine.Sol_NewEngine()
-local SolEnginePathResources="game/"
+local SolEnginePathResources="Game/"
 
 --[[ love.help() ]]
 function love.help()
@@ -25,7 +25,7 @@ end
 
 --[[ love.load(args) ]]
 function love.load(args)
-  SolarArguments.Sol_UserArgumentsDecode(args, {
+  LibraryArgparser.Argparser(args, {
     --
     ["--debug"]={nargs=0, wrap=function()
       setdebug(true)

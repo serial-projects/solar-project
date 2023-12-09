@@ -1,6 +1,8 @@
 -- 2020 - 2023 Solar Engine by Pipes Studios. This project is under the MIT license.
 
 local module = {}
+
+
 function module.SPI_IsCharacterNumber(ch)
 	ch = string.byte(ch)
 	return (ch >= string.byte('0') and ch <= string.byte('9'))

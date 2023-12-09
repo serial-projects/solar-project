@@ -52,7 +52,8 @@ function Sol_RoutineServiceDie(routine)
     end,
     [module.DIE_SEVERITY_HIGH]=function()
       -- TODO: change from world mode to crash mode.
-      qcrash(1, "routine: \"%s\" has DIED and took the entire game out, dump: %s", routine.name, routine.dump)
+      -- qcrash(1, "routine: \"%s\" has DIED and took the entire game out, dump: %s", routine.name, routine.dump)
+      os.exit(-1)
     end
   }
   perform_table[(routine.die_severity > 3) and module.DIE_SEVERITY_HIGH or routine.die_severity]()

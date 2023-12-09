@@ -21,6 +21,13 @@ function module.decode_buffer(buffer)
 	local sectionized_buffer = Text.sectionize(tokenizer_instance.tokens)
 	local collapsed_sections = collapse_table(sectionized_buffer)
 	return sectionized_buffer, collapsed_sections
+end
+
+-- NOTE: this is a LOVE version, use love.filesystem.newFile()
+function module.decode_file(file, open_function) open_function = open_function or love.filesystem.newFile
+	local fp = open_function(file, "r") ; assert(fp, "failed to open file: " .. file)
+	local sectionized_buffer, collapsed_sections = module.decode_buffer(fp:read("*a"))
+	fp:close() ; return sectionized_buffer, collapsed_sections
 end 
 
 return module

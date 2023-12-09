@@ -124,7 +124,7 @@ function module.Sol_LoadLanguage(storage, language)
     dmsg("Sol_LoadLanguage() is loading the file: "..lang_file)
     --
     lang_file=SCF.SCF_LoadFile(lang_file)
-    makesure(lang_file["texts"],42,"no text section found on language: "..language)
+    assert(lang_file["text"], "no text section found on language: " .. language)
     module.Sol_ReplaceTexts(storage, lang_file["texts"])
     storage.current_language=language
 end

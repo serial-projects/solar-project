@@ -81,7 +81,7 @@ end
 --  en_error:   enable logger:error() to show messages.
 --  en_colors:  on units that is not file, set colors (UNIX* only).
 
-function module.new(properties)
+function module.new(properties) properties = properties or {}
     --
     local proto_logger = {
         enabled     = properties["enabled"]     or true,
@@ -113,7 +113,7 @@ function module.new(properties)
     --
     function proto_logger:msg(fmt, ...)
         local header = "[  MSG]: " .. fmt
-        self:write("msg", fmt, ...)
+        self:write("msg", header .. fmt, ...)
     end
     function proto_logger:debug(fmt, ...)
         local header = "[DEBUG]: " .. fmt

@@ -99,7 +99,7 @@ local function sysc_adjust_performance(context, instance)
 	local PERFORMANCE_DEFAULT_VALUES = {
 		max 			= 25,
 		min 			= 10,
-		unlimited = -1,
+		unlimited 		= -1,
 	}
 	local desired_performance=instance.registers.A
 	if type(desired_performance) ~= "number" then
@@ -132,11 +132,11 @@ function module.SPI_GenerateBasicSystemCallsTable()
 		exit  = sysc_exit,
 		-- thread functions:
 		new_thread 				= sysc_new_thread,
-		get_thread_status = sysc_get_thread_status,
+		get_thread_status 		= sysc_get_thread_status,
 		clear_threads			= sysc_clear_threads,
 		-- system operations:
-		adjust_performance= sysc_adjust_performance,
-		sleep 						= sysc_sleep
+		adjust_performance		= sysc_adjust_performance,
+		sleep 					= sysc_sleep
 	}
 end
 return module

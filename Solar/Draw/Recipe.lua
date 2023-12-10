@@ -59,7 +59,7 @@ end
 
 -- _DrawImage(): draw some image on the screen.
 local function _DrawSimpleRectangle(draw, rxpos, rypos, width, height)
-    love.graphics.setColor(SM_Color.Sol_TranslateColor(draw.color))
+    love.graphics.setColor(draw.color:translate())
     love.graphics.rectangle("fill", rxpos, rypos, width, height)
 end
 

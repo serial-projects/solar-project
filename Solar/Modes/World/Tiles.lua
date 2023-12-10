@@ -35,7 +35,7 @@ end
 --[[ Draw Related Functions ]]
 function module.Sol_DrawTile(engine, world_mode, world, tile)
     local rxpos, rypos = SM_Tiles.Sol_GetTileRelativePosition(world_mode.player.rel_position, world_mode.player.rectangle.position, tile.rectangle.position)
-    local width, height= SM_Vector.Sol_UnpackVectorXY(tile.rectangle.size)
+    local width, height= tile.rectangle.size:unpackxy()
     SD_Recipe.Sol_DrawRecipe(engine, tile.draw, rxpos, rypos, width, height)
 end
 

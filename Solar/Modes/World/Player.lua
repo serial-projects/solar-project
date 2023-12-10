@@ -117,8 +117,8 @@ end
 -- Sol_DrawPlayer(engine, world_mode, player):
 -- Draw the player on the screen.
 function module.Sol_DrawPlayer(engine, world_mode, player)
-    local posx, posy    = SM_Vector.Sol_UnpackVectorXY(player.rel_position)
-    local width, height = SM_Vector.Sol_UnpackVectorXY(player.rectangle.size)
+    local posx, posy    = player.rel_position:unpackxy()
+    local width, height = player.rectangle.size:unpackxy()
     player.draw.using_recipe = player.looking_direction
     SD_Recipe.Sol_DrawRecipe(engine, player.draw, posx, posy, width, height)
 end

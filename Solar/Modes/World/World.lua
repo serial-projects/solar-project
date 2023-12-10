@@ -79,7 +79,7 @@ end
 --[[ Draw Related Functions ]]
 local function Sol_DrawWorldSkyboxSimpleColor(_, recipe)
     local __color_object=SM_Color.Sol_NewColor4(recipe.color)
-    love.graphics.clear(SM_Color.Sol_TranslateColor(__color_object))
+    love.graphics.clear(__color_object:translate())
 end
 
 local function Sol_DrawWorldSkyboxTexture(engine, recipe)

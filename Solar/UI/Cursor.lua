@@ -32,7 +32,7 @@ end
 
 function module.Sol_DrawCursor(cursor)
     if cursor.draw_method == SV_Consts.draw_using.COLOR then
-        love.graphics.setColor(SM_Color.Sol_TranslateColor(cursor.color))
+        love.graphics.setColor(cursor.color:translate())
         love.graphics.rectangle("fill", SM_Rectangle.Sol_UnpackRectXYWH(cursor.rectangle))
     else
         mwarn("drawing method not yet implemented for Sol_Cursor!")

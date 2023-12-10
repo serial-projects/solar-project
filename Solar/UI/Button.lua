@@ -58,18 +58,19 @@ function module.Sol_DrawButton(display, button)
     if button.visible then
         if button.font ~= 0 then
             --> the main rectangle
-            love.graphics.setColor(SM_Color.Sol_TranslateColor(button.hovering and button.background_hovering_color or button.background_color))
+            if button.hovering then love.graphics.setColor(button.background_hovering_color:translate())
+            else                    love.graphics.setColor(button.background_color:translate()) end
             love.graphics.rectangle("fill", SM_Rectangle.Sol_UnpackRectXYWH(button.rectangle))
             --> the borders
             if button.has_borders then
-                love.graphics.setColor(SM_Color.Sol_TranslateColor(button.border_color))
+                love.graphics.setColor(button.border_color:translate())
                 love.graphics.rectangle("line", SM_Rectangle.Sol_UnpackRectXYWH(button.rectangle))
             end
             --> the text
             local text_width, text_height=button.font:getWidth(button.text),button.font:getHeight()
             local text_position_x=math.floor( (button.rectangle.position.x+(button.rectangle.size.x/2)) - (text_width ) )
             local text_position_y=math.floor( (button.rectangle.position.y+(button.rectangle.size.y/2)) - (text_height) )
-            love.graphics.setColor(SM_Color.Sol_TranslateColor(button.foreground_color))
+            love.graphics.setColor(button.foreground_color:translate())
             love.graphics.print(button.text, text_position_x, text_position_y)
         end
     end

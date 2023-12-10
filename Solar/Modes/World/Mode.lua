@@ -127,7 +127,7 @@ end
 --[[ Draw Related Functions ]]
 function module.Sol_DrawWorldMode(engine, world_mode)
     love.graphics.setCanvas(world_mode.viewport)
-        love.graphics.clear(SM_Color.Sol_TranslateColor(SV_Defaults.SOL_VIEWPORT_BACKGROUND))
+        love.graphics.clear(SV_Defaults.SOL_VIEWPORT_BACKGROUND:translate())
         if world_mode.current_world and world_mode.do_world_draw then
             local current_world=world_mode.worlds[world_mode.current_world]
             if current_world then SWM_World.Sol_DrawWorld(engine, world_mode, current_world) end

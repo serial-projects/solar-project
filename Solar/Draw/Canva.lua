@@ -16,9 +16,9 @@ end
 
 -- Sol_QuickGenerateCanva(size: Sol_Vector, color: Sol_Color)
 function module.Sol_QuickGenerateCanva(size, color)
-    local new_canva=love.graphics.newCanvas(SM_Vector.Sol_UnpackVectorXY(size))
+    local new_canva=love.graphics.newCanvas(size:unpackxy())
     module.Sol_SaveLastCanvaAndPerformFunction(new_canva, function()
-        love.graphics.clear(SM_Color.Sol_TranslateColor(color))
+        love.graphics.clear(color:translate())
     end)
     return new_canva
 end

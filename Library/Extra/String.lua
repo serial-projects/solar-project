@@ -36,7 +36,7 @@ local __string_genstr_banks = {
     { begins = sbyte('A'), ends = sbyte('Z') },
     { begins = sbyte('0'), ends = sbyte('9') }
 }
-function module.genustr(length)
+function module.genustr(length) length = length or 32
     local acc = ""
     while string.unique_strings[acc] do
         for _ = 1, length do

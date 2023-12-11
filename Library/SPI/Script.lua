@@ -106,9 +106,10 @@ end
 
 -- SPI_TickContext(context: SPI_Context) -> main_thread_status: number
 function module.SPI_TickContext(context)
-    --> tick the main thread first:
+    -- NOTE: if the main thread dies or finishes it task, clear all the running/waiting, etc. threads that
+    -- spawned later on to prevent over memory usage.
     local current_main_thread_statement = module.instance.SPI_TickInstance(context, context.instance)
-    if current_main_thread_statement >= 2 and current_main_thread_statement <= 4 then
+    if current_main_thread_statement >= consts.SPI_InstanceStatus.FINISHED and current_main_thread_statement <= consts.SPI_InstanceStatus.DIED then
         module.SPI_ClearAllThreadsFromContext(context)
     end
     --> tick all the threads:

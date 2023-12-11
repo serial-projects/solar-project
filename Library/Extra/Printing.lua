@@ -2,6 +2,7 @@ local module = {}
 
 --
 local sfmt = string.format
+
 function _G.sprintf(fmt, ...)
     local s = ""
     if #{...} <= 0 then
@@ -104,28 +105,29 @@ function module.new(properties) properties = properties or {}
     end
     --
     function proto_logger:write(mode, fmt, ...)
+        local timestamp = os.date("%d/%m/%Y %H:%M:%S", os.time())
         if self["en_" .. mode] == true then
             self:trigger_units(
-                (#{...} <= 0) and fmt or sfmt(fmt, ...)
+                sfmt("[%s]: ", timestamp) .. ( (#{...} <= 0) and fmt or sfmt(fmt, ...) )
             )
         end
     end
     --
     function proto_logger:msg(fmt, ...)
-        local header = "[  MSG]: " .. fmt
-        self:write("msg", header .. fmt, ...)
+        local content = "[  MSG]: " .. fmt
+        self:write("msg", content, ...)
     end
     function proto_logger:debug(fmt, ...)
-        local header = "[DEBUG]: " .. fmt
-        self:write("debug", header, ...)
+        local content = "[DEBUG]: " .. fmt
+        self:write("debug", content, ...)
     end
     function proto_logger:warn(fmt, ...)
-        local header = "[ WARN]: " .. fmt
-        self:write("warn", header, ...)
+        local content = "[ WARN]: " .. fmt
+        self:write("warn", content, ...)
     end
     function proto_logger:error(fmt, ...)
-        local header = "[ERROR]: " .. fmt
-        self:write("error", header, ...)
+        local content = "[ERROR]: " .. fmt
+        self:write("error", content, ...)
     end
     --
     return proto_logger

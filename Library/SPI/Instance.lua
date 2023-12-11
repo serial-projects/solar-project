@@ -53,7 +53,7 @@ function module.SPI_TickInstance(context, instance)
     --> check the status and return if nothing to do.
     if instance.status ~= consts.SPI_InstanceStatus.RUNNING then
         -- this range considers: finished: 2, died: 3, waiting: 4
-        if instance.status <= 4 and instance.status >= 2 then
+        if instance.status <= consts.SPI_InstanceStatus.FINISHED and instance.status >= consts.SPI_InstanceStatus.WAITING then
             return instance.status
         elseif instance.status == consts.SPI_InstanceStatus.SLEEPING then
             if instance.sleep_until <= SPI_AdquireTimeUsingFunction() then
@@ -82,7 +82,6 @@ function module.SPI_TickInstance(context, instance)
             end
         end
         --> begin executing the wrapped function on the instruction wrapper:
-        -- NOTE: xtable.lua is required with function table.sub()
         local arguments = ETable.sub(context.code, current_pc + 1, (current_pc + 1) + current_instruction_nargs)
         current_opcode_structure.wrap(context, instance, unpack(arguments))
         --> should we increment the PCI this time?

@@ -1,7 +1,6 @@
 local module = {}
 
 local SS_Storage    = require("Solar.System.Storage")
-local SC_Functional = require("Solar.Code.Functional")
 local SV_Consts     = require("Solar.Values.Consts")
 
 local SM_Color      = require("Solar.Math.Color")
@@ -15,6 +14,7 @@ local SUI_Label     = require("Solar.UI.Label")
 local SUI_Button    = require("Solar.UI.Button")
 
 local ETable        =require("Library.Extra.Table")
+local EFunctional   = require("Library.Extra.Functional")
 
 --
 
@@ -49,7 +49,7 @@ local function Sol_TickDialogForm(message_service, dialog_form)
     if message_service.space_pressed then
         -- when: space is pressed and the message has already finished showing.
         if message_service.waiting_player_click_space then
-            SC_Functional.Sol_AttemptInvokeFunction(dialog_form.callback)
+            EFunctional.safecall(dialog_form.callback)
             message_service.waiting_player_click_space = false
             message_service.message_index = 1
             message_service.stack_index = message_service.stack_index + 1

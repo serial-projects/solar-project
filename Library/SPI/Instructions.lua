@@ -34,7 +34,7 @@ function module.SPI_swap(context, instance, source, destination)
     operations.SPI_SetDataToInstance(context, instance, destination, source_value)
 end
 
-function __SPI_IncrDecrTemplateOperation(context, instance, source, template_function, operation_name)
+function __SPI_IncrDecrTemplate(context, instance, source, template_function, operation_name)
     local source_value = operations.SPI_GetDataFromInstance(context, instance, source)
     if type(source_value) == "number" then
         operations.SPI_SetDataToInstance(context, instance, source, template_function(source_value))
@@ -44,11 +44,11 @@ function __SPI_IncrDecrTemplateOperation(context, instance, source, template_fun
 end
 
 function module.SPI_incr(context, instance, source)
-    __SPI_IncrDecrTemplateOperation(context, instance, source, function(a) return a + 1 end, "incr")
+    __SPI_IncrDecrTemplate(context, instance, source, function(a) return a + 1 end, "incr")
 end
 
 function module.SPI_decr(context, instance, source)
-    __SPI_IncrDecrTemplateOperation(context, instance, source, function(a) return a - 1 end, "decr")
+    __SPI_IncrDecrTemplate(context, instance, source, function(a) return a - 1 end, "decr")
 end
 
 function module.SPI_push(context, instance, source)
@@ -65,7 +65,7 @@ function module.SPI_pop(context, instance, source)
     end
 end
 
-function __SPI_MathOperationTemplateOperation(context, instance, source, destination, result, template_function, operation_name, custom_type)
+function __SPI_MathOperationTemplate(context, instance, source, destination, result, template_function, operation_name, custom_type)
     custom_type = custom_type or "number"
     local source_value = operations.SPI_GetDataFromInstance(context, instance, source)
     if type(source_value) ~= custom_type then return instance:set_error("%s requires first argument to be %s, got: %s", operation_name, custom_type, source) end
@@ -75,23 +75,23 @@ function __SPI_MathOperationTemplateOperation(context, instance, source, destina
 end
 
 function module.SPI_add(context, instance, source, destination, result)
-    __SPI_MathOperationTemplateOperation(context, instance, source, destination, result, function(a, b) return a + b end, "add")
+    __SPI_MathOperationTemplate(context, instance, source, destination, result, function(a, b) return a + b end, "add")
 end
 
 function module.SPI_sub(context, instance, source, destination, result)
-    __SPI_MathOperationTemplateOperation(context, instance, source, destination, result, function(a, b) return a - b end, "sub")
+    __SPI_MathOperationTemplate(context, instance, source, destination, result, function(a, b) return a - b end, "sub")
 end
 
 function module.SPI_mul(context, instance, source, destination, result)
-    __SPI_MathOperationTemplateOperation(context, instance, source, destination, result, function(a, b) return a * b end, "mul")
+    __SPI_MathOperationTemplate(context, instance, source, destination, result, function(a, b) return a * b end, "mul")
 end
 
 function module.SPI_div(context, instance, source, destination, result)
-  __SPI_MathOperationTemplateOperation(context, instance, source, destination, result, function(a, b) return a / b end, "div")
+  __SPI_MathOperationTemplate(context, instance, source, destination, result, function(a, b) return a / b end, "div")
 end
 
 function module.SPI_pow(context, instance, source, destination, result)
-  __SPI_MathOperationTemplateOperation(context, instance, source, destination, result, function(a, b) return math.pow(a, b) end, "pow")
+  __SPI_MathOperationTemplate(context, instance, source, destination, result, function(a, b) return math.pow(a, b) end, "pow")
 end
 
 function module.SPI_halt(_, instance)
@@ -144,15 +144,15 @@ function module.SPI_cge (context, instance, source) if instance.registers.GT    
 
 function module.SPI_and (context, instance, source, destination, result)
     -- TODO: when luajit supports '<<' and '&', remove from the bit library.
-    __SPI_MathOperationTemplateOperation(context, instance, source, destination, result, (function(a, b) return bit.band(a, b) end), "and")
+    __SPI_MathOperationTemplate(context, instance, source, destination, result, (function(a, b) return bit.band(a, b) end), "and")
 end
 
 function module.SPI_or (context, instance, source, destination, result) 
-    __SPI_MathOperationTemplateOperation(context, instance, source, destination, result, (function(a, b) return bit.bor(a, b) end), "or")
+    __SPI_MathOperationTemplate(context, instance, source, destination, result, (function(a, b) return bit.bor(a, b) end), "or")
 end
 
 function module.SPI_iran(context, instance, source, destination, result)
-    __SPI_MathOperationTemplateOperation(context, instance, source, destination, result, function(a, b) return math.random(a, b) end, "iran")
+    __SPI_MathOperationTemplate(context, instance, source, destination, result, function(a, b) return math.random(a, b) end, "iran")
 end
 
 module.SPI_PerformTable = {

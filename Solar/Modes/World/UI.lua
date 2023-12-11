@@ -23,7 +23,7 @@ function module.Sol_InitWorldModeGUI(engine, world_mode)
     local normal_font           = SS_Storage.Sol_LoadFontFromStorage(engine.storage, "normal", 12)
     local normal_title_font     = SS_Storage.Sol_LoadFontFromStorage(engine.storage, "normal", 24)
     --> some "macros" for the UI
-    local function _GenerateDebugUIGenericLabel() 
+    local function _GenerateDebugUIGenericLabel()
         return SUI_Label.Sol_NewLabel({font=terminal_font, color=SV_Consts.colors.white, has_background=true, background_color=SV_Consts.colors.black})
     end
     local function _GenerateExitFrameBackground()

@@ -54,7 +54,7 @@ function module.Sol_DrawLabel(display, label)
             end
             if label.has_background then
                 love.graphics.setColor(label.background_color:translate())
-                love.graphics.rectangle("fill", SM_Rectangle.Sol_UnpackRectXYWH(label.rectangle))
+                love.graphics.rectangle("fill", label.rectangle:unpackxywh())
             end
             love.graphics.setFont(label.font)
             love.graphics.setColor(label.color:translate())

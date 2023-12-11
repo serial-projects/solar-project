@@ -35,7 +35,8 @@ function module.Sol_AttemptInteractionInWorld(engine, world_mode, world)
     for _, tile in ipairs(current_chunk_tiles) do
         local current_tile=world.tiles[tile.target]
         if current_tile.enable_interaction and not current_tile.busy then
-            local has_collision=SM_Rectangle.Sol_TestRectangleCollision(testing_rectangle, current_tile.rectangle)
+            -- local has_collision=SM_Rectangle.Sol_TestRectangleCollision(testing_rectangle, current_tile.rectangle)
+            local has_collision = testing_rectangle:collide(current_tile.rectangle)
             if has_collision then
                 module.Sol_DoInteractionInWorld(engine, world_mode, world, current_tile, current_tile.when_interacted)
                 break

@@ -44,7 +44,7 @@ end
 -- case the world borders are enabled, case not, this function will skip the checkup).
 function module.Sol_CheckPlayerPositionAt(engine, world_mode, world, xposition, yposition)
     --> setup the testing rectangle.
-    local player_rectangle=SM_Rectangle.Sol_CloneRectangle(world_mode.player.rectangle)
+    local player_rectangle=world_mode.player.rectangle:clone()
     player_rectangle.position.x=xposition
     player_rectangle.position.y=yposition
     --> check if the player is inside the world borders.
@@ -59,7 +59,8 @@ function module.Sol_CheckPlayerPositionAt(engine, world_mode, world, xposition, 
     for _, tiles_referenced in ipairs(tiles_to_test) do
         local tile_selected = world.tiles[tiles_referenced.target]
         if tile_selected.collide then
-            if SM_Rectangle.Sol_TestRectangleCollision(player_rectangle, tile_selected.rectangle) then return false end
+            -- if SM_Rectangle.Sol_TestRectangleCollision(player_rectangle, tile_selected.rectangle) then return false end
+            if player_rectangle:collide(tile_selected.rectangle) then return false end
         end
     end
     return true

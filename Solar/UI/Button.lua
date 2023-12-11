@@ -42,7 +42,8 @@ function module.Sol_TickButton(display, button)
             if type(action_perform)=="function" then action_perform() end
         end
     end
-    button.hovering=SM_Rectangle.Sol_TestRectangleCollision(display.cursor.rectangle, button.rectangle)
+    -- button.hovering=SM_Rectangle.Sol_TestRectangleCollision(display.cursor.rectangle, button.rectangle)
+    button.hovering = display.cursor.rectangle:collide(button.rectangle)
     if button.visible then
         button.rectangle.size.x,button.rectangle.size.y=button.size.x,button.size.y
         if    button.force_absolute then button.rectangle.position.x,button.rectangle.position.y=button.position.x,button.position.y
@@ -60,11 +61,11 @@ function module.Sol_DrawButton(display, button)
             --> the main rectangle
             if button.hovering then love.graphics.setColor(button.background_hovering_color:translate())
             else                    love.graphics.setColor(button.background_color:translate()) end
-            love.graphics.rectangle("fill", SM_Rectangle.Sol_UnpackRectXYWH(button.rectangle))
+            love.graphics.rectangle("fill", button.rectangle:unpackxywh())
             --> the borders
             if button.has_borders then
                 love.graphics.setColor(button.border_color:translate())
-                love.graphics.rectangle("line", SM_Rectangle.Sol_UnpackRectXYWH(button.rectangle))
+                love.graphics.rectangle("line", button.rectangle:unpackxywh())
             end
             --> the text
             local text_width, text_height=button.font:getWidth(button.text),button.font:getHeight()

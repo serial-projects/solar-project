@@ -4,9 +4,13 @@ local module = {}
 
 local ETable = require("Library.Extra.Table")
 
-local    STRING_TOKENS          = {["\""]=true, ["'"]=true}
-local    VALID_BOOLEAN_TOKENS   = {["true"]=true, ["yes"]=true, ["false"]=true, ["no"]=true}
-local    SPECIAL_REGISTERS      = {["EQ"]=true, ["GT"]=true}
+local STRING_TOKENS         = {["\""]=true, ["'"]=true}
+local VALID_BOOLEAN_TOKENS  = {["true"]=true, ["yes"]=true, ["false"]=true, ["no"]=true}
+local SPECIAL_REGISTERS     = {["EQ"]=true, ["GT"]=true}
+
+local LOCAL_PREFIX          = "$"
+local GLOBAL_PREFIX         = "@"
+local REGISTER_PREFIX       = "!"
 
 function module.SPI_GetDataFromInstance(context, instance, token)
     -- prefixes:
@@ -17,26 +21,21 @@ function module.SPI_GetDataFromInstance(context, instance, token)
     local without_prefix  = token:sub(2, #token)
     local function CheckReference(type_reference, where_to_look, when_error, ...)
         if where_to_look[type_reference] then
-        return where_to_look[type_reference]
+            return where_to_look[type_reference]
         else
-        instance:set_error(when_error, ...)
+            instance:set_error(when_error, ...)
         end
     end
-    if possible_prefix == '$' then
-        return CheckReference(without_prefix, instance.variables, "no local declared: \"%s\"", without_prefix)
-    elseif possible_prefix == '@' then
-        return CheckReference(without_prefix, context.global_scope, "no global declared: \"%s\"", without_prefix)
-    elseif possible_prefix == '!' then
-        return CheckReference(string.upper(without_prefix), instance.registers, "no register found: \"%s\"", without_prefix)
-    elseif STRING_TOKENS[possible_prefix] and possible_prefix == token:sub(#token, #token) then
-        return without_prefix:sub(1, #without_prefix - 1)
-    elseif tonumber(token) then
-        return tonumber(token)
-    elseif VALID_BOOLEAN_TOKENS[token] then
-        return (token == "yes" or token == "true") and 1 or 0
-    else
-        instance:set_error("invalid reference: \"%s\"", token)
-    end
+    --[[ References ]]
+    if possible_prefix      == LOCAL_PREFIX then        return CheckReference(without_prefix, instance.variables, "no local declared: \"%s\"", without_prefix)
+    elseif possible_prefix  == GLOBAL_PREFIX then       return CheckReference(without_prefix, context.global_scope, "no global declared: \"%s\"", without_prefix)
+    elseif possible_prefix  == REGISTER_PREFIX then     return CheckReference(string.upper(without_prefix), instance.registers, "no register found: \"%s\"", without_prefix)
+    --[[ types ]]
+    elseif STRING_TOKENS[possible_prefix] and possible_prefix == token:sub(#token, #token) then return without_prefix:sub(1, #without_prefix - 1)
+    elseif tonumber(token) then                     return tonumber(token)
+    elseif VALID_BOOLEAN_TOKENS[token] then         return (token == "yes" or token == "true") and 1 or 0
+    --[[ Everything Else ]]
+    else instance:set_error("invalid reference: \"%s\"", token) end
     return 0
 end
 
@@ -48,9 +47,9 @@ function module.SPI_SetDataToInstance(context, instance, token, value)
     local   possible_prefix = token:sub(1, 1)
     local   without_prefix  = token:sub(2, #token)
     local   performing_table = {
-        ["$"]=function() instance.variables[without_prefix]=value   end,
-        ["@"]=function() context.global_scope[without_prefix]=value end,
-        ["!"]=function()
+        [LOCAL_PREFIX]=function()   instance.variables[without_prefix]=value   end,
+        [GLOBAL_PREFIX]=function()  context.global_scope[without_prefix]=value end,
+        [REGISTER_PREFIX]=function()
             -- NOTE: all the registers are in UPPERCASE like SP, A, etc...
             without_prefix = string.upper(without_prefix)
             if instance.registers[without_prefix] or SPECIAL_REGISTERS[without_prefix] then instance.registers[without_prefix] = value
@@ -65,10 +64,7 @@ end
 function module.SPI_Goto(context, instance, where, save_last_location)
     local location_address = context.label_addr[where]
     if location_address then
-        -- NOTE: here we assume all the instructions that move the code to a certain
-        -- direction only takes ONE argument, although there is no plans for new
-        -- instructions that violates this argument, it is better implement on the
-        -- future a way to modify this value.
+        -- HACK? Here we assume all the code moving opcodes are OPCODE <direction>.
         local AMOUNT_JUMP = 1 + 1
         if save_last_location then
             local save_address = instance.registers.PC + AMOUNT_JUMP
@@ -80,13 +76,14 @@ function module.SPI_Goto(context, instance, where, save_last_location)
         instance:set_error("no label to jump with name: \"%s\"", where)
     end
 end
+
 function module.SPI_RestoreLastLocation(instance)
     if #instance.call_stack <= 0 then
         instance:set_error("failed attempt to restore last location, #call_stack <= 0 (aka. nothing to return to.)")
     else
         -- NOTE: this makes xtable.lua required!
-        instance.registers.PC = ETable.pop(instance.call_stack)
-        instance.registers.PCI = false
+        instance.registers.PC   = ETable.pop(instance.call_stack)
+        instance.registers.PCI  = false
     end
 end
 return module

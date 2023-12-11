@@ -6,8 +6,8 @@ end
 # >> GEOMETRY:
 section geometry
     define  enable_world_borders, yes
-    define  bg_size, [5, 5]
-    define  bg_tile_size, [128, 128]
+    define  world_size, [5, 5]
+    define  world_grid_tile_size, [128, 128]
 end
 
 # >> LEVEL:

@@ -32,12 +32,12 @@ function module.Sol_NewWorld(world)
         recipe_messages     ={},
         recipe_skybox       ={},
         --
-        bg_size             =nil,
-        bg_tile_size        =nil,
-        world_size          =SM_Vector.Sol_NewVector(0, 0),
-        enable_world_borders=true,
-        tiles               ={{zindex=1, type="player"}},
-        current_skybox      =nil,
+        grid_tile_size          = SM_Vector.Sol_NewVector(0, 0),
+        grid_size               = SM_Vector.Sol_NewVector(0, 0),
+        size                    = SM_Vector.Sol_NewVector(0, 0),
+        enable_world_borders    = true,
+        tiles                   = {{zindex=1, type="player"}},
+        current_skybox          = nil,
     }
 end
 

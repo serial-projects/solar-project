@@ -49,8 +49,8 @@ function module.Sol_CheckPlayerPositionAt(engine, world_mode, world, xposition, 
     player_rectangle.position.y=yposition
     --> check if the player is inside the world borders.
     if world.enable_world_borders then
-        local inside_x=player_rectangle.position.x>=0 and player_rectangle.position.x<=world.world_size.x
-        local inside_y=player_rectangle.position.y>=0 and player_rectangle.position.y<=world.world_size.y
+        local inside_x=player_rectangle.position.x>=0 and player_rectangle.position.x<=world.size.x
+        local inside_y=player_rectangle.position.y>=0 and player_rectangle.position.y<=world.size.y
         if not (inside_x and inside_y) then return false end
     end
     --> check the player current chunk.

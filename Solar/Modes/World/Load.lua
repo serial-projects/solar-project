@@ -33,8 +33,8 @@ function module.Sol_GenerateLayer(world, layer)
                         mwarn("unable to find \"%s\" block for layer \"%s\"", matrix_block, layer)
                     else
                         local proto_tile=SWM_Tiles.Sol_NewTile(world.recipe_tiles[matrix_block])
-                        proto_tile.rectangle.position.x=(xindex-1)*world.bg_tile_size.x
-                        proto_tile.rectangle.position.y=(yindex-1)*world.bg_tile_size.y
+                        proto_tile.rectangle.position.x=(xindex-1)*world.grid_tile_size.x
+                        proto_tile.rectangle.position.y=(yindex-1)*world.grid_tile_size.y
                         table.insert(world.tiles, proto_tile)
                     end
                 end
@@ -57,10 +57,10 @@ end
 
 --> LoadWorld<Section>: this functions are going to load a specific world section.
 local function Sol_LoadWorldGeometry(world)
-    world.info                =world.recipe_info
-    world.bg_size             =SM_Vector.Sol_NewVector(world.recipe_geometry.bg_size)
-    world.bg_tile_size        =SM_Vector.Sol_NewVector(world.recipe_geometry.bg_tile_size)
-    world.world_size          =SM_Vector.Sol_NewVector((world.bg_size.x-1)*world.bg_tile_size.x,(world.bg_size.y-1)*world.bg_tile_size.y)
+    world.info                  = world.recipe_info
+    world.grid_size             = SM_Vector.Sol_NewVector(world.recipe_geometry.world_size)
+    world.grid_tile_size        = SM_Vector.Sol_NewVector(world.recipe_geometry.world_grid_tile_size)
+    world.size                  = SM_Vector.Sol_NewVector((world.grid_size.x-1)*world.grid_tile_size.x,(world.grid_size.y-1)*world.grid_tile_size.y)
     world.enable_world_borders=(world.recipe_geometry["enable_world_borders"] == true)
 end
 
@@ -90,8 +90,8 @@ local function Sol_LoadWorldPlayer(engine, world_mode, world)
         if spawn_position then
                 local xpos, ypos = spawn_position["xpos"] or 0, spawn_position["ypos"] or 0
                 if spawn_position["use_tile_alignment"] then
-                    xpos = xpos * world.bg_tile_size.x
-                    ypos = ypos * world.bg_tile_size.y
+                    xpos = xpos * world.grid_tile_size.x
+                    ypos = ypos * world.grid_tile_size.y
                 end
                 world_mode.player.rectangle.position.x,world_mode.player.rectangle.position.y=xpos, ypos
             end
@@ -173,7 +173,7 @@ function module.Sol_LoadWorld(engine, world_mode, world, world_name)
     Sol_LoadWorldScript(engine, world_mode, world)
     Sol_LoadWorldSkybox(world)
     --
-    dmsg("Loaded map: %dx%d with %d tiles.", world.recipe_geometry.bg_size[1], world.recipe_geometry.bg_size[2], #world.tiles)
+    dmsg("Loaded map: %dx%d with %d tiles.", world.size[1], world.size[2], #world.tiles)
     SWM_Chunk.Sol_MapChunksInWorld(world)
 end
 

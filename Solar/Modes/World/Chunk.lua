@@ -6,8 +6,8 @@ local module = {}
 -- Sol_GetPlayerCurrentChunk(world_mode: Sol_WorldMode, world: Sol_World) -> player_current_chunk_x: number, player_current_chunk_y: number
 -- Returns the player current chunk (in x and y) based on it's absolute position.
 function module.Sol_GetPlayerCurrentChunk(world_mode, world)
-    local player_current_chunk_x=math.floor(world_mode.player.rectangle.position.x/(world.bg_tile_size.x*SV_Defaults.SOL_WORLD_CHUNK_WIDTH))
-    local player_current_chunk_y=math.floor(world_mode.player.rectangle.position.y/(world.bg_tile_size.y*SV_Defaults.SOL_WORLD_CHUNK_HEIGHT))
+    local player_current_chunk_x=math.floor(world_mode.player.rectangle.position.x/(world.grid_tile_size.x*SV_Defaults.SOL_WORLD_CHUNK_WIDTH))
+    local player_current_chunk_y=math.floor(world_mode.player.rectangle.position.y/(world.grid_tile_size.y*SV_Defaults.SOL_WORLD_CHUNK_HEIGHT))
     return player_current_chunk_x, player_current_chunk_y
 end
 
@@ -19,8 +19,8 @@ function module.Sol_MapChunksInWorld(world)
     world.chunks={}
     for tile_index, tile in ipairs(world.tiles) do
         if tile.type == "tile" then
-            local tile_belongs_chunk_inx=math.floor(tile.rectangle.position.x/(world.bg_tile_size.x*SV_Defaults.SOL_WORLD_CHUNK_WIDTH))
-            local tile_belongs_chunk_iny=math.floor(tile.rectangle.position.y/(world.bg_tile_size.y*SV_Defaults.SOL_WORLD_CHUNK_HEIGHT))
+            local tile_belongs_chunk_inx=math.floor(tile.rectangle.position.x/(world.grid_tile_size.x*SV_Defaults.SOL_WORLD_CHUNK_WIDTH))
+            local tile_belongs_chunk_iny=math.floor(tile.rectangle.position.y/(world.grid_tile_size.y*SV_Defaults.SOL_WORLD_CHUNK_HEIGHT))
             local chunk_reference=tostring(tile_belongs_chunk_inx)..'.'..tostring(tile_belongs_chunk_iny)
             if world.chunks[chunk_reference] then
                 table.insert(world.chunks[chunk_reference], tile_index)

@@ -35,8 +35,6 @@ function module.decode_file(file, open_function) open_function = open_function o
 	if not sucess then
 		error(string.format("on file: \"%s\", error: %s", file, error_reason))
 	end
-	print("File: " .. file)
-	print(ETable.show(collapsed_sections))
 	fp:close() ; return sectionized_buffer, collapsed_sections
 end 
 

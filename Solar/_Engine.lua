@@ -125,7 +125,6 @@ end
 function module.Sol_DrawEngine(engine)
     if      engine.current_mode == SV_Consts.engine_modes.MENU   then mwarn("engine.current_mode is not yet implemented.")
     elseif  engine.current_mode == SV_Consts.engine_modes.WORLD  then
-        dmsg("drawing tile...")
         SWM_Mode.Sol_DrawWorldMode(engine, engine.world_mode)
         SD_Canvas.Sol_DrawCanvas(engine.world_mode.viewport, engine.viewport_position)
     else mwarn("engine.current_mode is not yet implemented.") end

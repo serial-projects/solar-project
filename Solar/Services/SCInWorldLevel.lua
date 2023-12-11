@@ -13,7 +13,7 @@ function module.Sol_ImplementInWorldSystemCalls(engine, world_mode, world, conte
     local begun_registering_functions=os.clock()
     --[[ Player Absolute Position ]]--
     context.system_calls["SolWorld_GetPlayerPosition"]=function(_, instance)
-        local xpos, ypos = SM_Vector.Sol_UnpackVectorXY(world_mode.player.rectangle.position)
+        local xpos, ypos = world_mode.player.rectangle.position:unpackxy()
         table.insert(instance.stack, xpos)
         table.insert(instance.stack, ypos)
     end

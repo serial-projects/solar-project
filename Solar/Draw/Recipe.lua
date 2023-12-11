@@ -12,7 +12,11 @@ local SS_Storage    = require("Solar.System.Storage")
 local ETable        = require("Library.Extra.Table")
 
 local module={}
---
+
+--- NOTE: Draw Recipes has a structure like:
+--- recipes: which contains all the recipes:
+---       \- color, draw_method, textures, texture_index, texture_timing, etc...
+--- using_recipe: the current using texture: what is selected on the recipes[using_recipe].
 function module.Sol_NewDrawRecipe(draw)
     -- _NewRecipe() build a recipe with the default values.
     local function _NewRecipe(recipe) recipe = recipe or {}
